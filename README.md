@@ -33,5 +33,15 @@ npm start
 Le serveur expose :
 
 - `/` : l'application mobile ;
+- `/admin` : régie admin du séminaire ;
 - `/api/presence` : heartbeat et statistiques temps réel des participants connectés.
 - `/api/votes` : enregistrement réel des votes et résultats agrégés par catégorie.
+- `/api/live-state` : état live piloté par l'admin.
+
+Code admin par défaut en développement : `but2026`
+
+En production, définir un code avec la variable d'environnement :
+
+```bash
+ADMIN_CODE=ton-code-secret
+```

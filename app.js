@@ -2,8 +2,6 @@ const STORAGE_KEYS = {
   profile: "nuit_cesars_profile",
   votes: "nuit_cesars_votes",
   messages: "nuit_cesars_messages",
-  demoVoteOpen: "nuit_cesars_demo_vote_open",
-  demoCategoryId: "nuit_cesars_demo_category_id",
 };
 
 const avatars = [
@@ -355,6 +353,11 @@ const state = {
   pseudoDraft: "",
   selectedNominee: null,
   pickedQuiz: null,
+  liveState: {
+    activeCategoryId: "very-bad-trip",
+    activeStepId: "welcome-breakfast",
+    voteOpen: false,
+  },
   presenceStats: null,
   voteStats: null,
   toast: null,
@@ -400,6 +403,10 @@ function currentAgendaStep() {
   const now = new Date();
   const minutes = now.getHours() * 60 + now.getMinutes();
   return [...agendaSteps].reverse().find((step) => isTimeWithinStep(step, minutes)) || agendaSteps[0];
+}
+
+function activeAgendaStep() {
+  return agendaSteps.find((step) => step.id === state.liveState?.activeStepId) || currentAgendaStep();
 }
 
 function emptyMoodCounts() {
@@ -458,19 +465,12 @@ function getMessages() {
 }
 
 function isVoteOpen() {
-  return localStorage.getItem(STORAGE_KEYS.demoVoteOpen) === "true";
+  return Boolean(state.liveState?.voteOpen);
 }
 
 function activeCategory() {
-  const categoryId = localStorage.getItem(STORAGE_KEYS.demoCategoryId);
+  const categoryId = state.liveState?.activeCategoryId;
   return oscarCategories.find((category) => category.id === categoryId) || oscarCategories[0];
-}
-
-function setDemoCategory(categoryId) {
-  localStorage.setItem(STORAGE_KEYS.demoCategoryId, categoryId);
-  state.selectedNominee = null;
-  notify("Catégorie prête.");
-  render();
 }
 
 function jsString(value) {
@@ -556,19 +556,42 @@ function startVoteSync() {
   state.voteTimer = window.setInterval(syncVotes, 5000);
 }
 
-function openDemoVote() {
-  localStorage.setItem(STORAGE_KEYS.demoVoteOpen, "true");
-  state.view = "vote";
-  notify("Les votes sont ouverts !");
-  pulse();
-  render();
+async function syncLiveState() {
+  try {
+    const response = await fetch("/api/live-state");
+    if (!response.ok) throw new Error("Live state unavailable");
+
+    const nextLiveState = await response.json();
+    const wasVoteOpen = Boolean(state.liveState?.voteOpen);
+    const previousCategory = state.liveState?.activeCategoryId;
+    state.liveState = {
+      ...state.liveState,
+      ...nextLiveState,
+    };
+
+    if (!wasVoteOpen && state.liveState.voteOpen && state.profile) {
+      notify("Les votes sont ouverts !");
+      pulse();
+    }
+
+    if (previousCategory !== state.liveState.activeCategoryId) {
+      state.selectedNominee = null;
+    }
+
+    render();
+  } catch {
+    state.liveState ||= {
+      activeCategoryId: "very-bad-trip",
+      activeStepId: "welcome-breakfast",
+      voteOpen: false,
+    };
+  }
 }
 
-function closeDemoVote() {
-  localStorage.setItem(STORAGE_KEYS.demoVoteOpen, "false");
-  state.view = "home";
-  notify("Le vote est fermé.");
-  render();
+function startLiveStateSync() {
+  if (state.liveTimer) return;
+  syncLiveState();
+  state.liveTimer = window.setInterval(syncLiveState, 3000);
 }
 
 async function submitVote() {
@@ -800,7 +823,7 @@ function renderRoomPulse() {
 }
 
 function renderAgendaPreview() {
-  const activeStep = currentAgendaStep();
+  const activeStep = activeAgendaStep();
   return `
     <section class="panel agenda-panel">
       <div class="section-title compact">
@@ -876,29 +899,15 @@ function renderHome() {
       </div>
 
       <div class="category-picker">
-        <p class="micro">Catégorie démo active</p>
-        <div class="category-scroll">
-          ${oscarCategories
-            .map(
-              (item) => `
-                <button
-                  class="category-chip ${item.id === category.id ? "is-selected" : ""}"
-                  onclick="setDemoCategory('${item.id}')"
-                >
-                  ${item.title}
-                </button>
-              `,
-            )
-            .join("")}
-        </div>
+        <p class="micro">Catégorie préparée par l’admin</p>
+        <div class="category-chip is-selected">${category.title}</div>
       </div>
 
       <div class="demo-strip">
         ${
           isVoteOpen()
-            ? `<button class="primary" onclick="state.view='vote'; render();">Vote maintenant</button>
-               <button class="secondary" onclick="closeDemoVote()">Fermer le vote démo</button>`
-            : `<button class="secondary" onclick="openDemoVote()">Démo admin : ouvrir le vote</button>`
+            ? `<button class="primary" onclick="state.view='vote'; render();">Vote maintenant</button>`
+            : `<button class="secondary" disabled>Vote fermé pour le moment</button>`
         }
       </div>
     </section>
@@ -1178,3 +1187,4 @@ function render() {
 render();
 startPresenceSync();
 startVoteSync();
+startLiveStateSync();

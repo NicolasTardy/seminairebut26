@@ -6,10 +6,13 @@ const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || "0.0.0.0";
 const ROOT = __dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
+const LIVE_STATE_FILE = path.join(DATA_DIR, "live-state.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
+const ADMIN_CODE = process.env.ADMIN_CODE || "but2026";
 const PRESENCE_TTL_MS = 18000;
 
 const participants = new Map();
+const liveState = loadLiveState();
 const votes = loadVotes();
 
 const mimeTypes = {
@@ -27,6 +30,30 @@ function loadVotes() {
   } catch {
     return { categories: {} };
   }
+}
+
+function loadLiveState() {
+  try {
+    return {
+      activeCategoryId: "very-bad-trip",
+      activeStepId: "welcome-breakfast",
+      updatedAt: new Date().toISOString(),
+      voteOpen: false,
+      ...JSON.parse(fs.readFileSync(LIVE_STATE_FILE, "utf8")),
+    };
+  } catch {
+    return {
+      activeCategoryId: "very-bad-trip",
+      activeStepId: "welcome-breakfast",
+      updatedAt: new Date().toISOString(),
+      voteOpen: false,
+    };
+  }
+}
+
+function saveLiveState() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(LIVE_STATE_FILE, JSON.stringify(liveState, null, 2));
 }
 
 function saveVotes() {
@@ -104,6 +131,10 @@ function sendJson(response, status, data) {
   response.end(JSON.stringify(data));
 }
 
+function isAuthorizedAdmin(request) {
+  return request.headers["x-admin-code"] === ADMIN_CODE;
+}
+
 function readBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -121,7 +152,7 @@ function readBody(request) {
 
 function safeStaticPath(urlPath) {
   const decoded = decodeURIComponent(urlPath.split("?")[0]);
-  const filePath = decoded === "/" ? "/index.html" : decoded;
+  const filePath = decoded === "/" ? "/index.html" : decoded === "/admin" ? "/admin.html" : decoded;
   const resolved = path.normalize(path.join(ROOT, filePath));
 
   if (!resolved.startsWith(ROOT)) return null;
@@ -182,6 +213,35 @@ const server = http.createServer(async (request, response) => {
       sendJson(response, 200, moodStats());
     } catch {
       sendJson(response, 400, { error: "Invalid presence payload" });
+    }
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/live-state" && request.method === "GET") {
+    sendJson(response, 200, liveState);
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/live-state" && request.method === "POST") {
+    if (!isAuthorizedAdmin(request)) {
+      sendJson(response, 401, { error: "Unauthorized" });
+      return;
+    }
+
+    try {
+      const payload = JSON.parse(await readBody(request));
+      const nextState = {
+        activeCategoryId: cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80),
+        activeStepId: cleanText(payload.activeStepId || liveState.activeStepId, 80),
+        updatedAt: new Date().toISOString(),
+        voteOpen: Boolean(payload.voteOpen),
+      };
+
+      Object.assign(liveState, nextState);
+      saveLiveState();
+      sendJson(response, 200, liveState);
+    } catch {
+      sendJson(response, 400, { error: "Invalid live state payload" });
     }
     return;
   }
