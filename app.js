@@ -341,27 +341,6 @@ const agendaSteps = [
   },
 ];
 
-const demoAudienceMoods = [
-  "good-vibes",
-  "full-power",
-  "good-vibes",
-  "recharge",
-  "full-power",
-  "good-vibes",
-  "full-power",
-  "good-vibes",
-  "recharge",
-  "good-vibes",
-  "full-power",
-  "good-vibes",
-  "good-vibes",
-  "full-power",
-  "recharge",
-  "good-vibes",
-  "full-power",
-  "good-vibes",
-];
-
 const quizQuestion = {
   title: "Quiz live",
   question: "Quel accessoire est indispensable pour une remise de prix ?",
@@ -376,6 +355,7 @@ const state = {
   pseudoDraft: "",
   selectedNominee: null,
   pickedQuiz: null,
+  presenceStats: null,
   toast: null,
 };
 
@@ -421,34 +401,43 @@ function currentAgendaStep() {
   return [...agendaSteps].reverse().find((step) => isTimeWithinStep(step, minutes)) || agendaSteps[0];
 }
 
-function connectedParticipants() {
-  const currentMood = state.profile?.moodId || "good-vibes";
-  return [currentMood, ...demoAudienceMoods];
-}
-
-function roomMoodStats() {
-  const participants = connectedParticipants();
+function emptyMoodCounts() {
   const counts = moods.reduce((acc, mood) => {
     acc[mood.id] = 0;
     return acc;
   }, {});
+  return counts;
+}
 
-  participants.forEach((moodId) => {
-    counts[moodById(moodId).id] += 1;
-  });
+function energyFromCounts(counts, total) {
+  if (!total) return 0;
+  return Math.round(((counts["good-vibes"] * 0.62 + counts["full-power"] * 1 + counts.recharge * 0.28) / total) * 100);
+}
 
+function roomMoodStats() {
+  if (state.presenceStats) {
+    const counts = { ...emptyMoodCounts(), ...state.presenceStats.counts };
+    const online = state.presenceStats.online || 0;
+    return {
+      online,
+      counts,
+      topMood: moodById(state.presenceStats.topMoodId),
+      energyScore: state.presenceStats.energyScore ?? energyFromCounts(counts, online),
+      isRealtime: true,
+    };
+  }
+
+  const counts = emptyMoodCounts();
+  const currentMood = moodById(state.profile?.moodId || state.selectedMoodId);
+  counts[currentMood.id] = 1;
   const topMood = moods.reduce((best, mood) => (counts[mood.id] > counts[best.id] ? mood : best), moods[0]);
-  const energyScore = Math.round(
-    ((counts["good-vibes"] * 0.62 + counts["full-power"] * 1 + counts.recharge * 0.28) /
-      participants.length) *
-      100,
-  );
 
   return {
-    participants,
+    online: 1,
     counts,
     topMood,
-    energyScore,
+    energyScore: energyFromCounts(counts, 1),
+    isRealtime: false,
   };
 }
 
@@ -509,7 +498,38 @@ function saveProfile(event) {
 
   writeJson(STORAGE_KEYS.profile, state.profile);
   notify("Bienvenue dans la cérémonie !");
+  startPresenceSync();
   render();
+}
+
+async function syncPresence() {
+  if (!state.profile) return;
+
+  try {
+    const response = await fetch("/api/presence", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: state.profile.id,
+        pseudo: state.profile.pseudo,
+        avatarId: state.profile.avatarId,
+        moodId: state.profile.moodId || "good-vibes",
+      }),
+    });
+
+    if (!response.ok) throw new Error("Presence unavailable");
+
+    state.presenceStats = await response.json();
+    if (state.view === "home") render();
+  } catch {
+    state.presenceStats = null;
+  }
+}
+
+function startPresenceSync() {
+  if (!state.profile || state.presenceTimer) return;
+  syncPresence();
+  state.presenceTimer = window.setInterval(syncPresence, 5000);
 }
 
 function openDemoVote() {
@@ -694,9 +714,9 @@ function renderRoomPulse() {
       <div class="section-title compact">
         <div>
           <p class="eyebrow">Salle en direct</p>
-          <h2>${stats.participants.length} personnes connectées</h2>
+          <h2>${stats.online} personne${stats.online > 1 ? "s" : ""} connectée${stats.online > 1 ? "s" : ""}</h2>
         </div>
-        <span class="pulse-live">Live</span>
+        <span class="pulse-live">${stats.isRealtime ? "Live réel" : "Local"}</span>
       </div>
 
       <div class="mood-summary">
@@ -712,7 +732,7 @@ function renderRoomPulse() {
         ${moods
           .map((mood) => {
             const count = stats.counts[mood.id];
-            const percent = Math.round((count / stats.participants.length) * 100);
+            const percent = stats.online ? Math.round((count / stats.online) * 100) : 0;
             return `
               <div class="mood-bar-row">
                 <span>${mood.icon} ${mood.label}</span>
@@ -1106,3 +1126,4 @@ function render() {
 }
 
 render();
+startPresenceSync();

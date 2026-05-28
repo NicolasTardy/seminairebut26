@@ -21,3 +21,16 @@ Le bouton `Démo admin : ouvrir le vote` simule l'action future du cockpit admin
 Sous-domaine prévu : `seminaire2026`
 
 URL finale attendue : `https://seminaire2026.triangleoffensif.fr`
+
+## Mode serveur
+
+L'app peut être servie en statique, mais le compteur réel de personnes connectées nécessite le serveur Node :
+
+```bash
+npm start
+```
+
+Le serveur expose :
+
+- `/` : l'application mobile ;
+- `/api/presence` : heartbeat et statistiques temps réel des participants connectés.
