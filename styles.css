@@ -76,6 +76,19 @@ button {
   margin-bottom: 18px;
 }
 
+.participant-actions {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.logout-button {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 0.76rem;
+}
+
 .brand {
   display: flex;
   align-items: center;

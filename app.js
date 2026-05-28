@@ -513,8 +513,44 @@ function saveProfile(event) {
   render();
 }
 
+function logoutParticipant() {
+  if (state.presenceTimer) {
+    window.clearInterval(state.presenceTimer);
+    state.presenceTimer = null;
+  }
+
+  if (state.voteTimer) {
+    window.clearInterval(state.voteTimer);
+    state.voteTimer = null;
+  }
+
+  state.profile = {
+    ...state.profile,
+    isActive: false,
+  };
+  writeJson(STORAGE_KEYS.profile, state.profile);
+  state.voteStats = null;
+  state.selectedNominee = null;
+  state.view = "home";
+  state.pseudoDraft = "";
+  notify("Tu es déconnecté de cet appareil.");
+  render();
+}
+
+function reconnectParticipant() {
+  state.profile = {
+    ...state.profile,
+    isActive: true,
+  };
+  writeJson(STORAGE_KEYS.profile, state.profile);
+  notify("Profil reconnecté.");
+  startPresenceSync();
+  startVoteSync();
+  render();
+}
+
 async function syncPresence() {
-  if (!state.profile) return;
+  if (!state.profile || state.profile.isActive === false) return;
 
   try {
     const response = await fetch("/api/presence", {
@@ -538,13 +574,13 @@ async function syncPresence() {
 }
 
 function startPresenceSync() {
-  if (!state.profile || state.presenceTimer) return;
+  if (!state.profile || state.profile.isActive === false || state.presenceTimer) return;
   syncPresence();
   state.presenceTimer = window.setInterval(syncPresence, 5000);
 }
 
 async function syncVotes() {
-  if (!state.profile) return;
+  if (!state.profile || state.profile.isActive === false) return;
 
   try {
     const params = new URLSearchParams({ participantId: state.profile.id });
@@ -560,7 +596,7 @@ async function syncVotes() {
 }
 
 function startVoteSync() {
-  if (!state.profile || state.voteTimer) return;
+  if (!state.profile || state.profile.isActive === false || state.voteTimer) return;
   syncVotes();
   state.voteTimer = window.setInterval(syncVotes, 5000);
 }
@@ -703,6 +739,7 @@ function pulse() {
 
 function renderTopbar() {
   const profile = state.profile;
+  const isConnected = profile && profile.isActive !== false;
   return `
     <header class="topbar">
       <div class="brand">
@@ -713,9 +750,14 @@ function renderTopbar() {
         </div>
       </div>
       ${
-        profile
-          ? `<span class="pill">${avatarById(profile.avatarId).icon} ${profile.pseudo}</span>`
-          : `<span class="pill">🎬 Live</span>`
+        isConnected
+          ? `
+              <div class="participant-actions">
+                <span class="pill">${avatarById(profile.avatarId).icon} ${profile.pseudo}</span>
+                <button class="ghost logout-button" type="button" onclick="logoutParticipant()">Se déconnecter</button>
+              </div>
+            `
+          : `<span class="pill">${profile ? "🔒 Hors ligne" : "🎬 Live"}</span>`
       }
     </header>
   `;
@@ -787,6 +829,42 @@ function renderProfileCreation() {
       <button class="primary" type="submit">Entrer dans la cérémonie</button>
       <p class="error" data-error></p>
     </form>
+  `;
+}
+
+function renderProfileReconnect() {
+  const profile = state.profile;
+  const avatar = avatarById(profile.avatarId);
+  const mood = moodById(profile.moodId);
+
+  return `
+    ${renderTopbar()}
+    <section class="hero welcome-card">
+      <div class="profile-line">
+        <div class="avatar-badge">${avatar.icon}</div>
+        <div>
+          <p class="eyebrow">Profil verrouillé</p>
+          <h1>${profile.pseudo}</h1>
+          <div class="profile-pills">
+            <span class="pill">🔒 Identité conservée</span>
+            <span class="pill">${mood.icon} ${mood.label}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="status-card">
+        <div class="status-icon">🔌</div>
+        <div>
+          <h2>Tu es déconnecté</h2>
+          <p class="muted">Reconnecte-toi avec le même profil pour reprendre la cérémonie.</p>
+        </div>
+      </div>
+      <div class="demo-strip">
+        <button class="primary" type="button" onclick="reconnectParticipant()">Me reconnecter</button>
+      </div>
+    </section>
   `;
 }
 
@@ -1188,6 +1266,11 @@ function render() {
 
   if (!state.profile) {
     app.innerHTML = renderToast() + renderProfileCreation();
+    return;
+  }
+
+  if (state.profile.isActive === false) {
+    app.innerHTML = renderToast() + renderProfileReconnect();
     return;
   }
 
