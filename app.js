@@ -192,6 +192,155 @@ const honorees = [
   },
 ];
 
+const agendaSteps = [
+  {
+    id: "welcome-breakfast",
+    start: "09:00",
+    end: "09:30",
+    title: "Accueil et petit déjeuner",
+    type: "welcome",
+    icon: "☕",
+    djAction: "Écran d'accueil + création des profils",
+  },
+  {
+    id: "day-intro",
+    start: "09:30",
+    end: "09:40",
+    title: "Présentation du déroulé de la journée",
+    type: "presentation",
+    icon: "🎤",
+    djAction: "Afficher le programme",
+  },
+  {
+    id: "kantar",
+    start: "09:40",
+    end: "10:30",
+    title: "Présentation Kantar",
+    type: "presentation",
+    icon: "📊",
+    djAction: "Mode présentation",
+  },
+  {
+    id: "morning-break",
+    start: "10:30",
+    end: "10:45",
+    title: "Pause",
+    type: "break",
+    icon: "⏸️",
+    djAction: "Écran pause",
+  },
+  {
+    id: "org-news-strategy",
+    start: "10:45",
+    end: "12:15",
+    title: "Organigramme, actualités & stratégie",
+    type: "presentation",
+    icon: "🧭",
+    djAction: "Mode présentation",
+  },
+  {
+    id: "lunch",
+    start: "12:15",
+    end: "13:30",
+    title: "Déjeuner",
+    type: "break",
+    icon: "🍽️",
+    djAction: "Écran pause déjeuner",
+  },
+  {
+    id: "brainstorming",
+    start: "13:30",
+    end: "16:45",
+    title: "Ateliers de brainstorming",
+    type: "workshop",
+    icon: "💡",
+    djAction: "Mur libre + idées",
+  },
+  {
+    id: "restitution-1",
+    start: "14:30",
+    end: "15:20",
+    title: "Restitution 1",
+    type: "restitution",
+    icon: "🗣️",
+    djAction: "Afficher synthèses groupe 1",
+  },
+  {
+    id: "afternoon-break",
+    start: "15:20",
+    end: "15:40",
+    title: "Pause",
+    type: "break",
+    icon: "⏸️",
+    djAction: "Écran pause",
+  },
+  {
+    id: "restitution-2",
+    start: "15:40",
+    end: "16:30",
+    title: "Restitution 2",
+    type: "restitution",
+    icon: "🗣️",
+    djAction: "Afficher synthèses groupe 2",
+  },
+  {
+    id: "wrap-up",
+    start: "16:30",
+    end: "16:45",
+    title: "Synthèse et clôture",
+    type: "closing",
+    icon: "🎯",
+    djAction: "Écran clôture journée",
+  },
+  {
+    id: "free-time",
+    start: "16:45",
+    end: "18:15",
+    title: "Temps libre",
+    subtitle: "Récupération des chambres et préparation à la soirée",
+    type: "break",
+    icon: "🛎️",
+    djAction: "Écran temps libre",
+  },
+  {
+    id: "team-building",
+    start: "18:15",
+    end: "19:30",
+    title: "Team Building",
+    subtitle: "Rendez-vous au Welcome desk",
+    type: "team-building",
+    icon: "🤝",
+    djAction: "Écran rendez-vous",
+  },
+  {
+    id: "oscars",
+    start: "19:30",
+    end: "20:30",
+    title: "Remise des Oscars",
+    type: "awards",
+    icon: "🏆",
+    djAction: "Ouvrir votes + reveals trophées",
+  },
+  {
+    id: "dinner",
+    start: "20:30",
+    end: "22:00",
+    title: "Dîner",
+    type: "break",
+    icon: "🍽️",
+    djAction: "Écran dîner",
+  },
+  {
+    id: "party",
+    start: "22:00",
+    end: "02:00",
+    title: "Soirée",
+    type: "party",
+    icon: "🪩",
+    djAction: "Mode soirée",
+  },
+];
+
 const quizQuestion = {
   title: "Quiz live",
   question: "Quel accessoire est indispensable pour une remise de prix ?",
@@ -227,6 +376,28 @@ function avatarById(id) {
 
 function moodById(id) {
   return moods.find((mood) => mood.id === id) || moods[1];
+}
+
+function timeToMinutes(time) {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function isTimeWithinStep(step, minutes) {
+  const start = timeToMinutes(step.start);
+  let end = timeToMinutes(step.end);
+  let current = minutes;
+
+  if (end <= start) end += 24 * 60;
+  if (current < start && end > 24 * 60) current += 24 * 60;
+
+  return current >= start && current < end;
+}
+
+function currentAgendaStep() {
+  const now = new Date();
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  return [...agendaSteps].reverse().find((step) => isTimeWithinStep(step, minutes)) || agendaSteps[0];
 }
 
 function getVotes() {
@@ -451,6 +622,47 @@ function renderProfileCreation() {
   `;
 }
 
+function renderAgendaPreview() {
+  const activeStep = currentAgendaStep();
+  return `
+    <section class="panel agenda-panel">
+      <div class="section-title compact">
+        <div>
+          <p class="eyebrow">Programme</p>
+          <h2>Grands cycles</h2>
+        </div>
+        <span class="pill">DJ ready</span>
+      </div>
+
+      <div class="now-card">
+        <div class="status-icon">${activeStep.icon}</div>
+        <div>
+          <p class="micro">Étape repère</p>
+          <h3>${activeStep.title}</h3>
+          <p class="reason">${activeStep.start} - ${activeStep.end} · ${activeStep.djAction}</p>
+        </div>
+      </div>
+
+      <div class="agenda-list">
+        ${agendaSteps
+          .map(
+            (step) => `
+              <article class="agenda-item ${step.id === activeStep.id ? "is-active" : ""}">
+                <div class="agenda-time">${step.start}<br />${step.end}</div>
+                <div class="agenda-dot">${step.icon}</div>
+                <div>
+                  <strong>${step.title}</strong>
+                  ${step.subtitle ? `<p class="reason">${step.subtitle}</p>` : ""}
+                </div>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderHome() {
   const profile = state.profile;
   const avatar = avatarById(profile.avatarId);
@@ -512,6 +724,7 @@ function renderHome() {
         }
       </div>
     </section>
+    ${renderAgendaPreview()}
     ${renderBottomNav()}
   `;
 }

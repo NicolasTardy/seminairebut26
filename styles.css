@@ -467,6 +467,71 @@ h3 {
   margin: 8px 0 14px;
 }
 
+.section-title.compact {
+  margin-top: 0;
+}
+
+.agenda-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.now-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 215, 106, 0.18), rgba(33, 230, 255, 0.14)),
+    rgba(255, 255, 255, 0.08);
+}
+
+.now-card h3 {
+  margin-bottom: 2px;
+}
+
+.agenda-list {
+  display: grid;
+  gap: 8px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.agenda-item {
+  display: grid;
+  grid-template-columns: 48px auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.agenda-item.is-active {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.22), rgba(255, 79, 196, 0.13));
+}
+
+.agenda-time {
+  color: var(--gold);
+  font-size: 0.74rem;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.agenda-dot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
 .nominee-list,
 .message-list,
 .quiz-options,
