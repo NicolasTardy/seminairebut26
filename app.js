@@ -341,6 +341,27 @@ const agendaSteps = [
   },
 ];
 
+const demoAudienceMoods = [
+  "good-vibes",
+  "full-power",
+  "good-vibes",
+  "recharge",
+  "full-power",
+  "good-vibes",
+  "full-power",
+  "good-vibes",
+  "recharge",
+  "good-vibes",
+  "full-power",
+  "good-vibes",
+  "good-vibes",
+  "full-power",
+  "recharge",
+  "good-vibes",
+  "full-power",
+  "good-vibes",
+];
+
 const quizQuestion = {
   title: "Quiz live",
   question: "Quel accessoire est indispensable pour une remise de prix ?",
@@ -398,6 +419,37 @@ function currentAgendaStep() {
   const now = new Date();
   const minutes = now.getHours() * 60 + now.getMinutes();
   return [...agendaSteps].reverse().find((step) => isTimeWithinStep(step, minutes)) || agendaSteps[0];
+}
+
+function connectedParticipants() {
+  const currentMood = state.profile?.moodId || "good-vibes";
+  return [currentMood, ...demoAudienceMoods];
+}
+
+function roomMoodStats() {
+  const participants = connectedParticipants();
+  const counts = moods.reduce((acc, mood) => {
+    acc[mood.id] = 0;
+    return acc;
+  }, {});
+
+  participants.forEach((moodId) => {
+    counts[moodById(moodId).id] += 1;
+  });
+
+  const topMood = moods.reduce((best, mood) => (counts[mood.id] > counts[best.id] ? mood : best), moods[0]);
+  const energyScore = Math.round(
+    ((counts["good-vibes"] * 0.62 + counts["full-power"] * 1 + counts.recharge * 0.28) /
+      participants.length) *
+      100,
+  );
+
+  return {
+    participants,
+    counts,
+    topMood,
+    energyScore,
+  };
 }
 
 function getVotes() {
@@ -622,6 +674,48 @@ function renderProfileCreation() {
   `;
 }
 
+function renderRoomPulse() {
+  const stats = roomMoodStats();
+  return `
+    <section class="panel pulse-panel">
+      <div class="section-title compact">
+        <div>
+          <p class="eyebrow">Salle en direct</p>
+          <h2>${stats.participants.length} personnes connectées</h2>
+        </div>
+        <span class="pulse-live">Live</span>
+      </div>
+
+      <div class="mood-summary">
+        <div class="status-icon">${stats.topMood.icon}</div>
+        <div>
+          <p class="micro">Humeur générale</p>
+          <h3>${stats.topMood.label}</h3>
+          <p class="reason">Énergie collective : ${stats.energyScore}%</p>
+        </div>
+      </div>
+
+      <div class="mood-bars">
+        ${moods
+          .map((mood) => {
+            const count = stats.counts[mood.id];
+            const percent = Math.round((count / stats.participants.length) * 100);
+            return `
+              <div class="mood-bar-row">
+                <span>${mood.icon} ${mood.label}</span>
+                <strong>${count}</strong>
+                <div class="mood-meter" aria-label="${mood.label} ${percent}%">
+                  <i style="width: ${percent}%"></i>
+                </div>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderAgendaPreview() {
   const activeStep = currentAgendaStep();
   return `
@@ -683,6 +777,7 @@ function renderHome() {
         </div>
       </div>
     </section>
+    ${renderRoomPulse()}
 
     <section class="panel">
       <div class="status-card">
