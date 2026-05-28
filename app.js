@@ -33,6 +33,27 @@ const avatars = [
   { id: "spark", icon: "✨", label: "Étincelle" },
 ];
 
+const moods = [
+  {
+    id: "recharge",
+    icon: "🌙",
+    label: "En mode recharge",
+    description: "Je démarre tranquille",
+  },
+  {
+    id: "good-vibes",
+    icon: "✨",
+    label: "Bonne vibe",
+    description: "Je suis bien lancé(e)",
+  },
+  {
+    id: "full-power",
+    icon: "🚀",
+    label: "Au taquet",
+    description: "Prêt(e) pour le show",
+  },
+];
+
 const oscarCategories = [
   {
     id: "very-bad-trip",
@@ -181,6 +202,7 @@ const state = {
   view: "home",
   profile: readJson(STORAGE_KEYS.profile),
   selectedAvatarId: "popcorn",
+  selectedMoodId: "good-vibes",
   pseudoDraft: "",
   selectedNominee: null,
   pickedQuiz: null,
@@ -201,6 +223,10 @@ function writeJson(key, value) {
 
 function avatarById(id) {
   return avatars.find((avatar) => avatar.id === id) || avatars[0];
+}
+
+function moodById(id) {
+  return moods.find((mood) => mood.id === id) || moods[1];
 }
 
 function getVotes() {
@@ -253,6 +279,7 @@ function saveProfile(event) {
     id: crypto.randomUUID(),
     pseudo,
     avatarId: state.selectedAvatarId,
+    moodId: state.selectedMoodId,
     createdAt: new Date().toISOString(),
     isActive: true,
   };
@@ -397,6 +424,27 @@ function renderProfileCreation() {
           .join("")}
       </div>
 
+      <h2>Ton humeur du moment</h2>
+      <div class="mood-grid">
+        ${moods
+          .map(
+            (mood) => `
+              <button
+                class="mood-choice ${mood.id === state.selectedMoodId ? "is-selected" : ""}"
+                type="button"
+                onclick="state.pseudoDraft=document.querySelector('#pseudo').value; state.selectedMoodId='${mood.id}'; render();"
+              >
+                <span class="mood-icon">${mood.icon}</span>
+                <span>
+                  <strong>${mood.label}</strong>
+                  <small>${mood.description}</small>
+                </span>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+
       <button class="primary" type="submit">Entrer dans la cérémonie</button>
       <p class="error" data-error></p>
     </form>
@@ -406,6 +454,7 @@ function renderProfileCreation() {
 function renderHome() {
   const profile = state.profile;
   const avatar = avatarById(profile.avatarId);
+  const mood = moodById(profile.moodId);
   const category = activeCategory();
   return `
     ${renderTopbar()}
@@ -415,7 +464,10 @@ function renderHome() {
         <div>
           <p class="eyebrow">Bienvenue,</p>
           <h1>${profile.pseudo}</h1>
-          <span class="pill">🔒 Profil verrouillé</span>
+          <div class="profile-pills">
+            <span class="pill">🔒 Profil verrouillé</span>
+            <span class="pill">${mood.icon} ${mood.label}</span>
+          </div>
         </div>
       </div>
     </section>

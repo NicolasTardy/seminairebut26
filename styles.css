@@ -267,6 +267,56 @@ h3 {
   transform: translateY(-2px);
 }
 
+.mood-grid {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+
+.mood-choice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 66px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  text-align: left;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.mood-choice strong,
+.mood-choice small {
+  display: block;
+}
+
+.mood-choice small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.mood-choice.is-selected {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.22), rgba(255, 79, 196, 0.16));
+}
+
+.mood-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(255, 215, 106, 0.92), rgba(255, 79, 196, 0.82));
+  color: var(--ink);
+  font-size: 1.35rem;
+}
+
 .primary,
 .secondary,
 .ghost {
@@ -339,6 +389,12 @@ h3 {
 
 .profile-line > div:last-child {
   min-width: 0;
+}
+
+.profile-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .avatar-badge {
