@@ -15,3 +15,9 @@ Prototype mobile-first pour une webapp d'animation de séminaire :
 Ouvrir `index.html` dans un navigateur.
 
 Le bouton `Démo admin : ouvrir le vote` simule l'action future du cockpit admin.
+
+## Déploiement prévu
+
+Sous-domaine prévu : `seminaire2026`
+
+URL finale attendue : `https://seminaire2026.<ton-domaine>`
