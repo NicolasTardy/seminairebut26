@@ -80,6 +80,11 @@
   font-weight: 850;
 }
 
+.admin-logout {
+  width: 100%;
+  margin-top: 18px;
+}
+
 @media (min-width: 780px) {
   .admin-two {
     grid-template-columns: 1fr 1fr;

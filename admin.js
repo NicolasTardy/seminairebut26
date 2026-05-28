@@ -110,6 +110,13 @@ function saveAdminCode(event) {
   refreshAdmin();
 }
 
+function logoutAdmin() {
+  localStorage.removeItem(ADMIN_CODE_KEY);
+  adminState.code = "";
+  adminState.message = "Déconnecté de la régie sur cet appareil.";
+  renderAdmin();
+}
+
 function renderCodePanel() {
   return `
     <form class="panel" onsubmit="saveAdminCode(event)">
@@ -212,6 +219,7 @@ function renderAdmin() {
         ${renderResults()}
       </div>
     </div>
+    <button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>
   `;
 }
 
