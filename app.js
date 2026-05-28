@@ -3,6 +3,7 @@ const STORAGE_KEYS = {
   votes: "nuit_cesars_votes",
   messages: "nuit_cesars_messages",
   demoVoteOpen: "nuit_cesars_demo_vote_open",
+  demoCategoryId: "nuit_cesars_demo_category_id",
 };
 
 const avatars = [
@@ -37,10 +38,11 @@ const oscarCategories = [
     id: "very-bad-trip",
     title: 'Oscar "Very Bad Trip"',
     subtitle: "Le pire trajet pour venir travailler à Emerainville",
+    source: "Valérie",
     nominees: [
       { name: "Imen", reason: "Cergy : RER A x2 + bus 212" },
       { name: "François", reason: "Eaubonne : train + RER B + RER A + bus 212" },
-      { name: "Nathalie Maitre", reason: "Arpajon : autoroute et patience olympique" },
+      { name: "Nathalie Maitre", reason: "Arpajon : autoroute..." },
       { name: "Axelle", reason: "Massy : RER B + RER A + bus 212" },
     ],
   },
@@ -48,10 +50,11 @@ const oscarCategories = [
     id: "ratatouille",
     title: 'Oscar "Ratatouille"',
     subtitle: "Les meilleurs cuisiniers qui régalent leurs collègues",
+    source: "Marjorie",
     nominees: [
       { name: "Eve Lagant", reason: "Toujours un cookie pour ses collègues préférés" },
       { name: "Olivier Granda", reason: "Cookies maison, battle officielle à prévoir" },
-      { name: "Sandra Notelet", reason: "Banana bread, tiramisu speculos et autres douceurs" },
+      { name: "Sandra Notelet", reason: "Banana bread, tiramisu spéculos et autres douceurs" },
       { name: "4e nominé", reason: "Place réservée pour la surprise du jury" },
     ],
   },
@@ -59,11 +62,84 @@ const oscarCategories = [
     id: "rocky",
     title: 'Oscar "Rocky"',
     subtitle: "Le plus sportif de la direction",
+    source: "Laure",
     nominees: [
-      { name: "Anaelle", reason: "Elle court un marathon" },
-      { name: "Perola & Laure", reason: "Le duo de BUT Gym" },
+      { name: "Anaëlle", reason: "Elle court un marathon" },
+      { name: "Pérola & Laure", reason: "Le duo de BUT Gym" },
       { name: "Sophie & Eve", reason: "Le duo de la salle de sport à côté de BUT" },
-      { name: "Anais & Adrien", reason: "Le duo qui va courir dehors" },
+      { name: "Anaïs & Adrien", reason: "Le duo qui va courir dehors" },
+    ],
+  },
+  {
+    id: "fashion",
+    title: 'Oscar "Confessions d’une accro du shopping"',
+    subtitle: "Le ou la plus fashion de notre direction",
+    source: "Marie",
+    nominees: [
+      { name: "Träcy Ignace Mboe", reason: "Pour son look coloré et pointu" },
+      { name: "Thomas Phommarath", reason: "Pour son style recherché, simple et efficace" },
+      { name: "Esther Livo-Durand", reason: "Classe et féminine, tout simplement" },
+      {
+        name: "Kathleen Derras",
+        reason: "Miss BUT, fraîcheur et mention spéciale du jury pour le make-up",
+      },
+    ],
+  },
+  {
+    id: "histoire-sans-fin",
+    title: 'Oscar "L’Histoire sans fin"',
+    subtitle: "La mobilité interne la plus longue de l’histoire de BUT",
+    source: "Marie",
+    nominees: [
+      {
+        name: "Audrey Barna",
+        reason:
+          "5 mois pour passer complètement d'account manager marketplace à chef de projet retail media marketplace",
+      },
+    ],
+  },
+  {
+    id: "million-dollar-baby",
+    title: 'Oscar "Million Dollar Baby"',
+    subtitle: "Record historique de revenus retail media",
+    source: "Marie",
+    nominees: [
+      {
+        name: "Margaux Beudet",
+        reason: "Record historique de revenus retail media pour BUT avec 1,5 million d'euros",
+      },
+    ],
+  },
+  {
+    id: "voyage-chihiro",
+    title: 'Oscar "Le voyage de Chihiro"',
+    subtitle: "Celles qui ont le plus voyagé entre les bureaux",
+    source: "Nicolas",
+    nominees: [
+      {
+        name: "Duo : Anaïs Mastio & Mélanie Coupron",
+        reason:
+          "En 2 mois, elles ont organisé 3 déménagements de bureau. Connexions et déconnexions de PC n'ont plus de secret pour elles.",
+      },
+    ],
+  },
+  {
+    id: "oss-117",
+    title: 'Oscar "OSS 117"',
+    subtitle: "Celui ou celle qui fait le plus de blagues et jeux de mots",
+    source: "Nathalie",
+    nominees: [
+      {
+        name: "Olivier Granda",
+        reason: "Qui ne connaît pas les jeux de mots et devinettes de monsieur Granda ?",
+      },
+      { name: "Anaïs Mastio", reason: "Nominée pour ses bons mots et son humour du quotidien" },
+      { name: "Amel", reason: "Nominée pour ses blagues et jeux de mots" },
+      {
+        name: "François",
+        reason:
+          "Même pas un an chez nous et déjà sur le podium des bons mots pour amuser ses collègues",
+      },
     ],
   },
 ];
@@ -147,7 +223,19 @@ function isVoteOpen() {
 }
 
 function activeCategory() {
-  return oscarCategories[0];
+  const categoryId = localStorage.getItem(STORAGE_KEYS.demoCategoryId);
+  return oscarCategories.find((category) => category.id === categoryId) || oscarCategories[0];
+}
+
+function setDemoCategory(categoryId) {
+  localStorage.setItem(STORAGE_KEYS.demoCategoryId, categoryId);
+  state.selectedNominee = null;
+  notify("Catégorie prête.");
+  render();
+}
+
+function jsString(value) {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
 function saveProfile(event) {
@@ -185,7 +273,7 @@ function openDemoVote() {
 function closeDemoVote() {
   localStorage.setItem(STORAGE_KEYS.demoVoteOpen, "false");
   state.view = "home";
-  notify("Le vote est ferme.");
+  notify("Le vote est fermé.");
   render();
 }
 
@@ -318,6 +406,7 @@ function renderProfileCreation() {
 function renderHome() {
   const profile = state.profile;
   const avatar = avatarById(profile.avatarId);
+  const category = activeCategory();
   return `
     ${renderTopbar()}
     <section class="hero welcome-card">
@@ -338,9 +427,27 @@ function renderHome() {
           <h2>${isVoteOpen() ? "Les votes sont ouverts !" : "En attente"}</h2>
           <p class="muted">${
             isVoteOpen()
-              ? 'Oscar "Very Bad Trip" est disponible maintenant.'
+              ? `${category.title} est disponible maintenant.`
               : "Garde cette page ouverte pendant le séminaire."
           }</p>
+        </div>
+      </div>
+
+      <div class="category-picker">
+        <p class="micro">Catégorie démo active</p>
+        <div class="category-scroll">
+          ${oscarCategories
+            .map(
+              (item) => `
+                <button
+                  class="category-chip ${item.id === category.id ? "is-selected" : ""}"
+                  onclick="setDemoCategory('${item.id}')"
+                >
+                  ${item.title}
+                </button>
+              `,
+            )
+            .join("")}
         </div>
       </div>
 
@@ -401,7 +508,7 @@ function renderVote() {
                       (nominee) => `
                         <button
                           class="nominee-card ${state.selectedNominee === nominee.name ? "is-selected" : ""}"
-                          onclick="state.selectedNominee='${nominee.name.replace("'", "\\'")}'; render();"
+                          onclick="state.selectedNominee=${jsString(nominee.name)}; render();"
                         >
                           <span class="mini-avatar">🏅</span>
                           <span>
@@ -435,7 +542,7 @@ function renderQuiz() {
         ${quizQuestion.options
           .map(
             (option) => `
-              <button class="quiz-option ${state.pickedQuiz === option ? "is-picked" : ""}" onclick="pickQuiz('${option.replace("'", "\\'")}')">
+              <button class="quiz-option ${state.pickedQuiz === option ? "is-picked" : ""}" onclick="pickQuiz(${jsString(option)})">
                 ${option}
               </button>
             `,
