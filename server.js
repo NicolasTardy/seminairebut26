@@ -5,9 +5,12 @@ const path = require("node:path");
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || "0.0.0.0";
 const ROOT = __dirname;
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
+const VOTES_FILE = path.join(DATA_DIR, "votes.json");
 const PRESENCE_TTL_MS = 18000;
 
 const participants = new Map();
+const votes = loadVotes();
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -17,6 +20,23 @@ const mimeTypes = {
   ".png": "image/png",
   ".svg": "image/svg+xml",
 };
+
+function loadVotes() {
+  try {
+    return JSON.parse(fs.readFileSync(VOTES_FILE, "utf8"));
+  } catch {
+    return { categories: {} };
+  }
+}
+
+function saveVotes() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2));
+}
+
+function cleanText(value, maxLength = 120) {
+  return String(value || "").trim().slice(0, maxLength);
+}
 
 function cleanPresence() {
   const now = Date.now();
@@ -50,6 +70,29 @@ function moodStats() {
     energyScore,
     online,
     topMoodId,
+  };
+}
+
+function voteStats(participantId) {
+  const participantVotes = {};
+  const results = {};
+
+  for (const [categoryId, categoryVotes] of Object.entries(votes.categories)) {
+    const counts = {};
+
+    for (const [voterId, vote] of Object.entries(categoryVotes)) {
+      counts[vote.nomineeName] = (counts[vote.nomineeName] || 0) + 1;
+      if (voterId === participantId) participantVotes[categoryId] = vote.nomineeName;
+    }
+
+    results[categoryId] = Object.entries(counts)
+      .map(([name, count]) => ({ count, name }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }
+
+  return {
+    participantVotes,
+    results,
   };
 }
 
@@ -114,12 +157,14 @@ function serveStatic(request, response) {
 }
 
 const server = http.createServer(async (request, response) => {
-  if (request.url === "/api/presence" && request.method === "GET") {
+  const requestUrl = new URL(request.url, "http://localhost");
+
+  if (requestUrl.pathname === "/api/presence" && request.method === "GET") {
     sendJson(response, 200, moodStats());
     return;
   }
 
-  if (request.url === "/api/presence" && request.method === "POST") {
+  if (requestUrl.pathname === "/api/presence" && request.method === "POST") {
     try {
       const payload = JSON.parse(await readBody(request));
       if (!payload.id) {
@@ -137,6 +182,47 @@ const server = http.createServer(async (request, response) => {
       sendJson(response, 200, moodStats());
     } catch {
       sendJson(response, 400, { error: "Invalid presence payload" });
+    }
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/votes" && request.method === "GET") {
+    sendJson(response, 200, voteStats(cleanText(requestUrl.searchParams.get("participantId"), 80)));
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/votes" && request.method === "POST") {
+    try {
+      const payload = JSON.parse(await readBody(request));
+      const participantId = cleanText(payload.participantId, 80);
+      const categoryId = cleanText(payload.categoryId, 80);
+      const nomineeName = cleanText(payload.nomineeName, 160);
+
+      if (!participantId || !categoryId || !nomineeName) {
+        sendJson(response, 400, { error: "Missing vote fields" });
+        return;
+      }
+
+      votes.categories[categoryId] ||= {};
+
+      if (!votes.categories[categoryId][participantId]) {
+        votes.categories[categoryId][participantId] = {
+          avatarId: cleanText(payload.avatarId, 40),
+          createdAt: new Date().toISOString(),
+          nomineeName,
+          pseudo: cleanText(payload.pseudo || "Participant", 48),
+        };
+        saveVotes();
+      }
+
+      const stats = voteStats(participantId);
+      sendJson(response, 200, {
+        ...stats,
+        accepted: votes.categories[categoryId][participantId].nomineeName === nomineeName,
+        savedVote: votes.categories[categoryId][participantId].nomineeName,
+      });
+    } catch {
+      sendJson(response, 400, { error: "Invalid vote payload" });
     }
     return;
   }

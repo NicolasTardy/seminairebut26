@@ -34,3 +34,4 @@ Le serveur expose :
 
 - `/` : l'application mobile ;
 - `/api/presence` : heartbeat et statistiques temps réel des participants connectés.
+- `/api/votes` : enregistrement réel des votes et résultats agrégés par catégorie.

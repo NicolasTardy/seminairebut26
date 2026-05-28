@@ -356,6 +356,7 @@ const state = {
   selectedNominee: null,
   pickedQuiz: null,
   presenceStats: null,
+  voteStats: null,
   toast: null,
 };
 
@@ -442,7 +443,7 @@ function roomMoodStats() {
 }
 
 function getVotes() {
-  return readJson(STORAGE_KEYS.votes, {});
+  return state.voteStats?.participantVotes || readJson(STORAGE_KEYS.votes, {});
 }
 
 function getMessages() {
@@ -499,6 +500,7 @@ function saveProfile(event) {
   writeJson(STORAGE_KEYS.profile, state.profile);
   notify("Bienvenue dans la cérémonie !");
   startPresenceSync();
+  startVoteSync();
   render();
 }
 
@@ -532,6 +534,28 @@ function startPresenceSync() {
   state.presenceTimer = window.setInterval(syncPresence, 5000);
 }
 
+async function syncVotes() {
+  if (!state.profile) return;
+
+  try {
+    const params = new URLSearchParams({ participantId: state.profile.id });
+    const response = await fetch(`/api/votes?${params.toString()}`);
+    if (!response.ok) throw new Error("Votes unavailable");
+
+    state.voteStats = await response.json();
+    writeJson(STORAGE_KEYS.votes, state.voteStats.participantVotes || {});
+    if (state.view === "vote" || state.view === "reveal") render();
+  } catch {
+    state.voteStats = null;
+  }
+}
+
+function startVoteSync() {
+  if (!state.profile || state.voteTimer) return;
+  syncVotes();
+  state.voteTimer = window.setInterval(syncVotes, 5000);
+}
+
 function openDemoVote() {
   localStorage.setItem(STORAGE_KEYS.demoVoteOpen, "true");
   state.view = "vote";
@@ -547,21 +571,47 @@ function closeDemoVote() {
   render();
 }
 
-function submitVote() {
+async function submitVote() {
   if (!state.selectedNominee) return;
-  const votes = getVotes();
   const category = activeCategory();
-  votes[category.id] = state.selectedNominee;
-  writeJson(STORAGE_KEYS.votes, votes);
-  notify("Vote enregistré.");
-  pulse();
-  render();
+
+  if (!state.profile) return;
+
+  try {
+    const response = await fetch("/api/votes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        avatarId: state.profile.avatarId,
+        categoryId: category.id,
+        nomineeName: state.selectedNominee,
+        participantId: state.profile.id,
+        pseudo: state.profile.pseudo,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Vote unavailable");
+
+    state.voteStats = await response.json();
+    writeJson(STORAGE_KEYS.votes, state.voteStats.participantVotes || {});
+    notify(state.voteStats.accepted ? "Vote enregistré." : "Tu as déjà voté pour cette catégorie.");
+    pulse();
+    render();
+  } catch {
+    const votes = readJson(STORAGE_KEYS.votes, {});
+    votes[category.id] ||= state.selectedNominee;
+    writeJson(STORAGE_KEYS.votes, votes);
+    notify("Vote enregistré sur cet appareil.");
+    pulse();
+    render();
+  }
 }
 
 function demoOscarWinner() {
   const category = activeCategory();
   const votes = getVotes();
-  const winnerName = votes[category.id] || category.nominees[0]?.name || "Lauréat mystère";
+  const resultWinner = state.voteStats?.results?.[category.id]?.[0]?.name;
+  const winnerName = resultWinner || votes[category.id] || category.nominees[0]?.name || "Lauréat mystère";
   const winner = category.nominees.find((nominee) => nominee.name === winnerName) || category.nominees[0];
 
   return {
@@ -1127,3 +1177,4 @@ function render() {
 
 render();
 startPresenceSync();
+startVoteSync();
