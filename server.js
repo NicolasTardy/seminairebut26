@@ -36,6 +36,7 @@ function loadLiveState() {
   try {
     return {
       activeCategoryId: "very-bad-trip",
+      activeHonoreeId: "",
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
@@ -44,6 +45,7 @@ function loadLiveState() {
   } catch {
     return {
       activeCategoryId: "very-bad-trip",
+      activeHonoreeId: "",
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
@@ -232,6 +234,7 @@ const server = http.createServer(async (request, response) => {
       const payload = JSON.parse(await readBody(request));
       const nextState = {
         activeCategoryId: cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80),
+        activeHonoreeId: cleanText(payload.activeHonoreeId ?? liveState.activeHonoreeId, 80),
         activeStepId: cleanText(payload.activeStepId || liveState.activeStepId, 80),
         updatedAt: new Date().toISOString(),
         voteOpen: Boolean(payload.voteOpen),

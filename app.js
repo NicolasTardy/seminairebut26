@@ -165,6 +165,7 @@ const oscarCategories = [
 
 const honorees = [
   {
+    id: "valerie-rochereau",
     title: 'Prix "Terminator"',
     subtitle: "Celle qui apprend à dompter l'IA",
     name: "Valérie Rochereau",
@@ -173,6 +174,7 @@ const honorees = [
       "En 3 mois, Valérie s'est approprié l'IA et multiplie la création d'outils avec une approche novatrice.",
   },
   {
+    id: "audrey-barna",
     title: 'Oscar "L’Histoire sans fin"',
     subtitle: "La mobilité interne la plus longue de l'histoire de BUT",
     name: "Audrey Barna",
@@ -181,6 +183,7 @@ const honorees = [
       "Gestion des 2 postes en même temps, toujours avec le sourire, et soutien à l'organisation du séminaire.",
   },
   {
+    id: "margaux-beudet",
     title: 'Oscar "Million Dollar Baby"',
     subtitle: "Record historique de revenus retail media",
     name: "Margaux Beudet",
@@ -355,6 +358,7 @@ const state = {
   pickedQuiz: null,
   liveState: {
     activeCategoryId: "very-bad-trip",
+    activeHonoreeId: "",
     activeStepId: "welcome-breakfast",
     voteOpen: false,
   },
@@ -473,6 +477,11 @@ function activeCategory() {
   return oscarCategories.find((category) => category.id === categoryId) || oscarCategories[0];
 }
 
+function activeHonoree() {
+  const honoreeId = state.liveState?.activeHonoreeId;
+  return honorees.find((honoree) => honoree.id === honoreeId) || null;
+}
+
 function jsString(value) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
 }
@@ -582,6 +591,7 @@ async function syncLiveState() {
   } catch {
     state.liveState ||= {
       activeCategoryId: "very-bad-trip",
+      activeHonoreeId: "",
       activeStepId: "welcome-breakfast",
       voteOpen: false,
     };
@@ -1089,6 +1099,8 @@ function renderWall() {
 }
 
 function renderTrophies() {
+  const honoree = activeHonoree();
+
   return `
     ${renderTopbar()}
     <section class="section-title">
@@ -1100,30 +1112,37 @@ function renderTrophies() {
     </section>
 
     <div class="trophy-list">
-      ${honorees
-        .map(
-          (honoree) => `
-            <article class="trophy-card">
-              <div class="trophy-portrait-wrap">
-                <img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />
-                <div class="trophy-portrait-badge">🏆</div>
-              </div>
-              <div class="trophy-content">
-                <p class="trophy-kicker">Et le trophée revient à...</p>
-                <div class="reveal-name">${honoree.name}</div>
-                <div class="award-ribbon">${honoree.title}</div>
-                <p class="trophy-subtitle">${honoree.subtitle}</p>
-                <p class="trophy-quote">“${honoree.reason}”</p>
-                <div class="reaction-row" aria-label="Réactions">
-                  <button class="reaction" onclick="pulse()">👏</button>
-                  <button class="reaction" onclick="pulse()">💖</button>
-                  <button class="reaction" onclick="pulse()">🤩</button>
+      ${
+        honoree
+          ? `
+              <article class="trophy-card">
+                <div class="trophy-portrait-wrap">
+                  <img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />
+                  <div class="trophy-portrait-badge">🏆</div>
                 </div>
-              </div>
-            </article>
-          `,
-        )
-        .join("")}
+                <div class="trophy-content">
+                  <p class="trophy-kicker">Et le trophée revient à...</p>
+                  <div class="reveal-name">${honoree.name}</div>
+                  <div class="award-ribbon">${honoree.title}</div>
+                  <p class="trophy-subtitle">${honoree.subtitle}</p>
+                  <p class="trophy-quote">“${honoree.reason}”</p>
+                  <div class="reaction-row" aria-label="Réactions">
+                    <button class="reaction" onclick="pulse()">👏</button>
+                    <button class="reaction" onclick="pulse()">💖</button>
+                    <button class="reaction" onclick="pulse()">🤩</button>
+                  </div>
+                </div>
+              </article>
+            `
+          : `
+              <article class="panel trophy-standby">
+                <div class="status-icon">🏆</div>
+                <p class="eyebrow">Suspense</p>
+                <h2>Prochaine récompense dans quelques instants</h2>
+                <p class="reason">La régie prépare la prochaine révélation.</p>
+              </article>
+            `
+      }
     </div>
     ${renderBottomNav()}
   `;

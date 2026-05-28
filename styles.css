@@ -837,6 +837,15 @@ h3 {
   position: relative;
 }
 
+.trophy-standby {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-height: 360px;
+  align-content: center;
+  text-align: center;
+}
+
 .trophy-portrait-wrap {
   position: relative;
   aspect-ratio: 1 / 1;

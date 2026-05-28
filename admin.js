@@ -34,6 +34,12 @@ const adminSteps = [
   { id: "party", label: "22:00 · Soirée" },
 ];
 
+const adminHonorees = [
+  { id: "valerie-rochereau", name: "Valérie Rochereau", title: 'Prix "Terminator"' },
+  { id: "audrey-barna", name: "Audrey Barna", title: 'Oscar "L’Histoire sans fin"' },
+  { id: "margaux-beudet", name: "Margaux Beudet", title: 'Oscar "Million Dollar Baby"' },
+];
+
 const adminState = {
   code: localStorage.getItem(ADMIN_CODE_KEY) || "",
   liveState: null,
@@ -44,6 +50,10 @@ const adminState = {
 
 function categoryById(id) {
   return adminCategories.find((category) => category.id === id) || adminCategories[0];
+}
+
+function honoreeById(id) {
+  return adminHonorees.find((honoree) => honoree.id === id) || null;
 }
 
 async function apiJson(url, options = {}) {
@@ -133,7 +143,12 @@ function renderCodePanel() {
 }
 
 function renderLiveControl() {
-  const live = adminState.liveState || { activeCategoryId: "very-bad-trip", activeStepId: "welcome-breakfast", voteOpen: false };
+  const live = adminState.liveState || {
+    activeCategoryId: "very-bad-trip",
+    activeHonoreeId: "",
+    activeStepId: "welcome-breakfast",
+    voteOpen: false,
+  };
   const category = categoryById(live.activeCategoryId);
   return `
     <section class="panel">
@@ -161,6 +176,44 @@ function renderLiveControl() {
         <button class="primary" onclick="saveLiveState({ voteOpen: true })">Ouvrir le vote</button>
         <button class="secondary" onclick="saveLiveState({ voteOpen: false })">Fermer le vote</button>
       </div>
+    </section>
+  `;
+}
+
+function showPreviousHonoree() {
+  const currentIndex = adminHonorees.findIndex((honoree) => honoree.id === adminState.liveState?.activeHonoreeId);
+  const nextIndex = currentIndex <= 0 ? 0 : currentIndex - 1;
+  saveLiveState({ activeHonoreeId: adminHonorees[nextIndex].id });
+}
+
+function showNextHonoree() {
+  const currentIndex = adminHonorees.findIndex((honoree) => honoree.id === adminState.liveState?.activeHonoreeId);
+  const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, adminHonorees.length - 1);
+  saveLiveState({ activeHonoreeId: adminHonorees[nextIndex].id });
+}
+
+function renderHonoreeControl() {
+  const activeHonoreeId = adminState.liveState?.activeHonoreeId || "";
+  const honoree = honoreeById(activeHonoreeId);
+
+  return `
+    <section class="panel">
+      <p class="eyebrow">Remise des prix</p>
+      <h2>${honoree ? honoree.name : "Prix masqués"}</h2>
+      <div class="field">
+        <label for="honoree">Élu affiché</label>
+        <select class="admin-select" id="honoree" onchange="saveLiveState({ activeHonoreeId: this.value })">
+          <option value="" ${activeHonoreeId ? "" : "selected"}>Masquer les prix</option>
+          ${adminHonorees
+            .map((item) => `<option value="${item.id}" ${item.id === activeHonoreeId ? "selected" : ""}>${item.name} · ${item.title}</option>`)
+            .join("")}
+        </select>
+      </div>
+      <div class="admin-actions">
+        <button class="secondary" onclick="showPreviousHonoree()">Précédent</button>
+        <button class="primary" onclick="showNextHonoree()">Suivant</button>
+      </div>
+      <button class="secondary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: '' })">Masquer la récompense</button>
     </section>
   `;
 }
@@ -216,6 +269,7 @@ function renderAdmin() {
       ${renderCodePanel()}
       <div class="admin-two">
         ${renderLiveControl()}
+        ${renderHonoreeControl()}
         ${renderResults()}
       </div>
     </div>
