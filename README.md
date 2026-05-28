@@ -20,4 +20,4 @@ Le bouton `Démo admin : ouvrir le vote` simule l'action future du cockpit admin
 
 Sous-domaine prévu : `seminaire2026`
 
-URL finale attendue : `https://seminaire2026.<ton-domaine>`
+URL finale attendue : `https://seminaire2026.triangleoffensif.fr`
