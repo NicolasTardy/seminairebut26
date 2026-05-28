@@ -538,6 +538,19 @@ function submitVote() {
   render();
 }
 
+function demoOscarWinner() {
+  const category = activeCategory();
+  const votes = getVotes();
+  const winnerName = votes[category.id] || category.nominees[0]?.name || "Lauréat mystère";
+  const winner = category.nominees.find((nominee) => nominee.name === winnerName) || category.nominees[0];
+
+  return {
+    category,
+    name: winnerName,
+    reason: winner?.reason || "Le public a tranché, place à la célébration.",
+  };
+}
+
 function submitMessage(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
@@ -892,6 +905,51 @@ function renderVote() {
   `;
 }
 
+function renderOscarReveal() {
+  const winner = demoOscarWinner();
+  return `
+    ${renderTopbar()}
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Reveal Oscar</p>
+        <h2>Pastille Waouh</h2>
+      </div>
+      <button class="ghost" onclick="pulse()">Confettis</button>
+    </section>
+
+    <article class="oscar-reveal-card">
+      <div class="oscar-stage">
+        <div class="stage-lights"></div>
+        <div class="winner-bubble">
+          <div class="winner-avatar">🕶️</div>
+          <div class="winner-spark winner-spark-left">★</div>
+          <div class="winner-spark winner-spark-right">⚡</div>
+        </div>
+        <div class="stage-trophy">🏆</div>
+      </div>
+
+      <div class="trophy-content">
+        <p class="trophy-kicker">Et l’Oscar revient à...</p>
+        <div class="reveal-name">${winner.name}</div>
+        <div class="award-ribbon">${winner.category.title}</div>
+        <p class="trophy-subtitle">${winner.category.subtitle}</p>
+        <p class="trophy-quote">“${winner.reason}”</p>
+        <div class="reaction-row" aria-label="Réactions">
+          <button class="reaction" onclick="pulse()">👏</button>
+          <button class="reaction" onclick="pulse()">💖</button>
+          <button class="reaction" onclick="pulse()">🤩</button>
+        </div>
+      </div>
+    </article>
+
+    <section class="panel">
+      <p class="micro">Version démo</p>
+      <p class="reason">Cette pastille utilisera le gagnant réel dès que les votes seront centralisés par le backend.</p>
+    </section>
+    ${renderBottomNav()}
+  `;
+}
+
 function renderQuiz() {
   return `
     ${renderTopbar()}
@@ -996,8 +1054,8 @@ function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "vote", label: "Vote", icon: "✓" },
+    { id: "reveal", label: "Reveal", icon: "★" },
     { id: "quiz", label: "Quiz", icon: "?" },
-    { id: "wall", label: "Mur", icon: "✎" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
 
@@ -1038,6 +1096,7 @@ function render() {
   const views = {
     home: renderHome,
     vote: renderVote,
+    reveal: renderOscarReveal,
     quiz: renderQuiz,
     wall: renderWall,
     trophies: renderTrophies,
