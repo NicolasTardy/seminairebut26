@@ -361,8 +361,14 @@ const server = http.createServer(async (request, response) => {
 
   if (requestUrl.pathname === "/api/messages" && request.method === "DELETE") {
     const participantId = cleanText(requestUrl.searchParams.get("participantId"), 80);
+    const avatarId = cleanText(requestUrl.searchParams.get("avatarId"), 40);
     const messageId = cleanText(requestUrl.searchParams.get("id"), 80);
-    const messageIndex = messages.findIndex((message) => message.id === messageId && message.participantId === participantId);
+    const pseudo = cleanText(requestUrl.searchParams.get("pseudo"), 48);
+    const messageIndex = messages.findIndex(
+      (message) =>
+        message.id === messageId &&
+        (message.participantId === participantId || (!message.participantId && message.pseudo === pseudo && message.avatarId === avatarId)),
+    );
 
     if (messageIndex === -1) {
       sendJson(response, 404, { error: "Message not found" });

@@ -708,12 +708,14 @@ h3 {
 }
 
 .message-delete {
-  min-height: 30px;
-  padding: 6px 9px;
-  border-radius: 8px;
-  background: rgba(255, 49, 95, 0.14);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(255, 49, 95, 0.2);
   color: #ffc2d0;
-  font-size: 0.72rem;
+  font-size: 1.15rem;
   font-weight: 900;
 }
 
@@ -733,12 +735,6 @@ h3 {
   background: rgba(255, 255, 255, 0.09);
   font-size: 1.35rem;
   cursor: pointer;
-}
-
-.wall-emoji input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .wall-emoji.is-selected {

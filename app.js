@@ -358,6 +358,7 @@ const state = {
   pseudoDraft: "",
   selectedNominee: null,
   selectedWallEmoji: "🎉",
+  wallTextDraft: "",
   liveState: {
     activeCategoryId: "very-bad-trip",
     activeHonoreeId: "",
@@ -499,6 +500,13 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function selectWallEmoji(emoji) {
+  const textarea = document.querySelector("[data-wall-message]");
+  if (textarea) state.wallTextDraft = textarea.value;
+  state.selectedWallEmoji = emoji;
+  render();
 }
 
 function saveProfile(event) {
@@ -723,8 +731,8 @@ async function submitVote() {
 async function submitMessage(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
-  const text = String(form.get("message") || "").trim();
-  const emoji = String(form.get("emoji") || state.selectedWallEmoji || "").trim();
+  const text = String(form.get("message") || state.wallTextDraft || "").trim();
+  const emoji = String(state.selectedWallEmoji || form.get("emoji") || "").trim();
   if (!text && !emoji) return;
 
   try {
@@ -744,7 +752,7 @@ async function submitMessage(event) {
 
     const data = await response.json();
     state.wallMessages = data.messages || [];
-    event.currentTarget.reset();
+    state.wallTextDraft = "";
     state.selectedWallEmoji = "🎉";
     notify("Message posté sur le mur.");
     render();
@@ -758,8 +766,10 @@ async function deleteMessage(messageId) {
 
   try {
     const params = new URLSearchParams({
+      avatarId: state.profile.avatarId,
       id: messageId,
       participantId: state.profile.id,
+      pseudo: state.profile.pseudo,
     });
     const response = await fetch(`/api/messages?${params.toString()}`, { method: "DELETE" });
     if (!response.ok) throw new Error("Delete unavailable");
@@ -1225,21 +1235,24 @@ function renderWall() {
         ${wallEmojis
           .map(
             (emoji) => `
-              <label class="wall-emoji ${state.selectedWallEmoji === emoji ? "is-selected" : ""}">
-                <input
-                  type="radio"
-                  name="emoji"
-                  value="${emoji}"
-                  ${state.selectedWallEmoji === emoji ? "checked" : ""}
-                  onchange="state.selectedWallEmoji='${emoji}'; render();"
-                />
-                <span>${emoji}</span>
-              </label>
+              <button
+                class="wall-emoji ${state.selectedWallEmoji === emoji ? "is-selected" : ""}"
+                type="button"
+                aria-label="Choisir ${emoji}"
+                onclick="selectWallEmoji('${emoji}')"
+              >${emoji}</button>
             `,
           )
           .join("")}
       </div>
-      <textarea class="textarea" name="message" maxlength="180" placeholder="Ton message pour la salle, ou juste une humeur"></textarea>
+      <textarea
+        class="textarea"
+        data-wall-message
+        name="message"
+        maxlength="180"
+        placeholder="Ton message pour la salle, ou juste une humeur"
+        oninput="state.wallTextDraft=this.value"
+      >${escapeHtml(state.wallTextDraft)}</textarea>
       <div class="sticky-action">
         <button class="primary" type="submit">Poster sur le mur</button>
       </div>
@@ -1258,7 +1271,7 @@ function renderWall() {
                         <strong>${escapeHtml(message.pseudo)}</strong>
                         ${
                           message.participantId === state.profile.id
-                            ? `<button class="message-delete" type="button" onclick="deleteMessage(${jsString(message.id)})">Supprimer</button>`
+                            ? `<button class="message-delete" type="button" aria-label="Supprimer mon post" onclick="deleteMessage(${jsString(message.id)})">×</button>`
                             : ""
                         }
                       </div>
