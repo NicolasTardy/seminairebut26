@@ -58,7 +58,7 @@ const oscarCategories = [
     id: "fashion",
     visual: "fashion",
     badgeIcon: "👗",
-    title: ‘Oscar "Confessions d’une accro du shopping"’,
+    title: `Oscar "Confessions d'une accro du shopping"`,
     subtitle: "Le ou la plus fashion de notre direction",
     source: "Marie",
     nominees: [
