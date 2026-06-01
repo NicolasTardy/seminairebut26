@@ -1143,7 +1143,7 @@ function renderVote() {
                       (nominee) => `
                         <button
                           class="nominee-card ${state.selectedNominee === nominee.name ? "is-selected" : ""}"
-                          onclick="state.selectedNominee=${jsString(nominee.name)}; render();"
+                          onclick="state.selectedNominee=${jsString(nominee.name).replace(/"/g, "&quot;")}; render();"
                         >
                           <span class="mini-avatar">🏅</span>
                           <span>
