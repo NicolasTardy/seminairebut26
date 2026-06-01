@@ -8,7 +8,7 @@ const ROOT = __dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
 const LIVE_STATE_FILE = path.join(DATA_DIR, "live-state.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
-const ADMIN_CODE = process.env.ADMIN_CODE || "but2026";
+const ADMIN_CODE = process.env.ADMIN_CODE || "beleket";
 const PRESENCE_TTL_MS = 18000;
 
 const participants = new Map();

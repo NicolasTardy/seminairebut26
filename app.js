@@ -715,6 +715,15 @@ function pulse() {
 function renderTopbar() {
   const profile = state.profile;
   const isConnected = profile && profile.isActive !== false;
+  const profileStatus = isConnected
+    ? `
+        <div class="participant-actions">
+          <span class="pill">${avatarById(profile.avatarId).icon} ${profile.pseudo}</span>
+          <button class="ghost logout-button" type="button" onclick="logoutParticipant()">Se déconnecter</button>
+        </div>
+      `
+    : `<span class="pill">${profile ? "🔒 Hors ligne" : "🎬 Live"}</span>`;
+
   return `
     <header class="topbar">
       <div class="brand">
@@ -724,16 +733,10 @@ function renderTopbar() {
           <div class="brand-subtitle">Cérémonie live</div>
         </div>
       </div>
-      ${
-        isConnected
-          ? `
-              <div class="participant-actions">
-                <span class="pill">${avatarById(profile.avatarId).icon} ${profile.pseudo}</span>
-                <button class="ghost logout-button" type="button" onclick="logoutParticipant()">Se déconnecter</button>
-              </div>
-            `
-          : `<span class="pill">${profile ? "🔒 Hors ligne" : "🎬 Live"}</span>`
-      }
+      <div class="topbar-actions">
+        <a class="ghost admin-link" href="/admin">Admin</a>
+        ${profileStatus}
+      </div>
     </header>
   `;
 }

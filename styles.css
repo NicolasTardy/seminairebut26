@@ -76,6 +76,13 @@ button {
   margin-bottom: 18px;
 }
 
+.topbar-actions {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
 .participant-actions {
   display: grid;
   justify-items: end;
@@ -83,6 +90,7 @@ button {
   flex: 0 0 auto;
 }
 
+.admin-link,
 .logout-button {
   min-height: 34px;
   padding: 7px 10px;
