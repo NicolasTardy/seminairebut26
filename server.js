@@ -376,6 +376,29 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  if (requestUrl.pathname === "/api/votes" && request.method === "DELETE") {
+    if (!isAuthorizedAdmin(request)) {
+      sendJson(response, 401, { error: "Unauthorized" });
+      return;
+    }
+    const categoryId = cleanText(requestUrl.searchParams.get("categoryId"), 80);
+    if (categoryId === "all") {
+      votes.categories = {};
+    } else if (categoryId) {
+      delete votes.categories[categoryId];
+    } else {
+      sendJson(response, 400, { error: "Missing categoryId" });
+      return;
+    }
+    liveState.voteOpen = false;
+    liveState.voteResultOpen = false;
+    liveState.updatedAt = new Date().toISOString();
+    saveVotes();
+    saveLiveState();
+    sendJson(response, 200, voteStats(""));
+    return;
+  }
+
   if (requestUrl.pathname === "/api/messages" && request.method === "GET") {
     sendJson(response, 200, { messages: wallMessages() });
     return;

@@ -49,6 +49,10 @@ const adminState = {
   tab: "live",
 };
 
+function jsAdminString(value) {
+  return JSON.stringify(value).replace(/"/g, "&quot;");
+}
+
 function categoryById(id) {
   return adminCategories.find((category) => category.id === id) || adminCategories[0];
 }
@@ -164,6 +168,22 @@ function closeVote() {
   saveLiveState({ voteOpen: false });
 }
 
+async function resetVotes(scope) {
+  const label = scope === "all" ? "TOUS les votes de toutes les catégories" : `les votes de la catégorie active`;
+  if (!confirm(`Remettre à zéro ${label} ? Cette action est irréversible.`)) return;
+  try {
+    const params = new URLSearchParams({ categoryId: scope });
+    await fetch(`/api/votes?${params}`, {
+      method: "DELETE",
+      headers: { "x-admin-code": adminState.code },
+    });
+    await refreshAdmin();
+    renderAdmin();
+  } catch {
+    alert("Erreur lors de la remise à zéro.");
+  }
+}
+
 function renderCodePanel() {
   return `
     <form class="panel" onsubmit="saveAdminCode(event)">
@@ -236,6 +256,14 @@ function renderLiveControl() {
         <button class="vote-toggle is-close-action" onclick="saveLiveState({ voteResultOpen: false })" ${live.voteResultOpen && !voteIsOpen ? "" : "disabled"}>
           <span>🙈</span>
           <strong>Masquer résultats</strong>
+        </button>
+      </div>
+      <div class="admin-reset-row">
+        <button class="admin-reset-btn" onclick="resetVotes(${jsAdminString(live.activeCategoryId)})">
+          ↺ Remettre à zéro cette catégorie
+        </button>
+        <button class="admin-reset-btn admin-reset-all" onclick="resetVotes('all')">
+          ↺ Tout remettre à zéro
         </button>
       </div>
     </section>

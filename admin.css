@@ -191,6 +191,34 @@
   white-space: nowrap;
 }
 
+.admin-reset-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.admin-reset-btn {
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 49, 95, 0.38);
+  background: rgba(255, 49, 95, 0.1);
+  color: #ffd0dc;
+  font-size: 0.78rem;
+  font-weight: 950;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.admin-reset-btn:hover {
+  background: rgba(255, 49, 95, 0.22);
+}
+
+.admin-reset-all {
+  border-color: rgba(255, 49, 95, 0.6);
+  background: rgba(255, 49, 95, 0.18);
+}
+
 /* Mobile tab nav */
 .admin-tabs {
   display: none;
