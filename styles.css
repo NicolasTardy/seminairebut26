@@ -627,7 +627,6 @@ h3 {
 
 .nominee-list,
 .message-list,
-.quiz-options,
 .trophy-list {
   display: grid;
   gap: 12px;
@@ -635,7 +634,6 @@ h3 {
 
 .nominee-card,
 .message-card,
-.quiz-card,
 .trophy-card {
   width: 100%;
   text-align: left;
@@ -685,21 +683,6 @@ h3 {
   min-height: 48svh;
   display: grid;
   place-items: center;
-}
-
-.quiz-option {
-  min-height: 54px;
-  width: 100%;
-  border-radius: 8px;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  font-weight: 850;
-}
-
-.quiz-option.is-picked {
-  background: rgba(69, 242, 162, 0.2);
-  border-color: var(--green);
 }
 
 .message-card {
@@ -987,7 +970,7 @@ h3 {
   bottom: 14px;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   width: min(calc(100% - 22px), 430px);
   min-height: 68px;
   transform: translateX(-50%);

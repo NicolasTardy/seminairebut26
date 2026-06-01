@@ -344,12 +344,6 @@ const agendaSteps = [
   },
 ];
 
-const quizQuestion = {
-  title: "Quiz live",
-  question: "Quel accessoire est indispensable pour une remise de prix ?",
-  options: ["Une enveloppe", "Un tableur", "Un badge visiteur", "Un câble HDMI"],
-};
-
 const state = {
   view: "home",
   profile: readJson(STORAGE_KEYS.profile),
@@ -357,7 +351,6 @@ const state = {
   selectedMoodId: "good-vibes",
   pseudoDraft: "",
   selectedNominee: null,
-  pickedQuiz: null,
   liveState: {
     activeCategoryId: "very-bad-trip",
     activeHonoreeId: "",
@@ -693,12 +686,6 @@ function submitMessage(event) {
   });
   writeJson(STORAGE_KEYS.messages, messages.slice(0, 8));
   notify("Message envoyé.");
-  render();
-}
-
-function pickQuiz(option) {
-  state.pickedQuiz = option;
-  notify("Réponse envoyée.");
   render();
 }
 
@@ -1122,28 +1109,6 @@ function renderOscarReveal() {
   `;
 }
 
-function renderQuiz() {
-  return `
-    ${renderTopbar()}
-    <section class="panel quiz-card">
-      <p class="eyebrow">Quiz live</p>
-      <h2>${quizQuestion.question}</h2>
-      <div class="quiz-options">
-        ${quizQuestion.options
-          .map(
-            (option) => `
-              <button class="quiz-option ${state.pickedQuiz === option ? "is-picked" : ""}" onclick="pickQuiz(${jsString(option)})">
-                ${option}
-              </button>
-            `,
-          )
-          .join("")}
-      </div>
-    </section>
-    ${renderBottomNav()}
-  `;
-}
-
 function renderWall() {
   return `
     ${renderTopbar()}
@@ -1210,7 +1175,6 @@ function renderBottomNav() {
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "vote", label: "Vote", icon: "✓" },
     { id: "reveal", label: "Reveal", icon: "★" },
-    { id: "quiz", label: "Quiz", icon: "?" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
 
@@ -1257,7 +1221,6 @@ function render() {
     home: renderHome,
     vote: renderVote,
     reveal: renderOscarReveal,
-    quiz: renderQuiz,
     wall: renderWall,
     trophies: renderTrophies,
   };
