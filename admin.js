@@ -46,6 +46,7 @@ const adminState = {
   presence: null,
   votes: null,
   message: "",
+  tab: "live",
 };
 
 function categoryById(id) {
@@ -283,7 +284,7 @@ function renderHonoreeControl() {
         <button class="secondary" onclick="showPreviousHonoree()">Précédent</button>
         <button class="primary" onclick="showNextHonoree()">Suivant</button>
       </div>
-      <button class="primary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: 'all' })" ${allHonoreesRevealed() ? "" : "disabled"}>Afficher la liste complète</button>
+      <button class="primary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: 'all' })">Afficher la liste complète</button>
       <button class="secondary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: '' })">Masquer la récompense</button>
     </section>
   `;
@@ -328,34 +329,65 @@ function renderResults() {
   `;
 }
 
+function renderAdminTabs() {
+  const tabs = [
+    { id: "live", label: "Régie", icon: "▶" },
+    { id: "prix", label: "Prix", icon: "🏆" },
+    { id: "resultats", label: "Résultats", icon: "📊" },
+  ];
+  return `
+    <nav class="admin-tabs">
+      ${tabs.map((t) => `
+        <button class="admin-tab ${adminState.tab === t.id ? "is-active" : ""}" onclick="adminState.tab='${t.id}'; renderAdmin();">
+          <span>${t.icon}</span>
+          <span>${t.label}</span>
+        </button>
+      `).join("")}
+    </nav>
+  `;
+}
+
 function renderAdmin() {
   const app = document.querySelector("#admin-app");
+  const isLoggedIn = adminState.liveState !== null;
   app.innerHTML = `
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">★</div>
         <div>
           <div class="brand-title">Régie admin</div>
-          <div class="brand-subtitle">Séminaire été 2026 - BUT</div>
+          <div class="brand-subtitle">BUT · Séminaire 2026</div>
         </div>
       </div>
-      <a class="ghost" href="/">App</a>
+      <a class="ghost admin-app-link" href="/">App</a>
     </header>
-    <section class="hero">
-      <p class="eyebrow">Mode DJ</p>
-      <h1>Piloter le live</h1>
-      <p class="lead">Ouvre les votes, choisis la catégorie active et suis les résultats en temps réel.</p>
-    </section>
+    ${isLoggedIn ? renderAdminTabs() : ""}
     <div class="admin-grid">
       ${renderCodePanel()}
-      <div class="admin-two">
-        ${renderLiveControl()}
-        ${renderHonoreeControl()}
-        ${renderResults()}
-      </div>
+      ${isLoggedIn ? `
+        <div class="admin-desktop-two">
+          <div class="admin-tab-panel" data-tab="live">${renderLiveControl()}</div>
+          <div>
+            <div class="admin-tab-panel" data-tab="prix">${renderHonoreeControl()}</div>
+            <div class="admin-tab-panel" data-tab="resultats">${renderResults()}</div>
+          </div>
+        </div>
+      ` : ""}
     </div>
-    <button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>
+    ${isLoggedIn ? `<button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>` : ""}
   `;
+  if (isLoggedIn) applyAdminTab();
+}
+
+function applyAdminTab() {
+  const isMobile = window.innerWidth < 700;
+  if (!isMobile) {
+    document.querySelectorAll(".admin-tab-panel").forEach((el) => (el.style.display = ""));
+    return;
+  }
+  document.querySelectorAll(".admin-tab-panel").forEach((el) => {
+    el.style.display = el.dataset.tab === adminState.tab ? "" : "none";
+  });
 }
 
 renderAdmin();

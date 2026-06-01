@@ -187,15 +187,102 @@
   margin-top: 18px;
 }
 
-@media (min-width: 780px) {
-  .admin-two {
+.admin-app-link {
+  white-space: nowrap;
+}
+
+/* Mobile tab nav */
+.admin-tabs {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+  min-height: 56px;
+}
+
+.admin-tab span:first-child {
+  font-size: 1.2rem;
+}
+
+.admin-tab.is-active {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.2), rgba(255, 79, 196, 0.12));
+  color: var(--gold);
+}
+
+/* Desktop two-col layout */
+.admin-desktop-two {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 700px) {
+  .admin-desktop-two {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 560px) {
-  .metric-grid,
+/* Mobile: show tabs, hide hero, compact header */
+@media (max-width: 699px) {
+  .admin-shell {
+    padding: 14px 12px 32px;
+  }
+
+  .admin-tabs {
+    display: grid;
+  }
+
+  .topbar {
+    margin-bottom: 14px;
+  }
+
+  .admin-shell > .hero {
+    display: none;
+  }
+
+  .vote-admin-status strong {
+    font-size: 2rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .admin-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .vote-toggle {
+    min-height: 54px;
+    font-size: 0.82rem;
+  }
+
+  .vote-toggle span {
+    width: 30px;
+    height: 30px;
+  }
+
+  .admin-select {
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  .results-category-label {
+    font-size: 0.82rem;
   }
 }
