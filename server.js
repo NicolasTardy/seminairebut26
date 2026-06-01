@@ -48,6 +48,7 @@ function loadLiveState() {
     return {
       activeCategoryId: "very-bad-trip",
       activeHonoreeId: "",
+      revealedHonoreeIds: [],
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
@@ -57,6 +58,7 @@ function loadLiveState() {
     return {
       activeCategoryId: "very-bad-trip",
       activeHonoreeId: "",
+      revealedHonoreeIds: [],
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
@@ -255,9 +257,19 @@ const server = http.createServer(async (request, response) => {
 
     try {
       const payload = JSON.parse(await readBody(request));
+      const activeHonoreeId = cleanText(payload.activeHonoreeId ?? liveState.activeHonoreeId, 80);
+      const revealedHonoreeIds = Array.isArray(liveState.revealedHonoreeIds) ? [...liveState.revealedHonoreeIds] : [];
+
+      if (activeHonoreeId && activeHonoreeId !== "all" && !revealedHonoreeIds.includes(activeHonoreeId)) {
+        revealedHonoreeIds.push(activeHonoreeId);
+      }
+
       const nextState = {
         activeCategoryId: cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80),
-        activeHonoreeId: cleanText(payload.activeHonoreeId ?? liveState.activeHonoreeId, 80),
+        activeHonoreeId,
+        revealedHonoreeIds: Array.isArray(payload.revealedHonoreeIds)
+          ? payload.revealedHonoreeIds.map((id) => cleanText(id, 80)).filter(Boolean)
+          : revealedHonoreeIds,
         activeStepId: cleanText(payload.activeStepId || liveState.activeStepId, 80),
         updatedAt: new Date().toISOString(),
         voteOpen: Boolean(payload.voteOpen),

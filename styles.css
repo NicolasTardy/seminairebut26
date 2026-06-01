@@ -928,16 +928,78 @@ h3 {
 .trophy-portrait-placeholder {
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 10px;
   width: 100%;
   height: 100%;
   background:
     radial-gradient(circle at 50% 38%, rgba(255, 215, 106, 0.38), transparent 34%),
     radial-gradient(circle at 64% 62%, rgba(255, 79, 196, 0.28), transparent 38%),
     linear-gradient(145deg, rgba(33, 230, 255, 0.18), rgba(255, 255, 255, 0.08));
+  text-align: center;
   font-size: clamp(5rem, 36vw, 8rem);
   text-shadow:
     0 0 24px rgba(255, 215, 106, 0.68),
     0 0 42px rgba(255, 79, 196, 0.52);
+}
+
+.trophy-portrait-placeholder span,
+.trophy-portrait-placeholder small {
+  position: relative;
+  z-index: 1;
+}
+
+.trophy-portrait-placeholder small {
+  width: min(82%, 260px);
+  color: #fff8ec;
+  font-size: 1.05rem;
+  font-weight: 950;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(255, 79, 196, 0.72);
+}
+
+.trophy-visual-timewarp .trophy-portrait-placeholder {
+  background:
+    repeating-conic-gradient(from 22deg, rgba(255, 215, 106, 0.22) 0 8deg, transparent 8deg 18deg),
+    radial-gradient(circle at 50% 46%, rgba(33, 230, 255, 0.42), transparent 34%),
+    linear-gradient(145deg, rgba(255, 79, 196, 0.38), rgba(10, 7, 14, 0.96));
+}
+
+.trophy-visual-million .trophy-portrait-placeholder {
+  background:
+    radial-gradient(circle at 24% 22%, rgba(69, 242, 162, 0.42), transparent 18%),
+    radial-gradient(circle at 74% 64%, rgba(255, 215, 106, 0.48), transparent 28%),
+    linear-gradient(145deg, rgba(19, 75, 54, 0.92), rgba(16, 7, 22, 0.96));
+}
+
+.trophy-visual-sunshine .trophy-portrait-placeholder {
+  background:
+    repeating-conic-gradient(from 0deg, rgba(255, 215, 106, 0.3) 0 9deg, transparent 9deg 19deg),
+    radial-gradient(circle at 50% 42%, rgba(255, 215, 106, 0.58), transparent 34%),
+    linear-gradient(145deg, rgba(255, 79, 196, 0.22), rgba(33, 230, 255, 0.2));
+}
+
+.trophy-visual-mission .trophy-portrait-placeholder {
+  background:
+    linear-gradient(90deg, rgba(255, 215, 106, 0.18) 0 8px, transparent 8px 18px),
+    radial-gradient(circle at 50% 42%, rgba(255, 49, 95, 0.46), transparent 31%),
+    linear-gradient(145deg, rgba(11, 19, 35, 0.96), rgba(43, 10, 35, 0.96));
+}
+
+.trophy-portrait-wrap.trophy-visual-ai::after,
+.trophy-portrait-wrap.trophy-visual-timewarp::after,
+.trophy-portrait-wrap.trophy-visual-million::after,
+.trophy-portrait-wrap.trophy-visual-sunshine::after,
+.trophy-portrait-wrap.trophy-visual-mission::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(255, 255, 255, 0.26), transparent 10%),
+    radial-gradient(circle at 84% 16%, rgba(255, 255, 255, 0.2), transparent 9%),
+    linear-gradient(100deg, transparent 0 42%, rgba(255, 255, 255, 0.12) 46%, transparent 54%);
+  pointer-events: none;
 }
 
 .trophy-portrait-badge {
@@ -1013,6 +1075,22 @@ h3 {
   border-left: 3px solid var(--pink);
 }
 
+.winner-list {
+  display: grid;
+  gap: 10px;
+}
+
+.winner-list-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 106, 0.22);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.15), rgba(255, 79, 196, 0.1));
+}
+
 .reaction-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1066,11 +1144,6 @@ h3 {
 .nav-item.is-active {
   color: var(--gold);
   background: rgba(255, 215, 106, 0.1);
-}
-
-.nav-item.is-locked {
-  opacity: 0.42;
-  cursor: not-allowed;
 }
 
 .confetti {

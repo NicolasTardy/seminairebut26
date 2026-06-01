@@ -56,6 +56,11 @@ function honoreeById(id) {
   return adminHonorees.find((honoree) => honoree.id === id) || null;
 }
 
+function allHonoreesRevealed() {
+  const revealed = adminState.liveState?.revealedHonoreeIds || [];
+  return adminHonorees.every((honoree) => revealed.includes(honoree.id));
+}
+
 async function apiJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -146,6 +151,7 @@ function renderLiveControl() {
   const live = adminState.liveState || {
     activeCategoryId: "very-bad-trip",
     activeHonoreeId: "",
+    revealedHonoreeIds: [],
     activeStepId: "welcome-breakfast",
     voteOpen: false,
   };
@@ -188,22 +194,31 @@ function showPreviousHonoree() {
 
 function showNextHonoree() {
   const currentIndex = adminHonorees.findIndex((honoree) => honoree.id === adminState.liveState?.activeHonoreeId);
-  const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, adminHonorees.length - 1);
+  if (currentIndex >= adminHonorees.length - 1) {
+    saveLiveState({ activeHonoreeId: "all" });
+    return;
+  }
+
+  const nextIndex = currentIndex < 0 ? 0 : currentIndex + 1;
   saveLiveState({ activeHonoreeId: adminHonorees[nextIndex].id });
 }
 
 function renderHonoreeControl() {
   const activeHonoreeId = adminState.liveState?.activeHonoreeId || "";
   const honoree = honoreeById(activeHonoreeId);
+  const revealedCount = adminState.liveState?.revealedHonoreeIds?.length || 0;
+  const title = activeHonoreeId === "all" ? "Liste complète affichée" : honoree ? honoree.name : "Prix masqués";
 
   return `
     <section class="panel">
       <p class="eyebrow">Remise des prix</p>
-      <h2>${honoree ? honoree.name : "Prix masqués"}</h2>
+      <h2>${title}</h2>
+      <p class="admin-note">${Math.min(revealedCount, adminHonorees.length)} / ${adminHonorees.length} révélés</p>
       <div class="field">
         <label for="honoree">Élu affiché</label>
         <select class="admin-select" id="honoree" onchange="saveLiveState({ activeHonoreeId: this.value })">
           <option value="" ${activeHonoreeId ? "" : "selected"}>Masquer les prix</option>
+          <option value="all" ${activeHonoreeId === "all" ? "selected" : ""}>Afficher la liste complète</option>
           ${adminHonorees
             .map((item) => `<option value="${item.id}" ${item.id === activeHonoreeId ? "selected" : ""}>${item.name} · ${item.title}</option>`)
             .join("")}
@@ -213,6 +228,7 @@ function renderHonoreeControl() {
         <button class="secondary" onclick="showPreviousHonoree()">Précédent</button>
         <button class="primary" onclick="showNextHonoree()">Suivant</button>
       </div>
+      <button class="primary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: 'all' })" ${allHonoreesRevealed() ? "" : "disabled"}>Afficher la liste complète</button>
       <button class="secondary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: '' })">Masquer la récompense</button>
     </section>
   `;

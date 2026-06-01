@@ -154,7 +154,8 @@ const honorees = [
     title: 'Oscar "L’Histoire sans fin"',
     subtitle: "La mobilité interne la plus longue de l'histoire de BUT",
     name: "Audrey Barna",
-    image: "assets/laureate-audrey.png",
+    badgeIcon: "⏳",
+    visual: "timewarp",
     reason:
       "5 mois pour passer complètement du poste d'account manager marketplace à chef de projet retail media marketplace.",
   },
@@ -163,7 +164,8 @@ const honorees = [
     title: 'Oscar "Million Dollar Baby"',
     subtitle: "Record historique de revenus retail media",
     name: "Margaux Beudet",
-    image: "assets/laureate-margaux.png",
+    badgeIcon: "💎",
+    visual: "million",
     reason:
       "Record historique de revenus retail media pour BUT avec 1,5 million d'euros.",
   },
@@ -173,6 +175,7 @@ const honorees = [
     subtitle: 'Prix "Singing in the rain"',
     name: "Nerrière Virginie",
     badgeIcon: "☀️",
+    visual: "sunshine",
     reason:
       "On a changé tout autour d'elle : sa boss, son équipe, son bureau, ses partenaires, ses missions mais elle a gardé son côté solaire.",
   },
@@ -182,6 +185,7 @@ const honorees = [
     subtitle: "Projet nouvelle campagne de pub",
     name: "Pessaro Perola",
     badgeIcon: "🎬",
+    visual: "mission",
     reason:
       "Elle a sauté à deux pieds dans le projet nouvelle campagne de pub, embrassant de nouvelles missions et projets imprévus.",
   },
@@ -191,6 +195,7 @@ const honorees = [
     subtitle: "Celle qui apprend à dompter l'IA",
     name: "Valérie Rochereau",
     image: "assets/laureate-valerie.png",
+    visual: "ai",
     reason:
       "En 3 mois, Valérie s'est approprié l'IA et multiplie la création d'outils et adopte une approche hyper novatrice et technique pour chaque enjeu.",
   },
@@ -356,6 +361,7 @@ const state = {
   liveState: {
     activeCategoryId: "very-bad-trip",
     activeHonoreeId: "",
+    revealedHonoreeIds: [],
     activeStepId: "welcome-breakfast",
     voteOpen: false,
   },
@@ -471,6 +477,15 @@ function activeCategory() {
 function activeHonoree() {
   const honoreeId = state.liveState?.activeHonoreeId;
   return honorees.find((honoree) => honoree.id === honoreeId) || null;
+}
+
+function revealedHonorees() {
+  const revealedIds = state.liveState?.revealedHonoreeIds || [];
+  return honorees.filter((honoree) => revealedIds.includes(honoree.id));
+}
+
+function shouldShowWinnerList() {
+  return state.liveState?.activeHonoreeId === "all" || revealedHonorees().length >= honorees.length;
 }
 
 function jsString(value) {
@@ -656,6 +671,7 @@ async function syncLiveState() {
     state.liveState ||= {
       activeCategoryId: "very-bad-trip",
       activeHonoreeId: "",
+      revealedHonoreeIds: [],
       activeStepId: "welcome-breakfast",
       voteOpen: false,
     };
@@ -1107,11 +1123,14 @@ function renderVote() {
 function renderHonoreeCard(honoree, kicker = "Et le trophée revient à...") {
   return `
     <article class="trophy-card">
-      <div class="trophy-portrait-wrap">
+      <div class="trophy-portrait-wrap ${honoree.visual ? `trophy-visual-${honoree.visual}` : ""}">
         ${
           honoree.image
             ? `<img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />`
-            : `<div class="trophy-portrait-placeholder">${honoree.badgeIcon || "🏆"}</div>`
+            : `<div class="trophy-portrait-placeholder">
+                <span>${honoree.badgeIcon || "🏆"}</span>
+                <small>${escapeHtml(honoree.name)}</small>
+              </div>`
         }
         <div class="trophy-portrait-badge">🏆</div>
       </div>
@@ -1128,6 +1147,28 @@ function renderHonoreeCard(honoree, kicker = "Et le trophée revient à...") {
         </div>
       </div>
     </article>
+  `;
+}
+
+function renderWinnerList() {
+  const winners = revealedHonorees().length >= honorees.length ? revealedHonorees() : honorees;
+
+  return `
+    <section class="winner-list">
+      ${winners
+        .map(
+          (honoree) => `
+            <article class="winner-list-item">
+              <div class="wall-post-emoji">${honoree.badgeIcon || "🏆"}</div>
+              <div>
+                <strong>${honoree.name}</strong>
+                <p class="reason">${honoree.title}</p>
+              </div>
+            </article>
+          `,
+        )
+        .join("")}
+    </section>
   `;
 }
 
@@ -1240,6 +1281,7 @@ function renderWall() {
 
 function renderTrophies() {
   const honoree = activeHonoree();
+  const showWinnerList = shouldShowWinnerList();
 
   return `
     ${renderTopbar()}
@@ -1253,7 +1295,9 @@ function renderTrophies() {
 
     <div class="trophy-list">
       ${
-        honoree
+        showWinnerList
+          ? renderWinnerList()
+          : honoree
           ? renderHonoreeCard(honoree)
           : renderRevealStandby()
       }
@@ -1265,7 +1309,7 @@ function renderTrophies() {
 function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
-    { id: "vote", label: "Les Oscars", icon: "★", requiresVoteOpen: true },
+    { id: "vote", label: "Les Oscars", icon: "★" },
     { id: "wall", label: "Mur", icon: "💬" },
     { id: "reveal", label: "Reveal", icon: "★" },
     { id: "trophies", label: "Prix", icon: "🏆" },
@@ -1275,11 +1319,9 @@ function renderBottomNav() {
     <nav class="bottom-nav" aria-label="Navigation principale">
       ${items
         .map((item) => {
-          const isLocked = item.requiresVoteOpen && !isVoteOpen();
           return `
             <button
-              class="nav-item ${state.view === item.id ? "is-active" : ""} ${isLocked ? "is-locked" : ""}"
-              ${isLocked ? "disabled" : ""}
+              class="nav-item ${state.view === item.id ? "is-active" : ""}"
               onclick="state.view='${item.id}'; render();"
             >
               <span class="nav-icon">${item.icon}</span>
