@@ -227,6 +227,16 @@ function renderLiveControl() {
           <strong>${voteIsOpen ? "Fermer maintenant" : "Vote fermé"}</strong>
         </button>
       </div>
+      <div class="admin-actions" style="margin-top:8px">
+        <button class="vote-toggle is-open-action" onclick="saveLiveState({ voteResultOpen: true })" ${live.voteResultOpen && !voteIsOpen ? "disabled" : ""}>
+          <span>📊</span>
+          <strong>${live.voteResultOpen && !voteIsOpen ? "Résultats affichés" : "Afficher résultats"}</strong>
+        </button>
+        <button class="vote-toggle is-close-action" onclick="saveLiveState({ voteResultOpen: false })" ${live.voteResultOpen && !voteIsOpen ? "" : "disabled"}>
+          <span>🙈</span>
+          <strong>Masquer résultats</strong>
+        </button>
+      </div>
     </section>
   `;
 }
@@ -280,30 +290,40 @@ function renderHonoreeControl() {
 }
 
 function renderResults() {
-  const categoryId = adminState.liveState?.activeCategoryId || "very-bad-trip";
-  const results = adminState.votes?.results?.[categoryId] || [];
-  const total = adminState.votes?.totals?.[categoryId] || results.reduce((sum, result) => sum + result.count, 0);
+  const activeCategoryId = adminState.liveState?.activeCategoryId || "very-bad-trip";
   return `
     <section class="panel">
-      <p class="eyebrow">Résultats live</p>
-      <h2>${total} vote${total > 1 ? "s" : ""}</h2>
-      <div class="admin-list">
-        ${
-          results.length
-            ? results
-                .map(
-                  (result, index) => `
-                    <article class="admin-row ${index === 0 ? "is-active" : ""}">
-                      <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
-                      <strong>${result.name}</strong>
-                      <span class="pill">${result.count}</span>
-                    </article>
-                  `,
-                )
-                .join("")
-            : `<p class="empty-state">Aucun vote enregistré pour cette catégorie.</p>`
-        }
-      </div>
+      <p class="eyebrow">Résultats par catégorie</p>
+      <h2>Oscars — tous les votes</h2>
+      ${adminCategories
+        .map((category) => {
+          const results = adminState.votes?.results?.[category.id] || [];
+          const total = adminState.votes?.totals?.[category.id] || results.reduce((sum, r) => sum + r.count, 0);
+          const isActive = category.id === activeCategoryId;
+          return `
+            <div class="results-category ${isActive ? "is-active-category" : ""}">
+              <p class="micro results-category-label">${isActive ? "▶ " : ""}${category.title.replace(/^Oscar /, "")} <span class="pill">${total} vote${total !== 1 ? "s" : ""}</span></p>
+              <div class="admin-list">
+                ${
+                  results.length
+                    ? results
+                        .map(
+                          (result, index) => `
+                            <article class="admin-row ${index === 0 ? "is-active" : ""}">
+                              <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
+                              <strong>${result.name}</strong>
+                              <span class="pill">${result.count}</span>
+                            </article>
+                          `,
+                        )
+                        .join("")
+                    : `<p class="empty-state">Aucun vote.</p>`
+                }
+              </div>
+            </div>
+          `;
+        })
+        .join("")}
     </section>
   `;
 }

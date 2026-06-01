@@ -298,8 +298,11 @@ const server = http.createServer(async (request, response) => {
       const nextVoteOpenedAt = wantsVoteOpen && !wasVoteOpen ? new Date(now).toISOString() : payload.voteOpenedAt || liveState.voteOpenedAt || "";
       const nextVoteClosesAt = wantsVoteOpen && !wasVoteOpen ? new Date(now + VOTE_DURATION_MS).toISOString() : payload.voteClosesAt || liveState.voteClosesAt || "";
 
+      const nextActiveCategoryId = cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80);
+      const categoryChanged = nextActiveCategoryId !== liveState.activeCategoryId;
+
       const nextState = {
-        activeCategoryId: cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80),
+        activeCategoryId: nextActiveCategoryId,
         activeHonoreeId,
         revealedHonoreeIds: Array.isArray(payload.revealedHonoreeIds)
           ? payload.revealedHonoreeIds.map((id) => cleanText(id, 80)).filter(Boolean)
@@ -310,6 +313,7 @@ const server = http.createServer(async (request, response) => {
         voteDurationSeconds: Math.round(VOTE_DURATION_MS / 1000),
         voteOpen: wantsVoteOpen,
         voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
+        voteResultOpen: categoryChanged ? false : Boolean(payload.voteResultOpen ?? liveState.voteResultOpen),
       };
 
       Object.assign(liveState, nextState);

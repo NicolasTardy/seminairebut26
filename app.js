@@ -1231,23 +1231,47 @@ function renderRevealStandby(message = "La régie prépare la prochaine révéla
 }
 
 function renderOscarReveal() {
-  const honoree = activeHonoree();
+  const category = activeCategory();
+  const results = state.voteStats?.results?.[category.id] || [];
+  const total = state.voteStats?.totals?.[category.id] || 0;
+  const voteResultOpen = Boolean(state.liveState?.voteResultOpen) && !isVoteOpen();
 
   return `
     ${renderTopbar()}
     <section class="section-title">
       <div>
-        <p class="eyebrow">Reveal live</p>
-        <h2>${honoree ? honoree.name : "En attente de la régie"}</h2>
+        <p class="eyebrow">Résultats Oscars</p>
+        <h2>${category.title}</h2>
+        <p class="muted">${category.subtitle}</p>
       </div>
       <button class="ghost" onclick="pulse()">Confettis</button>
     </section>
 
     <div class="trophy-list">
       ${
-        honoree
-          ? renderHonoreeCard(honoree, "Et la récompense revient à...")
-          : renderRevealStandby("L'admin affichera les récompensés un par un au moment voulu.")
+        !voteResultOpen
+          ? renderRevealStandby("L'admin affichera les résultats au bon moment.")
+          : results.length === 0
+          ? renderRevealStandby("Aucun vote enregistré pour cette catégorie.")
+          : `
+            <div class="nominee-list">
+              ${results
+                .map(
+                  (result, index) => `
+                    <article class="nominee-card ${index === 0 ? "is-selected" : ""}">
+                      <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
+                      <span>
+                        <strong>${result.name}</strong>
+                        <p class="reason">${result.count} vote${result.count !== 1 ? "s" : ""} · ${total ? Math.round((result.count / total) * 100) : 0}%</p>
+                      </span>
+                      ${index === 0 ? `<span class="check-dot">✓</span>` : ""}
+                    </article>
+                  `,
+                )
+                .join("")}
+            </div>
+            <p class="muted" style="text-align:center;margin-top:1rem">${total} vote${total !== 1 ? "s" : ""} exprimé${total !== 1 ? "s" : ""}</p>
+          `
       }
     </div>
     ${renderBottomNav()}
