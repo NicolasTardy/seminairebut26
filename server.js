@@ -11,6 +11,7 @@ const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
 const ADMIN_CODE = process.env.ADMIN_CODE || "beleket";
 const PRESENCE_TTL_MS = 18000;
+const VOTE_DURATION_MS = 90 * 1000;
 
 const participants = new Map();
 const liveState = loadLiveState();
@@ -81,6 +82,29 @@ function saveVotes() {
   fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2));
 }
 
+function voteEndsAt() {
+  const closesAt = Date.parse(liveState.voteClosesAt || "");
+  return Number.isFinite(closesAt) ? closesAt : 0;
+}
+
+function isVoteWindowOpen() {
+  if (!liveState.voteOpen) return false;
+  const endsAt = voteEndsAt();
+  if (!endsAt) return true;
+
+  if (Date.now() <= endsAt) return true;
+
+  liveState.voteOpen = false;
+  liveState.updatedAt = new Date().toISOString();
+  saveLiveState();
+  return false;
+}
+
+function normalizedLiveState() {
+  isVoteWindowOpen();
+  return liveState;
+}
+
 function cleanText(value, maxLength = 120) {
   return String(value || "").trim().slice(0, maxLength);
 }
@@ -130,9 +154,11 @@ function moodStats() {
 function voteStats(participantId) {
   const participantVotes = {};
   const results = {};
+  const totals = {};
 
   for (const [categoryId, categoryVotes] of Object.entries(votes.categories)) {
     const counts = {};
+    totals[categoryId] = Object.keys(categoryVotes).length;
 
     for (const [voterId, vote] of Object.entries(categoryVotes)) {
       counts[vote.nomineeName] = (counts[vote.nomineeName] || 0) + 1;
@@ -147,6 +173,7 @@ function voteStats(participantId) {
   return {
     participantVotes,
     results,
+    totals,
   };
 }
 
@@ -245,7 +272,7 @@ const server = http.createServer(async (request, response) => {
   }
 
   if (requestUrl.pathname === "/api/live-state" && request.method === "GET") {
-    sendJson(response, 200, liveState);
+    sendJson(response, 200, normalizedLiveState());
     return;
   }
 
@@ -256,6 +283,7 @@ const server = http.createServer(async (request, response) => {
     }
 
     try {
+      isVoteWindowOpen();
       const payload = JSON.parse(await readBody(request));
       const activeHonoreeId = cleanText(payload.activeHonoreeId ?? liveState.activeHonoreeId, 80);
       const revealedHonoreeIds = Array.isArray(liveState.revealedHonoreeIds) ? [...liveState.revealedHonoreeIds] : [];
@@ -263,6 +291,12 @@ const server = http.createServer(async (request, response) => {
       if (activeHonoreeId && activeHonoreeId !== "all" && !revealedHonoreeIds.includes(activeHonoreeId)) {
         revealedHonoreeIds.push(activeHonoreeId);
       }
+
+      const wantsVoteOpen = Boolean(payload.voteOpen);
+      const wasVoteOpen = Boolean(liveState.voteOpen);
+      const now = Date.now();
+      const nextVoteOpenedAt = wantsVoteOpen && !wasVoteOpen ? new Date(now).toISOString() : payload.voteOpenedAt || liveState.voteOpenedAt || "";
+      const nextVoteClosesAt = wantsVoteOpen && !wasVoteOpen ? new Date(now + VOTE_DURATION_MS).toISOString() : payload.voteClosesAt || liveState.voteClosesAt || "";
 
       const nextState = {
         activeCategoryId: cleanText(payload.activeCategoryId || liveState.activeCategoryId, 80),
@@ -272,12 +306,15 @@ const server = http.createServer(async (request, response) => {
           : revealedHonoreeIds,
         activeStepId: cleanText(payload.activeStepId || liveState.activeStepId, 80),
         updatedAt: new Date().toISOString(),
-        voteOpen: Boolean(payload.voteOpen),
+        voteClosesAt: wantsVoteOpen ? nextVoteClosesAt : "",
+        voteDurationSeconds: Math.round(VOTE_DURATION_MS / 1000),
+        voteOpen: wantsVoteOpen,
+        voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
       };
 
       Object.assign(liveState, nextState);
       saveLiveState();
-      sendJson(response, 200, liveState);
+      sendJson(response, 200, normalizedLiveState());
     } catch {
       sendJson(response, 400, { error: "Invalid live state payload" });
     }
@@ -298,6 +335,16 @@ const server = http.createServer(async (request, response) => {
 
       if (!participantId || !categoryId || !nomineeName) {
         sendJson(response, 400, { error: "Missing vote fields" });
+        return;
+      }
+
+      if (!isVoteWindowOpen()) {
+        sendJson(response, 409, { error: "Vote closed", liveState });
+        return;
+      }
+
+      if (categoryId !== liveState.activeCategoryId) {
+        sendJson(response, 409, { error: "Inactive category", activeCategoryId: liveState.activeCategoryId });
         return;
       }
 

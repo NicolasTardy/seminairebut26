@@ -61,6 +61,29 @@ function allHonoreesRevealed() {
   return adminHonorees.every((honoree) => revealed.includes(honoree.id));
 }
 
+function voteRemainingMs() {
+  if (!adminState.liveState?.voteOpen) return 0;
+  const closesAt = Date.parse(adminState.liveState.voteClosesAt || "");
+  if (!Number.isFinite(closesAt)) return 1;
+  return Math.max(0, closesAt - Date.now());
+}
+
+function isVoteOpen() {
+  return Boolean(adminState.liveState?.voteOpen) && voteRemainingMs() > 0;
+}
+
+function formatCountdown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function activeVoteTotal() {
+  const categoryId = adminState.liveState?.activeCategoryId || "very-bad-trip";
+  return adminState.votes?.totals?.[categoryId] || 0;
+}
+
 async function apiJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -132,6 +155,14 @@ function logoutAdmin() {
   renderAdmin();
 }
 
+function openVote() {
+  saveLiveState({ voteOpen: true });
+}
+
+function closeVote() {
+  saveLiveState({ voteOpen: false });
+}
+
 function renderCodePanel() {
   return `
     <form class="panel" onsubmit="saveAdminCode(event)">
@@ -156,12 +187,20 @@ function renderLiveControl() {
     voteOpen: false,
   };
   const category = categoryById(live.activeCategoryId);
+  const voteIsOpen = isVoteOpen();
+  const remainingMs = voteRemainingMs();
+  const votedCount = activeVoteTotal();
+
   return `
     <section class="panel">
       <p class="eyebrow">Régie live</p>
-      <h2>${live.voteOpen ? "Vote ouvert" : "Vote fermé"}</h2>
+      <div class="vote-admin-status ${voteIsOpen ? "is-open" : "is-closed"}">
+        <span>${voteIsOpen ? "Vote ouvert" : "Vote fermé"}</span>
+        <strong>${voteIsOpen ? formatCountdown(remainingMs) : "OFF"}</strong>
+      </div>
       <div class="metric-grid">
         <div class="metric"><span class="micro">Connectés</span><strong>${adminState.presence?.online ?? 0}</strong></div>
+        <div class="metric"><span class="micro">Ont voté</span><strong>${votedCount}</strong></div>
         <div class="metric"><span class="micro">Catégorie</span><strong>${category.title.replace("Oscar ", "")}</strong></div>
       </div>
       <div class="field">
@@ -179,8 +218,14 @@ function renderLiveControl() {
         </select>
       </div>
       <div class="admin-actions">
-        <button class="primary" onclick="saveLiveState({ voteOpen: true })">Ouvrir le vote</button>
-        <button class="secondary" onclick="saveLiveState({ voteOpen: false })">Fermer le vote</button>
+        <button class="vote-toggle is-open-action" onclick="openVote()" ${voteIsOpen ? "disabled" : ""}>
+          <span>▶</span>
+          <strong>${voteIsOpen ? "Vote déjà ouvert" : "Ouvrir 1:30"}</strong>
+        </button>
+        <button class="vote-toggle is-close-action" onclick="closeVote()" ${voteIsOpen ? "" : "disabled"}>
+          <span>■</span>
+          <strong>${voteIsOpen ? "Fermer maintenant" : "Vote fermé"}</strong>
+        </button>
       </div>
     </section>
   `;
@@ -237,7 +282,7 @@ function renderHonoreeControl() {
 function renderResults() {
   const categoryId = adminState.liveState?.activeCategoryId || "very-bad-trip";
   const results = adminState.votes?.results?.[categoryId] || [];
-  const total = results.reduce((sum, result) => sum + result.count, 0);
+  const total = adminState.votes?.totals?.[categoryId] || results.reduce((sum, result) => sum + result.count, 0);
   return `
     <section class="panel">
       <p class="eyebrow">Résultats live</p>
@@ -296,3 +341,6 @@ function renderAdmin() {
 renderAdmin();
 refreshAdmin();
 window.setInterval(refreshAdmin, 4000);
+window.setInterval(() => {
+  if (adminState.liveState?.voteOpen) renderAdmin();
+}, 1000);

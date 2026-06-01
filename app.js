@@ -459,7 +459,7 @@ function roomMoodStats() {
 }
 
 function getVotes() {
-  return state.voteStats?.participantVotes || readJson(STORAGE_KEYS.votes, {});
+  return state.voteStats?.participantVotes || {};
 }
 
 function getMessages() {
@@ -467,12 +467,31 @@ function getMessages() {
 }
 
 function isVoteOpen() {
-  return Boolean(state.liveState?.voteOpen);
+  return Boolean(state.liveState?.voteOpen) && voteRemainingMs() > 0;
 }
 
 function activeCategory() {
   const categoryId = state.liveState?.activeCategoryId;
   return oscarCategories.find((category) => category.id === categoryId) || oscarCategories[0];
+}
+
+function voteRemainingMs() {
+  if (!state.liveState?.voteOpen) return 0;
+  const closesAt = Date.parse(state.liveState.voteClosesAt || "");
+  if (!Number.isFinite(closesAt)) return 1;
+  return Math.max(0, closesAt - Date.now());
+}
+
+function formatCountdown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function activeVoteTotal() {
+  const category = activeCategory();
+  return state.voteStats?.totals?.[category.id] || 0;
 }
 
 function activeHonoree() {
@@ -692,6 +711,13 @@ function startLiveStateSync() {
   state.liveTimer = window.setInterval(syncLiveState, 3000);
 }
 
+function startClockSync() {
+  if (state.clockTimer) return;
+  state.clockTimer = window.setInterval(() => {
+    if (state.view === "vote" || isVoteOpen()) render();
+  }, 1000);
+}
+
 async function submitVote() {
   if (!state.selectedNominee) return;
   const category = activeCategory();
@@ -719,11 +745,9 @@ async function submitVote() {
     pulse();
     render();
   } catch {
-    const votes = readJson(STORAGE_KEYS.votes, {});
-    votes[category.id] ||= state.selectedNominee;
-    writeJson(STORAGE_KEYS.votes, votes);
-    notify("Vote enregistré sur cet appareil.");
-    pulse();
+    notify("Vote impossible : vérifie que le vote est bien ouvert.");
+    syncVotes();
+    syncLiveState();
     render();
   }
 }
@@ -1066,6 +1090,8 @@ function renderVote() {
   const category = activeCategory();
   const votes = getVotes();
   const alreadyVoted = Boolean(votes[category.id]);
+  const remainingMs = voteRemainingMs();
+  const voteTotal = activeVoteTotal();
 
   return `
     ${renderTopbar()}
@@ -1090,13 +1116,24 @@ function renderVote() {
             <span class="pill">1 vote</span>
           </section>
 
+          <section class="vote-countdown">
+            <div>
+              <p class="micro">Temps restant</p>
+              <strong>${formatCountdown(remainingMs)}</strong>
+            </div>
+            <div>
+              <p class="micro">Votes reçus</p>
+              <strong>${voteTotal}</strong>
+            </div>
+          </section>
+
           ${
             alreadyVoted
               ? `
                 <div class="panel status-card">
                   <div class="status-icon">✅</div>
                   <h2>Vote enregistré</h2>
-                  <p class="muted">Ton choix reste secret jusqu'à la révélation.</p>
+                  <p class="muted">Ton choix reste secret jusqu'à la révélation. Merci, c'est dans l'urne.</p>
                 </div>
               `
               : `
@@ -1120,7 +1157,7 @@ function renderVote() {
                     .join("")}
                 </div>
                 <div class="sticky-action">
-                  <button class="primary" ${state.selectedNominee ? "" : "disabled"} onclick="submitVote()">Valider mon vote</button>
+                  <button class="primary" ${state.selectedNominee && remainingMs > 0 ? "" : "disabled"} onclick="submitVote()">Valider mon vote</button>
                 </div>
               `
           }
@@ -1386,3 +1423,4 @@ startPresenceSync();
 startVoteSync();
 startWallSync();
 startLiveStateSync();
+startClockSync();
