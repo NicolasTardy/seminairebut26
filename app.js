@@ -56,7 +56,9 @@ const wallEmojis = ["🎉", "🔥", "👏", "💖", "🤩", "😂", "✨", "🏆
 const oscarCategories = [
   {
     id: "fashion",
-    title: 'Oscar "Confessions d’une accro du shopping"',
+    visual: "fashion",
+    badgeIcon: "👗",
+    title: ‘Oscar "Confessions d’une accro du shopping"’,
     subtitle: "Le ou la plus fashion de notre direction",
     source: "Marie",
     nominees: [
@@ -71,6 +73,8 @@ const oscarCategories = [
   },
   {
     id: "ratatouille",
+    visual: "ratatouille",
+    badgeIcon: "🍳",
     title: 'Oscar "Ratatouille"',
     subtitle: "Les meilleurs cuisiniers qui régalent leurs collègues",
     source: "Marjorie",
@@ -85,6 +89,8 @@ const oscarCategories = [
   },
   {
     id: "oss-117",
+    visual: "oss117",
+    badgeIcon: "🕵️",
     title: 'Oscar "OSS 117"',
     subtitle: "Celui ou celle qui fait le plus de blagues et jeux de mots en tous genres",
     source: "Nathalie",
@@ -104,6 +110,8 @@ const oscarCategories = [
   },
   {
     id: "voyage-chihiro",
+    visual: "chihiro",
+    badgeIcon: "🌊",
     title: 'Oscar "Le voyage de Chihiro"',
     subtitle: "Celles qui ont le plus voyagé entre les bureaux",
     source: "Nicolas",
@@ -124,6 +132,8 @@ const oscarCategories = [
   },
   {
     id: "rocky",
+    visual: "rocky",
+    badgeIcon: "🥊",
     title: 'Oscar "Rocky"',
     subtitle: "Le plus sportif de la direction",
     source: "Laure",
@@ -136,6 +146,8 @@ const oscarCategories = [
   },
   {
     id: "very-bad-trip",
+    visual: "badtrip",
+    badgeIcon: "🚌",
     title: 'Oscar "Very Bad Trip"',
     subtitle: "Le pire trajet pour venir travailler à Emerainville",
     source: "Valérie",
@@ -1235,42 +1247,55 @@ function renderOscarReveal() {
   const results = state.voteStats?.results?.[category.id] || [];
   const total = state.voteStats?.totals?.[category.id] || 0;
   const voteResultOpen = Boolean(state.liveState?.voteResultOpen) && !isVoteOpen();
+  const winner = results[0] || null;
+  const runners = results.slice(1);
 
   return `
     ${renderTopbar()}
-    <section class="section-title">
-      <div>
-        <p class="eyebrow">Résultats Oscars</p>
-        <h2>${category.title}</h2>
-        <p class="muted">${category.subtitle}</p>
-      </div>
-      <button class="ghost" onclick="pulse()">Confettis</button>
-    </section>
-
     <div class="trophy-list">
       ${
         !voteResultOpen
           ? renderRevealStandby("L'admin affichera les résultats au bon moment.")
-          : results.length === 0
+          : !winner
           ? renderRevealStandby("Aucun vote enregistré pour cette catégorie.")
           : `
-            <div class="nominee-list">
-              ${results
-                .map(
-                  (result, index) => `
-                    <article class="nominee-card ${index === 0 ? "is-selected" : ""}">
-                      <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
-                      <span>
-                        <strong>${result.name}</strong>
-                        <p class="reason">${result.count} vote${result.count !== 1 ? "s" : ""} · ${total ? Math.round((result.count / total) * 100) : 0}%</p>
-                      </span>
-                      ${index === 0 ? `<span class="check-dot">✓</span>` : ""}
-                    </article>
-                  `,
-                )
-                .join("")}
-            </div>
-            <p class="muted" style="text-align:center;margin-top:1rem">${total} vote${total !== 1 ? "s" : ""} exprimé${total !== 1 ? "s" : ""}</p>
+            <article class="trophy-card oscar-result-card">
+              <div class="trophy-portrait-wrap trophy-visual-${category.visual || "fashion"}">
+                <div class="trophy-portrait-placeholder">
+                  <span>${category.badgeIcon || "🏆"}</span>
+                </div>
+                <div class="trophy-portrait-badge">🏆</div>
+              </div>
+              <div class="trophy-content">
+                <p class="trophy-kicker">🎬 Et l'Oscar revient à…</p>
+                <div class="reveal-name">${escapeHtml(winner.name)}</div>
+                <div class="award-ribbon">${category.title}</div>
+                <p class="trophy-subtitle">${category.subtitle}</p>
+                <p class="oscar-vote-tally">${winner.count} vote${winner.count !== 1 ? "s" : ""} · ${total ? Math.round((winner.count / total) * 100) : 0}%</p>
+                ${
+                  runners.length
+                    ? `<div class="oscar-runners">
+                        ${runners
+                          .map(
+                            (r, i) => `
+                              <div class="oscar-runner-row">
+                                <span class="oscar-runner-rank">${i + 2}</span>
+                                <span class="oscar-runner-name">${escapeHtml(r.name)}</span>
+                                <span class="oscar-runner-pct">${total ? Math.round((r.count / total) * 100) : 0}%</span>
+                              </div>
+                            `,
+                          )
+                          .join("")}
+                      </div>`
+                    : ""
+                }
+                <div class="reaction-row" aria-label="Réactions">
+                  <button class="reaction" onclick="pulse()">👏</button>
+                  <button class="reaction" onclick="pulse()">🎉</button>
+                  <button class="reaction" onclick="pulse()">🤩</button>
+                </div>
+              </div>
+            </article>
           `
       }
     </div>
@@ -1332,7 +1357,7 @@ function renderWall() {
                         <strong>${escapeHtml(message.pseudo)}</strong>
                         ${
                           message.participantId === state.profile.id
-                            ? `<button class="message-delete" type="button" aria-label="Supprimer mon post" onclick="deleteMessage(${jsString(message.id)})">×</button>`
+                            ? `<button class="message-delete" type="button" aria-label="Supprimer mon post" onclick="deleteMessage(${jsString(message.id).replace(/"/g, "&quot;")})">×</button>`
                             : ""
                         }
                       </div>

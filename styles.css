@@ -1007,6 +1007,55 @@ h3 {
     linear-gradient(145deg, rgba(11, 19, 35, 0.96), rgba(43, 10, 35, 0.96));
 }
 
+/* Oscar category themes */
+.trophy-visual-fashion .trophy-portrait-placeholder {
+  background:
+    repeating-conic-gradient(from 0deg, rgba(255, 79, 196, 0.28) 0 10deg, transparent 10deg 22deg),
+    radial-gradient(circle at 50% 40%, rgba(255, 182, 255, 0.52), transparent 36%),
+    linear-gradient(145deg, rgba(180, 30, 120, 0.88), rgba(80, 10, 60, 0.96));
+}
+
+.trophy-visual-ratatouille .trophy-portrait-placeholder {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 190, 60, 0.5), transparent 28%),
+    radial-gradient(circle at 70% 64%, rgba(255, 100, 30, 0.5), transparent 30%),
+    linear-gradient(145deg, rgba(160, 60, 10, 0.92), rgba(40, 18, 5, 0.96));
+}
+
+.trophy-visual-oss117 .trophy-portrait-placeholder {
+  background:
+    repeating-linear-gradient(0deg, rgba(33, 230, 255, 0.12) 0 2px, transparent 2px 20px),
+    radial-gradient(circle at 50% 42%, rgba(33, 230, 255, 0.36), transparent 32%),
+    linear-gradient(145deg, rgba(5, 14, 35, 0.98), rgba(10, 30, 60, 0.96));
+}
+
+.trophy-visual-chihiro .trophy-portrait-placeholder {
+  background:
+    radial-gradient(ellipse at 50% 80%, rgba(60, 210, 210, 0.48), transparent 40%),
+    radial-gradient(circle at 22% 22%, rgba(120, 240, 200, 0.32), transparent 22%),
+    linear-gradient(145deg, rgba(8, 64, 80, 0.94), rgba(18, 12, 48, 0.96));
+}
+
+.trophy-visual-rocky .trophy-portrait-placeholder {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255, 60, 30, 0.54), transparent 32%),
+    radial-gradient(circle at 76% 68%, rgba(255, 160, 30, 0.4), transparent 28%),
+    linear-gradient(145deg, rgba(100, 18, 8, 0.94), rgba(20, 8, 5, 0.96));
+}
+
+.trophy-visual-badtrip .trophy-portrait-placeholder {
+  background:
+    repeating-linear-gradient(120deg, rgba(33, 230, 255, 0.1) 0 3px, transparent 3px 28px),
+    radial-gradient(circle at 50% 44%, rgba(100, 140, 200, 0.42), transparent 32%),
+    linear-gradient(145deg, rgba(20, 30, 70, 0.94), rgba(8, 12, 28, 0.96));
+}
+
+.trophy-portrait-wrap.trophy-visual-fashion::after,
+.trophy-portrait-wrap.trophy-visual-ratatouille::after,
+.trophy-portrait-wrap.trophy-visual-oss117::after,
+.trophy-portrait-wrap.trophy-visual-chihiro::after,
+.trophy-portrait-wrap.trophy-visual-rocky::after,
+.trophy-portrait-wrap.trophy-visual-badtrip::after,
 .trophy-portrait-wrap.trophy-visual-ai::after,
 .trophy-portrait-wrap.trophy-visual-timewarp::after,
 .trophy-portrait-wrap.trophy-visual-million::after,
@@ -1225,4 +1274,60 @@ h3 {
     border-radius: 18px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.46);
   }
+}
+
+/* Oscar vote result reveal */
+.oscar-result-card .trophy-portrait-placeholder {
+  font-size: clamp(6rem, 40vw, 10rem);
+}
+
+.oscar-vote-tally {
+  margin: 0;
+  color: var(--gold);
+  font-weight: 950;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.oscar-runners {
+  display: grid;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.oscar-runner-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.88rem;
+}
+
+.oscar-runner-rank {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.75rem;
+  font-weight: 950;
+  color: var(--muted);
+}
+
+.oscar-runner-name {
+  color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.oscar-runner-pct {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
