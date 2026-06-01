@@ -1,18 +1,24 @@
 const ADMIN_CODE_KEY = "seminaire_admin_code";
 
 const adminCategories = [
-  { id: "very-bad-trip", title: 'Oscar "Very Bad Trip"', subtitle: "Le pire trajet pour venir travailler à Emerainville" },
-  { id: "ratatouille", title: 'Oscar "Ratatouille"', subtitle: "Les meilleurs cuisiniers qui régalent leurs collègues" },
-  { id: "rocky", title: 'Oscar "Rocky"', subtitle: "Le plus sportif de la direction" },
   {
     id: "fashion",
     title: 'Oscar "Confessions d’une accro du shopping"',
     subtitle: "Le ou la plus fashion de notre direction",
   },
-  { id: "histoire-sans-fin", title: 'Oscar "L’Histoire sans fin"', subtitle: "La mobilité interne la plus longue" },
-  { id: "million-dollar-baby", title: 'Oscar "Million Dollar Baby"', subtitle: "Record historique de revenus retail media" },
+  { id: "ratatouille", title: 'Oscar "Ratatouille"', subtitle: "Les meilleurs cuisiniers qui régalent leurs collègues" },
+  { id: "oss-117", title: 'Oscar "OSS 117"', subtitle: "Blagues et jeux de mots en tous genres" },
   { id: "voyage-chihiro", title: 'Oscar "Le voyage de Chihiro"', subtitle: "Celles qui ont le plus voyagé entre les bureaux" },
-  { id: "oss-117", title: 'Oscar "OSS 117"', subtitle: "Blagues et jeux de mots" },
+  { id: "rocky", title: 'Oscar "Rocky"', subtitle: "Le plus sportif de la direction" },
+  { id: "very-bad-trip", title: 'Oscar "Very Bad Trip"', subtitle: "Le pire trajet pour venir travailler à Emerainville" },
+];
+
+const adminHonorees = [
+  { id: "audrey-barna", name: "Audrey Barna", title: 'Oscar "L’Histoire sans fin"' },
+  { id: "margaux-beudet", name: "Margaux Beudet", title: 'Oscar "Million Dollar Baby"' },
+  { id: "virginie-nerriere", name: "Nerrière Virginie", title: "Oscar de l'éternel sourire" },
+  { id: "perola-pessaro", name: "Pessaro Perola", title: "Prix Mission Impossible" },
+  { id: "valerie-rochereau", name: "Valérie Rochereau", title: 'Prix "Terminator"' },
 ];
 
 const adminSteps = [
@@ -32,12 +38,6 @@ const adminSteps = [
   { id: "oscars", label: "19:30 · Remise des Oscars" },
   { id: "dinner", label: "20:30 · Dîner" },
   { id: "party", label: "22:00 · Soirée" },
-];
-
-const adminHonorees = [
-  { id: "valerie-rochereau", name: "Valérie Rochereau", title: 'Prix "Terminator"' },
-  { id: "audrey-barna", name: "Audrey Barna", title: 'Oscar "L’Histoire sans fin"' },
-  { id: "margaux-beudet", name: "Margaux Beudet", title: 'Oscar "Million Dollar Baby"' },
 ];
 
 const adminState = {

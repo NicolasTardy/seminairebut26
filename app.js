@@ -54,15 +54,18 @@ const moods = [
 
 const oscarCategories = [
   {
-    id: "very-bad-trip",
-    title: 'Oscar "Very Bad Trip"',
-    subtitle: "Le pire trajet pour venir travailler à Emerainville",
-    source: "Valérie",
+    id: "fashion",
+    title: 'Oscar "Confessions d’une accro du shopping"',
+    subtitle: "Le ou la plus fashion de notre direction",
+    source: "Marie",
     nominees: [
-      { name: "Imen", reason: "Cergy : RER A x2 + bus 212" },
-      { name: "François", reason: "Eaubonne : train + RER B + RER A + bus 212" },
-      { name: "Nathalie Maitre", reason: "Arpajon : autoroute..." },
-      { name: "Axelle", reason: "Massy : RER B + RER A + bus 212" },
+      { name: "Träcy Ignace Mboe", reason: "Pour son look coloré et pointu" },
+      { name: "Thomas Phommarath", reason: "Pour son style recherché, simple et efficace" },
+      { name: "Esther Livo-Durand", reason: "Classe et féminine, tout simplement" },
+      {
+        name: "Kathleen Derras",
+        reason: "Miss BUT, pour sa fraîcheur et mention spéciale du jury pour le make-up",
+      },
     ],
   },
   {
@@ -72,9 +75,50 @@ const oscarCategories = [
     source: "Marjorie",
     nominees: [
       { name: "Eve Lagant", reason: "Toujours un cookie pour ses collègues préférés" },
-      { name: "Olivier Granda", reason: "Cookies maison, battle officielle à prévoir" },
-      { name: "Sandra Notelet", reason: "Banana bread, tiramisu spéculos et autres douceurs" },
-      { name: "4e nominé", reason: "Place réservée pour la surprise du jury" },
+      { name: "Olivier Granda", reason: "Aussi des cookies maison, battle à faire..." },
+      {
+        name: "Sandra Notelet (team Valérie)",
+        reason: "La reine du banana bread, tiramisu spéculos et autres douceurs pour régaler ses collègues",
+      },
+    ],
+  },
+  {
+    id: "oss-117",
+    title: 'Oscar "OSS 117"',
+    subtitle: "Celui ou celle qui fait le plus de blagues et jeux de mots en tous genres",
+    source: "Nathalie",
+    nominees: [
+      {
+        name: "Olivier Granda",
+        reason: "Qui ne connaît pas les jeux de mots et devinettes de monsieur Granda ?",
+      },
+      { name: "Anaïs Mastio", reason: "Nominée pour ses blagues et jeux de mots" },
+      { name: "Amel", reason: "Nominée pour ses blagues et jeux de mots" },
+      {
+        name: "François Bertonneau",
+        reason:
+          "Même pas un an chez nous et déjà sur le podium des bons mots et autres blagues pour amuser ses collègues",
+      },
+    ],
+  },
+  {
+    id: "voyage-chihiro",
+    title: 'Oscar "Le voyage de Chihiro"',
+    subtitle: "Celles qui ont le plus voyagé entre les bureaux",
+    source: "Nicolas",
+    nominees: [
+      {
+        name: "Duo : Anaïs Mastio & Mélanie Coupron",
+        reason:
+          "En 2 mois, elles ont organisé 3 déménagements de bureau. La gestion de l'espace ne les effraie pas. La déconnexion et connexion de PC est un jeu pour elles.",
+      },
+      { name: "Margaux Beudet", reason: "Nominée pour ses voyages entre les bureaux" },
+      {
+        name: "Audrey Barna",
+        reason:
+          "Est passée de la marketplace BUT à un 1er bureau chez BUT et un autre bureau chez Conforama pour rechanger de bureau chez BUT et chez Conforama",
+      },
+      { name: "Claire Zegarra", reason: "Elle a acheté un camping-car" },
     ],
   },
   {
@@ -90,89 +134,20 @@ const oscarCategories = [
     ],
   },
   {
-    id: "fashion",
-    title: 'Oscar "Confessions d’une accro du shopping"',
-    subtitle: "Le ou la plus fashion de notre direction",
-    source: "Marie",
+    id: "very-bad-trip",
+    title: 'Oscar "Very Bad Trip"',
+    subtitle: "Le pire trajet pour venir travailler à Emerainville",
+    source: "Valérie",
     nominees: [
-      { name: "Träcy Ignace Mboe", reason: "Pour son look coloré et pointu" },
-      { name: "Thomas Phommarath", reason: "Pour son style recherché, simple et efficace" },
-      { name: "Esther Livo-Durand", reason: "Classe et féminine, tout simplement" },
-      {
-        name: "Kathleen Derras",
-        reason: "Miss BUT, fraîcheur et mention spéciale du jury pour le make-up",
-      },
-    ],
-  },
-  {
-    id: "histoire-sans-fin",
-    title: 'Oscar "L’Histoire sans fin"',
-    subtitle: "La mobilité interne la plus longue de l’histoire de BUT",
-    source: "Marie",
-    nominees: [
-      {
-        name: "Audrey Barna",
-        reason:
-          "5 mois pour passer complètement d'account manager marketplace à chef de projet retail media marketplace",
-      },
-    ],
-  },
-  {
-    id: "million-dollar-baby",
-    title: 'Oscar "Million Dollar Baby"',
-    subtitle: "Record historique de revenus retail media",
-    source: "Marie",
-    nominees: [
-      {
-        name: "Margaux Beudet",
-        reason: "Record historique de revenus retail media pour BUT avec 1,5 million d'euros",
-      },
-    ],
-  },
-  {
-    id: "voyage-chihiro",
-    title: 'Oscar "Le voyage de Chihiro"',
-    subtitle: "Celles qui ont le plus voyagé entre les bureaux",
-    source: "Nicolas",
-    nominees: [
-      {
-        name: "Duo : Anaïs Mastio & Mélanie Coupron",
-        reason:
-          "En 2 mois, elles ont organisé 3 déménagements de bureau. Connexions et déconnexions de PC n'ont plus de secret pour elles.",
-      },
-    ],
-  },
-  {
-    id: "oss-117",
-    title: 'Oscar "OSS 117"',
-    subtitle: "Celui ou celle qui fait le plus de blagues et jeux de mots",
-    source: "Nathalie",
-    nominees: [
-      {
-        name: "Olivier Granda",
-        reason: "Qui ne connaît pas les jeux de mots et devinettes de monsieur Granda ?",
-      },
-      { name: "Anaïs Mastio", reason: "Nominée pour ses bons mots et son humour du quotidien" },
-      { name: "Amel", reason: "Nominée pour ses blagues et jeux de mots" },
-      {
-        name: "François",
-        reason:
-          "Même pas un an chez nous et déjà sur le podium des bons mots pour amuser ses collègues",
-      },
+      { name: "Imen", reason: "Cergy : RER A x2 + bus 212" },
+      { name: "François", reason: "Eaubonne : train + RER B + RER A + bus 212" },
+      { name: "Nathalie Maitre", reason: "Arpajon : autoroute..." },
+      { name: "Axelle", reason: "Massy : RER B + RER A + bus 212" },
     ],
   },
 ];
 
 const honorees = [
-  {
-    id: "valerie-rochereau",
-    title: 'Prix "Terminator"',
-    subtitle: "Celle qui apprend à dompter l'IA",
-    name: "Valérie Rochereau",
-    image: "assets/laureate-valerie.png",
-    reason:
-      "En 3 mois, Valérie s'est approprié l'IA et multiplie la création d'outils avec une approche novatrice.",
-  },
   {
     id: "audrey-barna",
     title: 'Oscar "L’Histoire sans fin"',
@@ -180,7 +155,7 @@ const honorees = [
     name: "Audrey Barna",
     image: "assets/laureate-audrey.png",
     reason:
-      "Gestion des 2 postes en même temps, toujours avec le sourire, et soutien à l'organisation du séminaire.",
+      "5 mois pour passer complètement du poste d'account manager marketplace à chef de projet retail media marketplace.",
   },
   {
     id: "margaux-beudet",
@@ -189,7 +164,34 @@ const honorees = [
     name: "Margaux Beudet",
     image: "assets/laureate-margaux.png",
     reason:
-      "Record battu de revenus et prise en main du trade BUT et du déploiement de DUYO.",
+      "Record historique de revenus retail media pour BUT avec 1,5 million d'euros.",
+  },
+  {
+    id: "virginie-nerriere",
+    title: "Oscar de l'éternel sourire",
+    subtitle: 'Prix "Singing in the rain"',
+    name: "Nerrière Virginie",
+    badgeIcon: "☀️",
+    reason:
+      "On a changé tout autour d'elle : sa boss, son équipe, son bureau, ses partenaires, ses missions mais elle a gardé son côté solaire.",
+  },
+  {
+    id: "perola-pessaro",
+    title: "Prix Mission Impossible",
+    subtitle: "Projet nouvelle campagne de pub",
+    name: "Pessaro Perola",
+    badgeIcon: "🎬",
+    reason:
+      "Elle a sauté à deux pieds dans le projet nouvelle campagne de pub, embrassant de nouvelles missions et projets imprévus.",
+  },
+  {
+    id: "valerie-rochereau",
+    title: 'Prix "Terminator"',
+    subtitle: "Celle qui apprend à dompter l'IA",
+    name: "Valérie Rochereau",
+    image: "assets/laureate-valerie.png",
+    reason:
+      "En 3 mois, Valérie s'est approprié l'IA et multiplie la création d'outils et adopte une approche hyper novatrice et technique pour chaque enjeu.",
   },
 ];
 
@@ -1195,7 +1197,11 @@ function renderTrophies() {
           ? `
               <article class="trophy-card">
                 <div class="trophy-portrait-wrap">
-                  <img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />
+                  ${
+                    honoree.image
+                      ? `<img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />`
+                      : `<div class="trophy-portrait-placeholder">${honoree.badgeIcon || "🏆"}</div>`
+                  }
                   <div class="trophy-portrait-badge">🏆</div>
                 </div>
                 <div class="trophy-content">
