@@ -181,7 +181,7 @@ function serveStatic(request, response) {
 
       const extension = path.extname(filePath);
       response.writeHead(200, {
-        "Cache-Control": extension === ".html" ? "no-cache" : "public, max-age=60",
+        "Cache-Control": [".css", ".html", ".js"].includes(extension) ? "no-cache" : "public, max-age=60",
         "Content-Type": mimeTypes[extension] || "application/octet-stream",
       });
       response.end(content);
