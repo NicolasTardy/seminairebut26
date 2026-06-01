@@ -1010,6 +1010,11 @@ h3 {
   background: rgba(255, 215, 106, 0.1);
 }
 
+.nav-item.is-locked {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
 .confetti {
   position: fixed;
   inset: 0;
@@ -1051,47 +1056,6 @@ h3 {
   display: grid;
   gap: 8px;
   margin-top: 14px;
-}
-
-.category-picker {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.category-scroll {
-  display: flex;
-  gap: 8px;
-  margin-inline: -4px;
-  padding: 2px 4px 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.category-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.category-chip {
-  flex: 0 0 auto;
-  max-width: 220px;
-  min-height: 42px;
-  padding: 8px 11px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 900;
-  line-height: 1.15;
-  text-align: left;
-  white-space: normal;
-}
-
-.category-chip.is-selected {
-  border-color: var(--gold);
-  background: linear-gradient(135deg, rgba(255, 215, 106, 0.24), rgba(255, 79, 196, 0.18));
-  color: #fff7dc;
 }
 
 @media (min-width: 760px) {

@@ -933,7 +933,6 @@ function renderHome() {
   const profile = state.profile;
   const avatar = avatarById(profile.avatarId);
   const mood = moodById(profile.moodId);
-  const category = activeCategory();
   return `
     ${renderTopbar()}
     <section class="hero welcome-card">
@@ -958,23 +957,10 @@ function renderHome() {
           <h2>${isVoteOpen() ? "Les votes sont ouverts !" : "En attente"}</h2>
           <p class="muted">${
             isVoteOpen()
-              ? `${category.title} est disponible maintenant.`
+              ? "L'onglet Les Oscars est ouvert maintenant."
               : "Garde cette page ouverte pendant le séminaire."
           }</p>
         </div>
-      </div>
-
-      <div class="category-picker">
-        <p class="micro">Catégorie préparée par l’admin</p>
-        <div class="category-chip is-selected">${category.title}</div>
-      </div>
-
-      <div class="demo-strip">
-        ${
-          isVoteOpen()
-            ? `<button class="primary" onclick="state.view='vote'; render();">Vote maintenant</button>`
-            : `<button class="secondary" disabled>Vote fermé pour le moment</button>`
-        }
       </div>
     </section>
     ${renderAgendaPreview()}
@@ -996,7 +982,7 @@ function renderVote() {
             <div class="panel status-card">
               <div class="status-icon">🎬</div>
               <h2>Aucun vote ouvert</h2>
-              <p class="empty-state">Les Oscars seront actives par l'admin au bon moment.</p>
+              <p class="empty-state">Les Oscars seront ouverts par l'admin au bon moment.</p>
             </div>
           </section>
         `
@@ -1176,7 +1162,7 @@ function renderTrophies() {
 function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
-    { id: "vote", label: "Vote", icon: "✓" },
+    { id: "vote", label: "Les Oscars", icon: "★", requiresVoteOpen: true },
     { id: "reveal", label: "Reveal", icon: "★" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
@@ -1184,14 +1170,19 @@ function renderBottomNav() {
   return `
     <nav class="bottom-nav" aria-label="Navigation principale">
       ${items
-        .map(
-          (item) => `
-            <button class="nav-item ${state.view === item.id ? "is-active" : ""}" onclick="state.view='${item.id}'; render();">
+        .map((item) => {
+          const isLocked = item.requiresVoteOpen && !isVoteOpen();
+          return `
+            <button
+              class="nav-item ${state.view === item.id ? "is-active" : ""} ${isLocked ? "is-locked" : ""}"
+              ${isLocked ? "disabled" : ""}
+              onclick="state.view='${item.id}'; render();"
+            >
               <span class="nav-icon">${item.icon}</span>
               <span>${item.label}</span>
             </button>
-          `,
-        )
+          `;
+        })
         .join("")}
     </nav>
   `;
