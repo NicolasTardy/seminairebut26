@@ -678,20 +678,6 @@ async function submitVote() {
   }
 }
 
-function demoOscarWinner() {
-  const category = activeCategory();
-  const votes = getVotes();
-  const resultWinner = state.voteStats?.results?.[category.id]?.[0]?.name;
-  const winnerName = resultWinner || votes[category.id] || category.nominees[0]?.name || "Lauréat mystère";
-  const winner = category.nominees.find((nominee) => nominee.name === winnerName) || category.nominees[0];
-
-  return {
-    category,
-    name: winnerName,
-    reason: winner?.reason || "Le public a tranché, place à la célébration.",
-  };
-}
-
 function submitMessage(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
@@ -1074,35 +1060,23 @@ function renderVote() {
   `;
 }
 
-function renderOscarReveal() {
-  const winner = demoOscarWinner();
+function renderHonoreeCard(honoree, kicker = "Et le trophée revient à...") {
   return `
-    ${renderTopbar()}
-    <section class="section-title">
-      <div>
-        <p class="eyebrow">Reveal Oscar</p>
-        <h2>Pastille Waouh</h2>
+    <article class="trophy-card">
+      <div class="trophy-portrait-wrap">
+        ${
+          honoree.image
+            ? `<img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />`
+            : `<div class="trophy-portrait-placeholder">${honoree.badgeIcon || "🏆"}</div>`
+        }
+        <div class="trophy-portrait-badge">🏆</div>
       </div>
-      <button class="ghost" onclick="pulse()">Confettis</button>
-    </section>
-
-    <article class="oscar-reveal-card">
-      <div class="oscar-stage">
-        <div class="stage-lights"></div>
-        <div class="winner-bubble">
-          <div class="winner-avatar">🕶️</div>
-          <div class="winner-spark winner-spark-left">★</div>
-          <div class="winner-spark winner-spark-right">⚡</div>
-        </div>
-        <div class="stage-trophy">🏆</div>
-      </div>
-
       <div class="trophy-content">
-        <p class="trophy-kicker">Et l’Oscar revient à...</p>
-        <div class="reveal-name">${winner.name}</div>
-        <div class="award-ribbon">${winner.category.title}</div>
-        <p class="trophy-subtitle">${winner.category.subtitle}</p>
-        <p class="trophy-quote">“${winner.reason}”</p>
+        <p class="trophy-kicker">${kicker}</p>
+        <div class="reveal-name">${honoree.name}</div>
+        <div class="award-ribbon">${honoree.title}</div>
+        <p class="trophy-subtitle">${honoree.subtitle}</p>
+        <p class="trophy-quote">“${honoree.reason}”</p>
         <div class="reaction-row" aria-label="Réactions">
           <button class="reaction" onclick="pulse()">👏</button>
           <button class="reaction" onclick="pulse()">💖</button>
@@ -1110,11 +1084,40 @@ function renderOscarReveal() {
         </div>
       </div>
     </article>
+  `;
+}
 
-    <section class="panel">
-      <p class="micro">Version démo</p>
-      <p class="reason">Cette pastille utilisera le gagnant réel dès que les votes seront centralisés par le backend.</p>
+function renderRevealStandby(message = "La régie prépare la prochaine révélation.") {
+  return `
+    <article class="panel trophy-standby">
+      <div class="status-icon">🏆</div>
+      <p class="eyebrow">Suspense</p>
+      <h2>Prochaine récompense dans quelques instants</h2>
+      <p class="reason">${message}</p>
+    </article>
+  `;
+}
+
+function renderOscarReveal() {
+  const honoree = activeHonoree();
+
+  return `
+    ${renderTopbar()}
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Reveal live</p>
+        <h2>${honoree ? honoree.name : "En attente de la régie"}</h2>
+      </div>
+      <button class="ghost" onclick="pulse()">Confettis</button>
     </section>
+
+    <div class="trophy-list">
+      ${
+        honoree
+          ? renderHonoreeCard(honoree, "Et la récompense revient à...")
+          : renderRevealStandby("L'admin affichera les récompensés un par un au moment voulu.")
+      }
+    </div>
     ${renderBottomNav()}
   `;
 }
@@ -1194,38 +1197,8 @@ function renderTrophies() {
     <div class="trophy-list">
       ${
         honoree
-          ? `
-              <article class="trophy-card">
-                <div class="trophy-portrait-wrap">
-                  ${
-                    honoree.image
-                      ? `<img class="trophy-portrait" src="${honoree.image}" alt="Portrait festif de ${honoree.name}" />`
-                      : `<div class="trophy-portrait-placeholder">${honoree.badgeIcon || "🏆"}</div>`
-                  }
-                  <div class="trophy-portrait-badge">🏆</div>
-                </div>
-                <div class="trophy-content">
-                  <p class="trophy-kicker">Et le trophée revient à...</p>
-                  <div class="reveal-name">${honoree.name}</div>
-                  <div class="award-ribbon">${honoree.title}</div>
-                  <p class="trophy-subtitle">${honoree.subtitle}</p>
-                  <p class="trophy-quote">“${honoree.reason}”</p>
-                  <div class="reaction-row" aria-label="Réactions">
-                    <button class="reaction" onclick="pulse()">👏</button>
-                    <button class="reaction" onclick="pulse()">💖</button>
-                    <button class="reaction" onclick="pulse()">🤩</button>
-                  </div>
-                </div>
-              </article>
-            `
-          : `
-              <article class="panel trophy-standby">
-                <div class="status-icon">🏆</div>
-                <p class="eyebrow">Suspense</p>
-                <h2>Prochaine récompense dans quelques instants</h2>
-                <p class="reason">La régie prépare la prochaine révélation.</p>
-              </article>
-            `
+          ? renderHonoreeCard(honoree)
+          : renderRevealStandby()
       }
     </div>
     ${renderBottomNav()}
