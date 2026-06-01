@@ -1,7 +1,6 @@
 const STORAGE_KEYS = {
   profile: "nuit_cesars_profile",
   votes: "nuit_cesars_votes",
-  messages: "nuit_cesars_messages",
 };
 
 const avatars = [
@@ -51,6 +50,8 @@ const moods = [
     description: "Prêt(e) pour le show",
   },
 ];
+
+const wallEmojis = ["🎉", "🔥", "👏", "💖", "🤩", "😂", "✨", "🏆"];
 
 const oscarCategories = [
   {
@@ -351,6 +352,7 @@ const state = {
   selectedMoodId: "good-vibes",
   pseudoDraft: "",
   selectedNominee: null,
+  selectedWallEmoji: "🎉",
   liveState: {
     activeCategoryId: "very-bad-trip",
     activeHonoreeId: "",
@@ -359,6 +361,7 @@ const state = {
   },
   presenceStats: null,
   voteStats: null,
+  wallMessages: null,
   toast: null,
 };
 
@@ -453,14 +456,7 @@ function getVotes() {
 }
 
 function getMessages() {
-  return readJson(STORAGE_KEYS.messages, [
-    {
-      id: "seed-1",
-      pseudo: "StudioPop",
-      avatarId: "clap",
-      text: "Prêt pour la cérémonie.",
-    },
-  ]);
+  return state.wallMessages || [];
 }
 
 function isVoteOpen() {
@@ -479,6 +475,15 @@ function activeHonoree() {
 
 function jsString(value) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function saveProfile(event) {
@@ -505,6 +510,7 @@ function saveProfile(event) {
   notify("Bienvenue dans la cérémonie !");
   startPresenceSync();
   startVoteSync();
+  startWallSync();
   render();
 }
 
@@ -517,6 +523,11 @@ function logoutParticipant() {
   if (state.voteTimer) {
     window.clearInterval(state.voteTimer);
     state.voteTimer = null;
+  }
+
+  if (state.wallTimer) {
+    window.clearInterval(state.wallTimer);
+    state.wallTimer = null;
   }
 
   state.profile = {
@@ -541,6 +552,7 @@ function reconnectParticipant() {
   notify("Profil reconnecté.");
   startPresenceSync();
   startVoteSync();
+  startWallSync();
   render();
 }
 
@@ -594,6 +606,27 @@ function startVoteSync() {
   if (!state.profile || state.profile.isActive === false || state.voteTimer) return;
   syncVotes();
   state.voteTimer = window.setInterval(syncVotes, 5000);
+}
+
+async function syncMessages() {
+  if (!state.profile || state.profile.isActive === false) return;
+
+  try {
+    const response = await fetch("/api/messages");
+    if (!response.ok) throw new Error("Messages unavailable");
+
+    const data = await response.json();
+    state.wallMessages = data.messages || [];
+    if (state.view === "wall") render();
+  } catch {
+    state.wallMessages ||= [];
+  }
+}
+
+function startWallSync() {
+  if (!state.profile || state.profile.isActive === false || state.wallTimer) return;
+  syncMessages();
+  state.wallTimer = window.setInterval(syncMessages, 4000);
 }
 
 async function syncLiveState() {
@@ -671,22 +704,57 @@ async function submitVote() {
   }
 }
 
-function submitMessage(event) {
+async function submitMessage(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const text = String(form.get("message") || "").trim();
-  if (!text) return;
+  const emoji = String(form.get("emoji") || state.selectedWallEmoji || "").trim();
+  if (!text && !emoji) return;
 
-  const messages = getMessages();
-  messages.unshift({
-    id: crypto.randomUUID(),
-    pseudo: state.profile.pseudo,
-    avatarId: state.profile.avatarId,
-    text,
-  });
-  writeJson(STORAGE_KEYS.messages, messages.slice(0, 8));
-  notify("Message envoyé.");
-  render();
+  try {
+    const response = await fetch("/api/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        avatarId: state.profile.avatarId,
+        emoji,
+        participantId: state.profile.id,
+        pseudo: state.profile.pseudo,
+        text,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Message unavailable");
+
+    const data = await response.json();
+    state.wallMessages = data.messages || [];
+    event.currentTarget.reset();
+    state.selectedWallEmoji = "🎉";
+    notify("Message posté sur le mur.");
+    render();
+  } catch {
+    notify("Impossible de poster pour le moment.");
+  }
+}
+
+async function deleteMessage(messageId) {
+  if (!state.profile) return;
+
+  try {
+    const params = new URLSearchParams({
+      id: messageId,
+      participantId: state.profile.id,
+    });
+    const response = await fetch(`/api/messages?${params.toString()}`, { method: "DELETE" });
+    if (!response.ok) throw new Error("Delete unavailable");
+
+    const data = await response.json();
+    state.wallMessages = data.messages || [];
+    notify("Post supprimé.");
+    render();
+  } catch {
+    notify("Suppression impossible.");
+  }
 }
 
 function notify(message) {
@@ -1099,37 +1167,72 @@ function renderOscarReveal() {
 }
 
 function renderWall() {
+  const messages = getMessages();
+
   return `
     ${renderTopbar()}
     <section class="section-title">
       <div>
         <p class="eyebrow">Expression libre</p>
-        <h2>Mur libre</h2>
+        <h2>Mur</h2>
       </div>
       <span class="pill">💬 Live</span>
     </section>
 
     <form class="panel" onsubmit="submitMessage(event)">
-      <textarea class="textarea" name="message" maxlength="160" placeholder="Ton message pour la salle"></textarea>
+      <div class="wall-emoji-picker" aria-label="Humeur du post">
+        ${wallEmojis
+          .map(
+            (emoji) => `
+              <label class="wall-emoji ${state.selectedWallEmoji === emoji ? "is-selected" : ""}">
+                <input
+                  type="radio"
+                  name="emoji"
+                  value="${emoji}"
+                  ${state.selectedWallEmoji === emoji ? "checked" : ""}
+                  onchange="state.selectedWallEmoji='${emoji}'; render();"
+                />
+                <span>${emoji}</span>
+              </label>
+            `,
+          )
+          .join("")}
+      </div>
+      <textarea class="textarea" name="message" maxlength="180" placeholder="Ton message pour la salle, ou juste une humeur"></textarea>
       <div class="sticky-action">
-        <button class="primary" type="submit">Envoyer</button>
+        <button class="primary" type="submit">Poster sur le mur</button>
       </div>
     </form>
 
     <div class="message-list">
-      ${getMessages()
-        .map(
-          (message) => `
-            <article class="message-card">
-              <div class="mini-avatar">${avatarById(message.avatarId).icon}</div>
-              <div>
-                <strong>${message.pseudo}</strong>
-                <p class="reason">${message.text}</p>
-              </div>
-            </article>
-          `,
-        )
-        .join("")}
+      ${
+        messages.length
+          ? messages
+              .map(
+                (message) => `
+                  <article class="message-card">
+                    <div class="wall-post-emoji">${message.emoji || avatarById(message.avatarId).icon}</div>
+                    <div>
+                      <div class="message-head">
+                        <strong>${escapeHtml(message.pseudo)}</strong>
+                        ${
+                          message.participantId === state.profile.id
+                            ? `<button class="message-delete" type="button" onclick="deleteMessage(${jsString(message.id)})">Supprimer</button>`
+                            : ""
+                        }
+                      </div>
+                      ${message.text ? `<p class="reason">${escapeHtml(message.text)}</p>` : `<p class="reason">Humeur partagée</p>`}
+                    </div>
+                  </article>
+                `,
+              )
+              .join("")
+          : `<article class="panel trophy-standby">
+              <div class="status-icon">💬</div>
+              <h2>Le mur attend son premier post</h2>
+              <p class="reason">Un emoji, une humeur, un message : tout compte.</p>
+            </article>`
+      }
     </div>
     ${renderBottomNav()}
   `;
@@ -1163,6 +1266,7 @@ function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "vote", label: "Les Oscars", icon: "★", requiresVoteOpen: true },
+    { id: "wall", label: "Mur", icon: "💬" },
     { id: "reveal", label: "Reveal", icon: "★" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
@@ -1225,4 +1329,5 @@ function render() {
 render();
 startPresenceSync();
 startVoteSync();
+startWallSync();
 startLiveStateSync();

@@ -696,7 +696,65 @@ h3 {
 .message-card {
   display: grid;
   grid-template-columns: auto 1fr;
+  align-items: start;
   gap: 10px;
+}
+
+.message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.message-delete {
+  min-height: 30px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(255, 49, 95, 0.14);
+  color: #ffc2d0;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.wall-emoji-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.wall-emoji {
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.09);
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+
+.wall-emoji input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wall-emoji.is-selected {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.22), rgba(255, 79, 196, 0.16));
+}
+
+.wall-post-emoji {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(255, 215, 106, 0.92), rgba(255, 79, 196, 0.82));
+  color: #24110d;
+  font-size: 1.45rem;
 }
 
 .oscar-reveal-card {
@@ -978,7 +1036,7 @@ h3 {
   bottom: 14px;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   width: min(calc(100% - 22px), 430px);
   min-height: 68px;
   transform: translateX(-50%);

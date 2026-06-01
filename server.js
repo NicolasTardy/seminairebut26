@@ -7,12 +7,14 @@ const HOST = process.env.HOST || "0.0.0.0";
 const ROOT = __dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
 const LIVE_STATE_FILE = path.join(DATA_DIR, "live-state.json");
+const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
 const ADMIN_CODE = process.env.ADMIN_CODE || "beleket";
 const PRESENCE_TTL_MS = 18000;
 
 const participants = new Map();
 const liveState = loadLiveState();
+const messages = loadMessages();
 const votes = loadVotes();
 
 const mimeTypes = {
@@ -29,6 +31,15 @@ function loadVotes() {
     return JSON.parse(fs.readFileSync(VOTES_FILE, "utf8"));
   } catch {
     return { categories: {} };
+  }
+}
+
+function loadMessages() {
+  try {
+    const savedMessages = JSON.parse(fs.readFileSync(MESSAGES_FILE, "utf8"));
+    return Array.isArray(savedMessages) ? savedMessages : [];
+  } catch {
+    return [];
   }
 }
 
@@ -58,6 +69,11 @@ function saveLiveState() {
   fs.writeFileSync(LIVE_STATE_FILE, JSON.stringify(liveState, null, 2));
 }
 
+function saveMessages() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages.slice(0, 120), null, 2));
+}
+
 function saveVotes() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2));
@@ -65,6 +81,13 @@ function saveVotes() {
 
 function cleanText(value, maxLength = 120) {
   return String(value || "").trim().slice(0, maxLength);
+}
+
+function wallMessages() {
+  return messages
+    .slice()
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+    .slice(0, 80);
 }
 
 function cleanPresence() {
@@ -287,6 +310,56 @@ const server = http.createServer(async (request, response) => {
     } catch {
       sendJson(response, 400, { error: "Invalid vote payload" });
     }
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/messages" && request.method === "GET") {
+    sendJson(response, 200, { messages: wallMessages() });
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/messages" && request.method === "POST") {
+    try {
+      const payload = JSON.parse(await readBody(request));
+      const participantId = cleanText(payload.participantId, 80);
+      const text = cleanText(payload.text, 180);
+      const emoji = cleanText(payload.emoji, 12);
+
+      if (!participantId || (!text && !emoji)) {
+        sendJson(response, 400, { error: "Missing message fields" });
+        return;
+      }
+
+      messages.unshift({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+        avatarId: cleanText(payload.avatarId || "spark", 40),
+        createdAt: new Date().toISOString(),
+        emoji,
+        participantId,
+        pseudo: cleanText(payload.pseudo || "Participant", 48),
+        text,
+      });
+      saveMessages();
+      sendJson(response, 200, { messages: wallMessages() });
+    } catch {
+      sendJson(response, 400, { error: "Invalid message payload" });
+    }
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/messages" && request.method === "DELETE") {
+    const participantId = cleanText(requestUrl.searchParams.get("participantId"), 80);
+    const messageId = cleanText(requestUrl.searchParams.get("id"), 80);
+    const messageIndex = messages.findIndex((message) => message.id === messageId && message.participantId === participantId);
+
+    if (messageIndex === -1) {
+      sendJson(response, 404, { error: "Message not found" });
+      return;
+    }
+
+    messages.splice(messageIndex, 1);
+    saveMessages();
+    sendJson(response, 200, { messages: wallMessages() });
     return;
   }
 
