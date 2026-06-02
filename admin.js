@@ -47,10 +47,19 @@ const adminState = {
   votes: null,
   message: "",
   tab: "live",
+  alertDraft: "",
 };
 
 function jsAdminString(value) {
   return JSON.stringify(value).replace(/"/g, "&quot;");
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function categoryById(id) {
@@ -168,6 +177,14 @@ function closeVote() {
   saveLiveState({ voteOpen: false });
 }
 
+async function sendAlert() {
+  const msg = (adminState.alertDraft || "").trim();
+  if (!msg) return;
+  await saveLiveState({ alertMessage: msg });
+  adminState.alertDraft = "";
+  renderAdmin();
+}
+
 async function resetVotes(scope) {
   const label = scope === "all" ? "TOUS les votes de toutes les catégories" : `les votes de la catégorie active`;
   if (!confirm(`Remettre à zéro ${label} ? Cette action est irréversible.`)) return;
@@ -266,9 +283,6 @@ function renderLiveControl() {
         ${adminToggle("Vote ouvert (1:30)", "🗳️", voteIsOpen,
           "openVote()",
           "closeVote()")}
-        ${adminToggle("Résultats affichés", "📊", Boolean(live.voteResultOpen) && !voteIsOpen,
-          "saveLiveState({ voteResultOpen: true })",
-          "saveLiveState({ voteResultOpen: false })")}
       </div>
 
       <div class="atoggle-group">
@@ -341,40 +355,52 @@ function renderHonoreeControl() {
 }
 
 function renderResults() {
-  const activeCategoryId = adminState.liveState?.activeCategoryId || "very-bad-trip";
+  const activeRevealId = adminState.liveState?.activeRevealCategoryId || "";
   return `
     <section class="panel">
-      <p class="eyebrow">Résultats par catégorie</p>
-      <h2>Oscars — tous les votes</h2>
-      ${adminCategories
-        .map((category) => {
+      <p class="eyebrow">Résultats & Reveal Oscars</p>
+      <div class="astat-banner ${activeRevealId ? "is-vote-on" : ""}" style="margin-bottom:12px">
+        <div class="astat-row">
+          <span>Affiché aux participants</span>
+          <strong>${activeRevealId ? (adminCategories.find(c => c.id === activeRevealId)?.title.replace(/^Oscar /, "") || activeRevealId) : "—"}</strong>
+        </div>
+      </div>
+      ${adminCategories.map((category) => {
           const results = adminState.votes?.results?.[category.id] || [];
           const total = adminState.votes?.totals?.[category.id] || results.reduce((sum, r) => sum + r.count, 0);
-          const isActive = category.id === activeCategoryId;
+          const isRevealed = activeRevealId === category.id;
+          const winner = results[0];
           return `
-            <div class="results-category ${isActive ? "is-active-category" : ""}">
-              <p class="micro results-category-label">${isActive ? "▶ " : ""}${category.title.replace(/^Oscar /, "")} <span class="pill">${total} vote${total !== 1 ? "s" : ""}</span></p>
-              <div class="admin-list">
-                ${
-                  results.length
-                    ? results
-                        .map(
-                          (result, index) => `
-                            <article class="admin-row ${index === 0 ? "is-active" : ""}">
-                              <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
-                              <strong>${result.name}</strong>
-                              <span class="pill">${result.count}</span>
-                            </article>
-                          `,
-                        )
-                        .join("")
-                    : `<p class="empty-state">Aucun vote.</p>`
+            <div class="results-category ${isRevealed ? "is-active-category" : ""}">
+              <div class="results-cat-head">
+                <div>
+                  <p class="micro results-category-label" style="margin:0">${category.title.replace(/^Oscar /, "")}</p>
+                  ${winner ? `<span class="results-winner-preview">🏆 ${winner.name} · ${total ? Math.round(winner.count/total*100) : 0}%</span>` : `<span class="results-winner-preview muted">Aucun vote</span>`}
+                </div>
+                <div class="results-cat-actions">
+                  <span class="pill" style="font-size:0.72rem">${total} vote${total !== 1 ? "s" : ""}</span>
+                  ${isRevealed
+                    ? `<button class="admin-reset-btn" style="min-height:36px;padding:6px 10px;font-size:0.78rem" onclick="saveLiveState({ activeRevealCategoryId: '' })">🙈 Masquer</button>`
+                    : `<button class="admin-nav-btn is-next" style="min-height:36px;padding:6px 12px;font-size:0.82rem;width:auto" onclick="saveLiveState({ activeRevealCategoryId: ${jsAdminString(category.id)} })">▶ Révéler</button>`
+                  }
+                </div>
+              </div>
+              <div class="admin-list" style="margin-top:8px">
+                ${results.length
+                  ? results.map((result, index) => `
+                      <article class="admin-row ${index === 0 ? "is-active" : ""}">
+                        <span class="mini-avatar">${index === 0 ? "🏆" : "🏅"}</span>
+                        <strong>${result.name}</strong>
+                        <span class="pill">${result.count}</span>
+                      </article>
+                    `).join("")
+                  : `<p class="empty-state" style="margin:4px 0">Aucun vote.</p>`
                 }
               </div>
             </div>
           `;
-        })
-        .join("")}
+        }).join("")}
+      <button class="secondary admin-wide-action" style="margin-top:10px" onclick="saveLiveState({ activeRevealCategoryId: '' })">🙈 Tout masquer</button>
     </section>
   `;
 }
@@ -424,7 +450,31 @@ function renderAdmin() {
         </div>
       ` : ""}
     </div>
-    ${isLoggedIn ? `<button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>` : ""}
+    ${isLoggedIn ? `
+      <div class="alert-panel">
+        <div class="alert-panel-header">
+          <span class="alert-panel-icon">📣</span>
+          <div>
+            <strong>Message à tous</strong>
+            <p class="micro">Popup + signal sonore sur tous les téléphones</p>
+          </div>
+        </div>
+        <div class="alert-compose">
+          <input
+            class="alert-panel-input"
+            type="text"
+            id="alert-msg-input"
+            placeholder="Ex : RDV au bar · Pause 10 min · La soirée commence !"
+            maxlength="120"
+            value="${escapeHtml(adminState.alertDraft || "")}"
+            oninput="adminState.alertDraft=this.value"
+            onkeydown="if(event.key==='Enter' && this.value.trim()) sendAlert()"
+          />
+          <button class="alert-send-btn" onclick="sendAlert()">Envoyer 🔔</button>
+        </div>
+      </div>
+      <button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>
+    ` : ""}
   `;
   if (isLoggedIn) applyAdminTab();
 }

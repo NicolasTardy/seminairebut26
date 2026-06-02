@@ -1754,3 +1754,77 @@ h3 {
 
 .prada-rank { font-size: 1.3rem; text-align: center; }
 .prada-pct { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+
+.bs-search-wrap {
+  position: relative;
+}
+
+.bs-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+/* ── Alerte admin ─────────────────────────────── */
+.alert-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0,0,0,0.72);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  backdrop-filter: blur(4px);
+  animation: alert-in 0.2s ease both;
+}
+
+@keyframes alert-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.alert-popup {
+  width: min(100%, 360px);
+  padding: 28px 24px 24px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 215, 106, 0.5);
+  background: linear-gradient(145deg, #1e0c1a, #0e0c1e);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.alert-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  animation: bell-shake 0.6s ease 0.1s both;
+}
+
+@keyframes bell-shake {
+  0%,100% { transform: rotate(0); }
+  20%      { transform: rotate(-18deg); }
+  40%      { transform: rotate(16deg); }
+  60%      { transform: rotate(-10deg); }
+  80%      { transform: rotate(8deg); }
+}
+
+.alert-msg {
+  font-size: 1.4rem;
+  font-weight: 950;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+  word-break: break-word;
+}

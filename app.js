@@ -540,6 +540,8 @@ const state = {
   brainstormSearch: "",
   brainstormMyTeam: null,
   pradaStats: null,
+  lastAlertSentAt: localStorage.getItem("nuit_cesars_last_alert") || "",
+  activeAlert: null,
   pradaReineSearch: "",
   pradaRoiSearch: "",
   pradaReineSelected: null,
@@ -866,6 +868,8 @@ async function syncLiveState() {
     const nextLiveState = await response.json();
     const wasVoteOpen = Boolean(state.liveState?.voteOpen);
     const previousCategory = state.liveState?.activeCategoryId;
+    const previousRevealId = state.liveState?.activeRevealCategoryId || "";
+    const previousAlertAt = state.liveState?.alertSentAt || "";
     state.liveState = {
       ...state.liveState,
       ...nextLiveState,
@@ -878,6 +882,21 @@ async function syncLiveState() {
 
     if (previousCategory !== state.liveState.activeCategoryId) {
       state.selectedNominee = null;
+    }
+
+    // Détecter une nouvelle alerte admin
+    const newAlertAt = state.liveState?.alertSentAt || "";
+    if (newAlertAt && newAlertAt !== previousAlertAt && newAlertAt !== state.lastAlertSentAt) {
+      state.lastAlertSentAt = newAlertAt;
+      localStorage.setItem("nuit_cesars_last_alert", newAlertAt);
+      state.activeAlert = state.liveState.alertMessage || "";
+      playDing();
+    }
+
+    // Quand le reveal change, forcer un refresh des votes immédiatement
+    const newRevealId = state.liveState?.activeRevealCategoryId || "";
+    if (newRevealId && newRevealId !== previousRevealId) {
+      await syncVotes();
     }
 
     // Sync prada results when vote closes automatically
@@ -1277,6 +1296,53 @@ function renderHome() {
 }
 
 function renderVote() {
+  // Si l'admin a révélé un résultat, afficher le vainqueur dans cet onglet
+  const revealId = state.liveState?.activeRevealCategoryId || "";
+  if (revealId) {
+    const revCat = oscarCategories.find((c) => c.id === revealId) || activeCategory();
+    const results = state.voteStats?.results?.[revCat.id] || [];
+    const total = state.voteStats?.totals?.[revCat.id] || 0;
+    const winner = results[0] || null;
+    const runners = results.slice(1);
+    if (!winner && !state.voteStats) {
+      syncVotes().then(render);
+    }
+    return `
+      ${renderTopbar()}
+      <div class="trophy-list">
+        ${!winner
+          ? renderRevealStandby(!state.voteStats ? "Chargement des résultats…" : "Aucun vote enregistré pour cette catégorie.")
+          : `
+            <article class="trophy-card oscar-result-card">
+              <div class="trophy-portrait-wrap trophy-visual-${revCat.visual || "fashion"}">
+                <div class="trophy-portrait-placeholder"><span>${revCat.badgeIcon || "🏆"}</span></div>
+                <div class="trophy-portrait-badge">🏆</div>
+              </div>
+              <div class="trophy-content">
+                <p class="trophy-kicker">🎬 Et l'Oscar revient à…</p>
+                <div class="reveal-name">${escapeHtml(winner.name)}</div>
+                <div class="award-ribbon">${revCat.title}</div>
+                <p class="trophy-subtitle">${revCat.subtitle}</p>
+                <p class="oscar-vote-tally">${winner.count} vote${winner.count !== 1 ? "s" : ""} · ${total ? Math.round((winner.count / total) * 100) : 0}%</p>
+                ${runners.length ? `<div class="oscar-runners">${runners.map((r, i) => `
+                  <div class="oscar-runner-row">
+                    <span class="oscar-runner-rank">${i + 2}</span>
+                    <span class="oscar-runner-name">${escapeHtml(r.name)}</span>
+                    <span class="oscar-runner-pct">${total ? Math.round((r.count / total) * 100) : 0}%</span>
+                  </div>`).join("")}</div>` : ""}
+                <div class="reaction-row">
+                  <button class="reaction" onclick="pulse()">👏</button>
+                  <button class="reaction" onclick="pulse()">🎉</button>
+                  <button class="reaction" onclick="pulse()">🤩</button>
+                </div>
+              </div>
+            </article>
+          `}
+      </div>
+      ${renderBottomNav()}
+    `;
+  }
+
   const category = activeCategory();
   const votes = getVotes();
   const alreadyVoted = Boolean(votes[category.id]);
@@ -1421,10 +1487,13 @@ function renderRevealStandby(message = "La régie prépare la prochaine révéla
 }
 
 function renderOscarReveal() {
-  const category = activeCategory();
+  const revealId = state.liveState?.activeRevealCategoryId || "";
+  const category = revealId
+    ? (oscarCategories.find((c) => c.id === revealId) || activeCategory())
+    : activeCategory();
   const results = state.voteStats?.results?.[category.id] || [];
   const total = state.voteStats?.totals?.[category.id] || 0;
-  const voteResultOpen = Boolean(state.liveState?.voteResultOpen) && !isVoteOpen();
+  const voteResultOpen = Boolean(revealId);
   const winner = results[0] || null;
   const runners = results.slice(1);
 
@@ -1434,6 +1503,8 @@ function renderOscarReveal() {
       ${
         !voteResultOpen
           ? renderRevealStandby("L'admin affichera les résultats au bon moment.")
+          : !winner && !state.voteStats
+          ? (syncVotes().then(render), renderRevealStandby("Chargement des résultats…"))
           : !winner
           ? renderRevealStandby("Aucun vote enregistré pour cette catégorie.")
           : `
@@ -1593,6 +1664,31 @@ function poleColor(pole) {
     "Services financiers": "#a78bfa",
   };
   return map[pole] || "rgba(255,255,255,0.5)";
+}
+
+function playDing() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    [880, 1100, 1320].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, now + i * 0.12);
+      gain.gain.linearRampToValueAtTime(0.4, now + i * 0.12 + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.8);
+      osc.start(now + i * 0.12);
+      osc.stop(now + i * 0.12 + 0.85);
+    });
+  } catch {}
+}
+
+function dismissAlert() {
+  state.activeAlert = null;
+  render();
 }
 
 function normalize(str) {
@@ -1922,9 +2018,11 @@ function renderBrainstorming() {
       <p class="eyebrow">Les équipes</p>
     </div>
     <div class="bs-search-wrap">
-      <input class="input bs-search" type="search" placeholder="Chercher un prénom ou un nom…"
+      <input class="input bs-search" id="bs-search-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        placeholder="Chercher un prénom ou un nom…"
         value="${escapeHtml(state.brainstormSearch || "")}"
-        oninput="state.brainstormSearch=this.value; render(); const f=document.querySelector('.bs-search'); if(f){f.focus();f.setSelectionRange(f.value.length,f.value.length);}" />
+        oninput="(function(el){var v=el.value,p=el.selectionStart;state.brainstormSearch=v;render();var f=document.getElementById('bs-search-input');if(f){f.focus();try{f.setSelectionRange(p,p);}catch(e){}}})(this)" />
+      ${state.brainstormSearch ? `<button class="bs-search-clear" onclick="state.brainstormSearch='';render();">×</button>` : ""}
     </div>
 
     <div class="bs-teams">
@@ -1939,8 +2037,8 @@ function renderBrainstorming() {
                 <button class="bs-team-toggle" onclick="state['bs_open_${team.id}'] = ${!isOpen}; render();">
                   <span class="bs-team-number">${team.id}</span>
                   <div class="bs-team-info">
-                    <strong>Équipe ${team.id}</strong>
-                    <span class="bs-resp">${escapeHtml(team.angle)} · ${team.question === 1 ? "Fidélité" : "Gén. Z"}</span>
+                    <strong>Équipe ${team.id}${team.responsable ? ` · ${escapeHtml(team.responsable)}` : ""}</strong>
+                    <span class="bs-resp">${escapeHtml(team.angle)}</span>
                   </div>
                   <span class="bs-count">${team.members.length}</span>
                   <span class="bs-chevron">${isOpen ? "▲" : "▼"}</span>
@@ -1979,8 +2077,8 @@ function renderBottomNav() {
 
   const visibleItems = items.filter((item) => {
     if (!item.gate) return true;
-    const flagOn = Boolean(state.liveState?.[item.gate]);
-    // prada stays visible after close so results remain accessible
+    const val = state.liveState?.[item.gate];
+    const flagOn = Boolean(val);
     if (item.alwaysWhenActive) return flagOn || (state.pradaStats && (state.pradaStats.total?.reine > 0 || state.pradaStats.total?.roi > 0));
     return flagOn;
   });
@@ -2002,13 +2100,22 @@ function renderBottomNav() {
 }
 
 function renderToast() {
-  if (!state.toast) return "";
-  return `
-    <div class="toast" role="status">
-      <span class="mini-avatar">🔔</span>
-      <strong>${state.toast}</strong>
-    </div>
-  `;
+  const alert = state.activeAlert
+    ? `
+      <div class="alert-overlay" onclick="dismissAlert()">
+        <div class="alert-popup" onclick="event.stopPropagation()">
+          <div class="alert-icon">🔔</div>
+          <p class="alert-msg">${escapeHtml(state.activeAlert)}</p>
+          <button class="primary" style="margin-top:14px" onclick="dismissAlert()">OK</button>
+        </div>
+      </div>
+    ` : "";
+
+  const toast = state.toast
+    ? `<div class="toast" role="status"><span class="mini-avatar">🔔</span><strong>${state.toast}</strong></div>`
+    : "";
+
+  return alert + toast;
 }
 
 function render() {

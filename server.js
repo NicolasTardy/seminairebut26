@@ -107,6 +107,7 @@ function loadLiveState() {
       voteOpen: false,
       brainstormOpen: false,
       pradaOpen: false,
+      activeRevealCategoryId: "",
       ...JSON.parse(fs.readFileSync(LIVE_STATE_FILE, "utf8")),
     };
   } catch {
@@ -119,6 +120,7 @@ function loadLiveState() {
       voteOpen: false,
       brainstormOpen: false,
       pradaOpen: false,
+      activeRevealCategoryId: "",
     };
   }
 }
@@ -369,8 +371,10 @@ const server = http.createServer(async (request, response) => {
         voteDurationSeconds: Math.round(VOTE_DURATION_MS / 1000),
         voteOpen: wantsVoteOpen,
         voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
-        voteResultOpen: categoryChanged ? false : Boolean(payload.voteResultOpen ?? liveState.voteResultOpen),
+        activeRevealCategoryId: categoryChanged ? "" : cleanText(payload.activeRevealCategoryId ?? liveState.activeRevealCategoryId ?? "", 80),
         brainstormOpen: Boolean(payload.brainstormOpen ?? liveState.brainstormOpen),
+        alertMessage: payload.alertMessage !== undefined ? cleanText(payload.alertMessage, 200) : (liveState.alertMessage || ""),
+        alertSentAt: payload.alertMessage !== undefined && payload.alertMessage ? new Date().toISOString() : (liveState.alertSentAt || ""),
         pradaOpen: (() => {
           const wants = payload.pradaOpen !== undefined ? Boolean(payload.pradaOpen) : Boolean(liveState.pradaOpen);
           const was = Boolean(liveState.pradaOpen);
@@ -459,7 +463,7 @@ const server = http.createServer(async (request, response) => {
       return;
     }
     liveState.voteOpen = false;
-    liveState.voteResultOpen = false;
+    liveState.activeRevealCategoryId = "";
     liveState.updatedAt = new Date().toISOString();
     saveVotes();
     saveLiveState();
