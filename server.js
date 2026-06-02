@@ -25,6 +25,7 @@ const mimeTypes = {
   ".json": "application/json; charset=utf-8",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 };
 
 function loadVotes() {
@@ -53,6 +54,7 @@ function loadLiveState() {
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
+      brainstormOpen: false,
       ...JSON.parse(fs.readFileSync(LIVE_STATE_FILE, "utf8")),
     };
   } catch {
@@ -63,6 +65,7 @@ function loadLiveState() {
       activeStepId: "welcome-breakfast",
       updatedAt: new Date().toISOString(),
       voteOpen: false,
+      brainstormOpen: false,
     };
   }
 }
@@ -314,6 +317,7 @@ const server = http.createServer(async (request, response) => {
         voteOpen: wantsVoteOpen,
         voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
         voteResultOpen: categoryChanged ? false : Boolean(payload.voteResultOpen ?? liveState.voteResultOpen),
+        brainstormOpen: Boolean(payload.brainstormOpen ?? liveState.brainstormOpen),
       };
 
       Object.assign(liveState, nextState);

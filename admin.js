@@ -224,6 +224,16 @@ function renderLiveControl() {
         <div class="metric"><span class="micro">Ont voté</span><strong>${votedCount}</strong></div>
         <div class="metric"><span class="micro">Catégorie</span><strong>${category.title.replace("Oscar ", "")}</strong></div>
       </div>
+      <div class="admin-actions" style="margin-bottom:4px">
+        <button class="vote-toggle is-open-action" onclick="saveLiveState({ brainstormOpen: true })" ${live.brainstormOpen ? "disabled" : ""}>
+          <span>💡</span>
+          <strong>${live.brainstormOpen ? "Équipes visibles" : "Ouvrir brainstorming"}</strong>
+        </button>
+        <button class="vote-toggle is-close-action" onclick="saveLiveState({ brainstormOpen: false })" ${live.brainstormOpen ? "" : "disabled"}>
+          <span>🔒</span>
+          <strong>Masquer équipes</strong>
+        </button>
+      </div>
       <div class="field">
         <label for="step">Étape active</label>
         <select class="admin-select" id="step" onchange="saveLiveState({ activeStepId: this.value })">

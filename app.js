@@ -53,6 +53,143 @@ const moods = [
 
 const wallEmojis = ["🎉", "🔥", "👏", "💖", "🤩", "😂", "✨", "🏆"];
 
+const brainstormingTeams = [
+  {
+    id: 1,
+    responsable: "Nicolas Tardy",
+    members: [
+      { prenom: "Olivier", nom: "Granda", pole: "Communication" },
+      { prenom: "Jessie", nom: "Missilou", pole: "E-commerce" },
+      { prenom: "Mourad", nom: "Baïche", pole: "CRM - Trafic" },
+      { prenom: "Laura", nom: "Venâncio", pole: "E-commerce" },
+      { prenom: "Anais", nom: "Atienza", pole: "E-commerce" },
+      { prenom: "Andrea", nom: "Becker", pole: "E-commerce" },
+      { prenom: "Jenna", nom: "Blancon", pole: "E-commerce" },
+      { prenom: "Marie", nom: "Palus", pole: "E-commerce" },
+      { prenom: "Astrid", nom: "Minier", pole: "Expérience Client" },
+      { prenom: "Caroline", nom: "De Oliveira", pole: "Expérience Client" },
+      { prenom: "Yassine", nom: "Mesmoudi", pole: "CRM - Trafic" },
+    ],
+  },
+  {
+    id: 2,
+    responsable: "Marjorie Courtet",
+    members: [
+      { prenom: "Julie", nom: "Gouvard", pole: "Communication" },
+      { prenom: "Virginie", nom: "Nerrière", pole: "Communication" },
+      { prenom: "Théo", nom: "Decherf", pole: "CRM - Trafic" },
+      { prenom: "Emilie", nom: "Coatelant", pole: "CRM - Trafic" },
+      { prenom: "Imen", nom: "Krichen", pole: "E-commerce" },
+      { prenom: "Träcy", nom: "Ignace Mboe", pole: "E-commerce" },
+      { prenom: "Pauline", nom: "Periquito", pole: "E-commerce" },
+      { prenom: "Amandine", nom: "Alaso", pole: "E-commerce" },
+      { prenom: "Sandra", nom: "Notelet", pole: "Expérience Client" },
+      { prenom: "Kamila", nom: "Lamri", pole: "Expérience Client" },
+      { prenom: "Mathilde", nom: "Grassin", pole: "E-commerce" },
+    ],
+  },
+  {
+    id: 3,
+    responsable: "Nathalie Jacquot",
+    members: [
+      { prenom: "Victoria", nom: "Onephitak", pole: "Communication" },
+      { prenom: "Mélanie", nom: "Sagon", pole: "Communication" },
+      { prenom: "Ountourou Pilar", nom: "Gomis", pole: "Communication" },
+      { prenom: "Mayez", nom: "Hassan", pole: "CRM - Trafic" },
+      { prenom: "Adib", nom: "Samari", pole: "CRM - Trafic" },
+      { prenom: "Quentin", nom: "Drouhot", pole: "E-commerce" },
+      { prenom: "Florian", nom: "Renault", pole: "E-commerce" },
+      { prenom: "Tania", nom: "Lefebvre", pole: "E-commerce" },
+      { prenom: "Elisa", nom: "Lorthios", pole: "Expérience Client" },
+      { prenom: "Millia", nom: "Netro", pole: "Expérience Client" },
+    ],
+  },
+  {
+    id: 4,
+    responsable: "Laure Dutournier",
+    members: [
+      { prenom: "Nathalie", nom: "Maitre", pole: "Communication" },
+      { prenom: "Sarah", nom: "Evenden", pole: "Communication" },
+      { prenom: "Lauren", nom: "Destombes", pole: "Communication" },
+      { prenom: "Axelle", nom: "Piquet / Duvignacq", pole: "CRM - Trafic" },
+      { prenom: "Claire", nom: "Zegarra", pole: "E-commerce" },
+      { prenom: "Nordine", nom: "Iriout", pole: "E-commerce" },
+      { prenom: "Nada", nom: "Ben Brahim", pole: "CRM - Trafic" },
+      { prenom: "Sharia", nom: "Ponn", pole: "E-commerce" },
+      { prenom: "Iman", nom: "Maghzaz", pole: "Trade Marketing & Retail media" },
+      { prenom: "Marie", nom: "Albiez", pole: "Expérience Client" },
+      { prenom: "Mélanie", nom: "Courpron", pole: "Services financiers" },
+    ],
+  },
+  {
+    id: 5,
+    responsable: "Valérie Krauss",
+    members: [
+      { prenom: "Penda", nom: "Cisse", pole: "Communication" },
+      { prenom: "Eva", nom: "Habert", pole: "Communication" },
+      { prenom: "Laetitia", nom: "Boutros", pole: "Communication" },
+      { prenom: "Mehdi", nom: "Kebaili", pole: "CRM - Trafic" },
+      { prenom: "Dalel", nom: "Jlidi", pole: "E-commerce" },
+      { prenom: "Jade", nom: "Oba Icket", pole: "E-commerce" },
+      { prenom: "Wesley", nom: "Bijaoui", pole: "E-commerce" },
+      { prenom: "Amel", nom: "Mbatsogo", pole: "E-commerce" },
+      { prenom: "Christophe", nom: "Holvoet", pole: "Expérience Client" },
+      { prenom: "Anaïs", nom: "Mastio", pole: "Services financiers" },
+      { prenom: "Antoine", nom: "Jacquemond", pole: "E-commerce" },
+    ],
+  },
+  {
+    id: 6,
+    responsable: "Solenne Pasqualetti",
+    members: [
+      { prenom: "Pérola", nom: "Passaro", pole: "Communication" },
+      { prenom: "Kathleen", nom: "Derras", pole: "Communication" },
+      { prenom: "Laetitia", nom: "Otto", pole: "Communication" },
+      { prenom: "Samuel", nom: "Zaabouli-Bourgeois", pole: "CRM - Trafic" },
+      { prenom: "Emilie", nom: "Pelé", pole: "CRM - Trafic" },
+      { prenom: "Shahinez", nom: "Belghit", pole: "E-commerce" },
+      { prenom: "Dylan", nom: "Gandon", pole: "E-commerce" },
+      { prenom: "Aubane", nom: "Olivero de Rubiana", pole: "E-commerce" },
+      { prenom: "Rayane", nom: "Adghar", pole: "Expérience Client" },
+      { prenom: "Binta", nom: "Hama", pole: "Expérience Client" },
+      { prenom: "Valérie", nom: "Rochereau", pole: "Services financiers" },
+    ],
+  },
+  {
+    id: 7,
+    responsable: null,
+    members: [
+      { prenom: "Laure", nom: "Leconte", pole: "Communication" },
+      { prenom: "Frédéric", nom: "Kellenberger", pole: "Communication" },
+      { prenom: "Adrien", nom: "Djeabal", pole: "E-commerce" },
+      { prenom: "Coralie", nom: "Le Bozec", pole: "E-commerce" },
+      { prenom: "Alexane", nom: "Weber", pole: "E-commerce" },
+      { prenom: "Anaele", nom: "Vitse", pole: "CRM - Trafic" },
+      { prenom: "Océane", nom: "Hadjadj", pole: "Expérience Client" },
+      { prenom: "François", nom: "Bertonneau", pole: "Expérience Client" },
+      { prenom: "Audrey", nom: "Barna", pole: "Trade Marketing & Retail media" },
+      { prenom: "Monica", nom: "Ribeiro Da Silva", pole: "E-commerce" },
+      { prenom: "Célia", nom: "Lefebvre", pole: "Communication" },
+    ],
+  },
+  {
+    id: 8,
+    responsable: "Marie Amsellem",
+    members: [
+      { prenom: "Alexandra", nom: "Gauthier", pole: "Communication" },
+      { prenom: "Olivia", nom: "Cabaret", pole: "Communication" },
+      { prenom: "Jérémy", nom: "Tissier", pole: "E-commerce" },
+      { prenom: "Azur", nom: "Chadaine", pole: "E-commerce" },
+      { prenom: "Thomas", nom: "Phommarath", pole: "E-commerce" },
+      { prenom: "Morgane", nom: "Vidament", pole: "E-commerce" },
+      { prenom: "Amélia", nom: "Machado", pole: "E-commerce" },
+      { prenom: "Esther", nom: "Livio", pole: "Expérience Client" },
+      { prenom: "Sophie", nom: "Bourgeois", pole: "Expérience Client" },
+      { prenom: "Margaux", nom: "Beudet", pole: "Trade Marketing & Retail media" },
+    ],
+  },
+];
+
 const oscarCategories = [
   {
     id: "fashion",
@@ -369,6 +506,8 @@ const state = {
   selectedMoodId: "good-vibes",
   pseudoDraft: "",
   selectedNominee: null,
+  brainstormSearch: "",
+  brainstormMyTeam: null,
   selectedWallEmoji: "🎉",
   wallTextDraft: "",
   liveState: {
@@ -1405,20 +1544,149 @@ function renderTrophies() {
   `;
 }
 
+function poleColor(pole) {
+  const map = {
+    "Communication": "#ff4fc4",
+    "E-commerce": "#21e6ff",
+    "CRM - Trafic": "#ffd76a",
+    "Expérience Client": "#45f2a2",
+    "Trade Marketing & Retail media": "#ff315f",
+    "Services financiers": "#a78bfa",
+  };
+  return map[pole] || "rgba(255,255,255,0.5)";
+}
+
+function renderBrainstorming() {
+  const query = (state.brainstormSearch || "").toLowerCase().trim();
+  const myTeamId = state.brainstormMyTeam;
+
+  const matchesMember = (m) =>
+    !query ||
+    m.prenom.toLowerCase().includes(query) ||
+    m.nom.toLowerCase().includes(query);
+
+  const filteredTeams = brainstormingTeams
+    .map((t) => ({ ...t, matchedMembers: t.members.filter(matchesMember) }))
+    .filter((t) => !query || t.matchedMembers.length > 0);
+
+  const myTeam = myTeamId ? brainstormingTeams.find((t) => t.id === myTeamId) : null;
+
+  return `
+    ${renderTopbar()}
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Atelier</p>
+        <h2>Brainstorming</h2>
+      </div>
+      ${myTeam ? `<span class="pill">Équipe ${myTeam.id}</span>` : ""}
+    </section>
+
+    ${myTeam ? `
+      <div class="bs-my-team panel">
+        <p class="eyebrow" style="margin:0 0 6px">Mon équipe</p>
+        <div class="bs-team-header">
+          <span class="bs-team-number">${myTeam.id}</span>
+          <div>
+            <strong>Équipe ${myTeam.id}</strong>
+            ${myTeam.responsable ? `<p class="reason" style="margin:2px 0 0">Resp. ${escapeHtml(myTeam.responsable)}</p>` : ""}
+          </div>
+          <button class="ghost" style="width:auto;min-height:36px;padding:6px 10px;font-size:0.8rem" onclick="state.brainstormMyTeam=null;render()">Changer</button>
+        </div>
+        <div class="bs-member-list" style="margin-top:10px">
+          ${myTeam.members.map((m) => `
+            <div class="bs-member">
+              <span class="bs-pole-dot" style="background:${poleColor(m.pole)}"></span>
+              <span><strong>${escapeHtml(m.prenom)}</strong> ${escapeHtml(m.nom)}</span>
+              <span class="bs-pole-label">${escapeHtml(m.pole)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <p class="muted" style="text-align:center;margin:10px 0 16px;font-size:0.82rem">Toutes les équipes ci-dessous</p>
+    ` : `
+      <p class="reason" style="margin-bottom:12px">Cherche ton prénom ou nom pour trouver ton équipe, puis appuie sur "C'est mon équipe".</p>
+    `}
+
+    <a
+      class="bs-download-btn"
+      href="/assets/template-brainstorming.pptx"
+      download="template-brainstorming.pptx"
+    >
+      <span>📥</span>
+      <span>Télécharger le template PowerPoint</span>
+    </a>
+
+    <div class="bs-search-wrap">
+      <input
+        class="input bs-search"
+        type="search"
+        placeholder="Chercher un prénom ou un nom…"
+        value="${escapeHtml(state.brainstormSearch || "")}"
+        oninput="state.brainstormSearch=this.value; render(); this.focus();"
+      />
+    </div>
+
+    <div class="bs-teams">
+      ${filteredTeams.length === 0
+        ? `<p class="empty-state">Aucun résultat pour "${escapeHtml(query)}"</p>`
+        : filteredTeams.map((team) => {
+            const isOpen = query ? true : (state[`bs_open_${team.id}`] || false);
+            const isMyTeam = myTeamId === team.id;
+            const membersToShow = query ? team.matchedMembers : team.members;
+            return `
+              <article class="bs-team-card ${isMyTeam ? "is-my-team" : ""}">
+                <button
+                  class="bs-team-toggle"
+                  onclick="state['bs_open_${team.id}'] = ${!isOpen}; render();"
+                >
+                  <span class="bs-team-number">${team.id}</span>
+                  <div class="bs-team-info">
+                    <strong>Équipe ${team.id}</strong>
+                    ${team.responsable ? `<span class="bs-resp">Resp. ${escapeHtml(team.responsable)}</span>` : `<span class="bs-resp muted">Responsable non défini</span>`}
+                  </div>
+                  <span class="bs-count">${team.members.length} membres</span>
+                  <span class="bs-chevron">${isOpen ? "▲" : "▼"}</span>
+                </button>
+                ${isOpen ? `
+                  <div class="bs-member-list">
+                    ${membersToShow.map((m) => `
+                      <div class="bs-member ${query && matchesMember(m) ? "is-match" : ""}">
+                        <span class="bs-pole-dot" style="background:${poleColor(m.pole)}"></span>
+                        <span><strong>${escapeHtml(m.prenom)}</strong> ${escapeHtml(m.nom)}</span>
+                        <span class="bs-pole-label">${escapeHtml(m.pole)}</span>
+                      </div>
+                    `).join("")}
+                    ${!isMyTeam ? `
+                      <button class="primary" style="margin-top:12px" onclick="state.brainstormMyTeam=${team.id}; state.brainstormSearch=''; render();">
+                        ✓ C'est mon équipe
+                      </button>
+                    ` : `<p class="bs-my-tag">✓ Mon équipe</p>`}
+                  </div>
+                ` : ""}
+              </article>
+            `;
+          }).join("")}
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
 function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
-    { id: "vote", label: "Les Oscars", icon: "★" },
+    { id: "brainstorm", label: "Brainstorming", icon: "💡", gated: true },
+    { id: "vote", label: "Oscars", icon: "★" },
     { id: "wall", label: "Mur", icon: "💬" },
-    { id: "reveal", label: "Reveal", icon: "★" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
 
+  const visibleItems = items.filter(
+    (item) => !item.gated || Boolean(state.liveState?.brainstormOpen)
+  );
   return `
     <nav class="bottom-nav" aria-label="Navigation principale">
-      ${items
-        .map((item) => {
-          return `
+      ${visibleItems
+        .map((item) => `
             <button
               class="nav-item ${state.view === item.id ? "is-active" : ""}"
               onclick="state.view='${item.id}'; render();"
@@ -1426,8 +1694,7 @@ function renderBottomNav() {
               <span class="nav-icon">${item.icon}</span>
               <span>${item.label}</span>
             </button>
-          `;
-        })
+          `)
         .join("")}
     </nav>
   `;
@@ -1458,6 +1725,7 @@ function render() {
 
   const views = {
     home: renderHome,
+    brainstorm: renderBrainstorming,
     vote: renderVote,
     reveal: renderOscarReveal,
     wall: renderWall,

@@ -1331,3 +1331,165 @@ h3 {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+
+/* ── Brainstorming ─────────────────────────────── */
+.bs-search-wrap {
+  margin-bottom: 14px;
+}
+
+.bs-search {
+  min-height: 48px;
+  border-radius: 999px;
+  padding: 12px 18px;
+}
+
+.bs-teams {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 16px;
+}
+
+.bs-team-card {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.bs-team-card.is-my-team {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.14), rgba(255, 79, 196, 0.08));
+}
+
+.bs-team-toggle {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  border: none;
+}
+
+.bs-team-number {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--pink));
+  color: #23110d;
+  font-size: 1.2rem;
+  font-weight: 950;
+  flex-shrink: 0;
+}
+
+.bs-team-info {
+  display: grid;
+  gap: 2px;
+}
+
+.bs-team-info strong {
+  font-size: 1rem;
+}
+
+.bs-resp {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.bs-count {
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.bs-chevron {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.bs-member-list {
+  display: grid;
+  gap: 6px;
+  padding: 0 14px 14px;
+}
+
+.bs-member {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.88rem;
+}
+
+.bs-member.is-match {
+  background: rgba(255, 215, 106, 0.14);
+  border: 1px solid rgba(255, 215, 106, 0.3);
+}
+
+.bs-pole-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bs-pole-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.bs-my-tag {
+  margin: 10px 0 0;
+  text-align: center;
+  color: var(--gold);
+  font-weight: 950;
+  font-size: 0.9rem;
+}
+
+.bs-my-team {
+  margin-bottom: 4px;
+}
+
+.bs-team-header {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.bs-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin-bottom: 14px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 2px dashed rgba(33, 230, 255, 0.5);
+  background: rgba(33, 230, 255, 0.07);
+  color: var(--cyan);
+  font-weight: 950;
+  font-size: 0.95rem;
+  text-decoration: none;
+  text-align: center;
+}
+
+.bs-download-btn:active {
+  background: rgba(33, 230, 255, 0.16);
+}
