@@ -11,7 +11,7 @@ const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
 const ADMIN_CODE = process.env.ADMIN_CODE || "beleket";
 const PRESENCE_TTL_MS = 18000;
-const VOTE_DURATION_MS = 90 * 1000;
+const VOTE_DURATION_MS = 60 * 1000;
 
 const participants = new Map();
 const liveState = loadLiveState();
