@@ -61,17 +61,18 @@ const brainstormingTeams = [
     angle: "Relation & humain",
     angleDetail: "Le rôle des vendeurs et du conseil",
     members: [
-      { prenom: "Olivier", nom: "Granda", pole: "Communication" },
-      { prenom: "Jessie", nom: "Missilou", pole: "E-commerce" },
+      { prenom: "Olivier", nom: "GRANDA", pole: "Communication" },
+      { prenom: "Jessie", nom: "MISSILOU", pole: "E-commerce" },
       { prenom: "Mourad", nom: "Baïche", pole: "CRM - Trafic" },
       { prenom: "Laura", nom: "Venâncio", pole: "E-commerce" },
-      { prenom: "Anais", nom: "Atienza", pole: "E-commerce" },
-      { prenom: "Andrea", nom: "Becker", pole: "E-commerce" },
-      { prenom: "Jenna", nom: "Blancon", pole: "E-commerce" },
-      { prenom: "Marie", nom: "Palus", pole: "E-commerce" },
-      { prenom: "Astrid", nom: "Minier", pole: "Expérience Client" },
-      { prenom: "Caroline", nom: "De Oliveira", pole: "Expérience Client" },
-      { prenom: "Yassine", nom: "Mesmoudi", pole: "CRM - Trafic" },
+      { prenom: "Anais", nom: "ATIENZA", pole: "E-commerce" },
+      { prenom: "Andrea", nom: "BECKER", pole: "E-commerce" },
+      { prenom: "Jenna", nom: "BLANCON", pole: "E-commerce" },
+      { prenom: "Marie", nom: "PALUS", pole: "E-commerce" },
+      { prenom: "Astrid", nom: "MINIER", pole: "Expérience Client" },
+      { prenom: "Caroline", nom: "DE OLIVEIRA", pole: "Expérience Client" },
+      { prenom: "Yassine", nom: "Mesmoudi", pole: "CRM - Trafic" },      { prenom: "Nicolas", nom: "Tardy", pole: "Management" },
+
     ],
   },
   {
@@ -81,17 +82,18 @@ const brainstormingTeams = [
     angle: "Data & personnalisation",
     angleDetail: "CRM, IA et programmes relationnels",
     members: [
-      { prenom: "Julie", nom: "Gouvard", pole: "Communication" },
-      { prenom: "Virginie", nom: "Nerrière", pole: "Communication" },
+      { prenom: "Julie", nom: "GOUVARD", pole: "Communication" },
+      { prenom: "Virginie", nom: "NERRIERE", pole: "Communication" },
       { prenom: "Théo", nom: "Decherf", pole: "CRM - Trafic" },
-      { prenom: "Emilie", nom: "Coatelant", pole: "CRM - Trafic" },
+      { prenom: "Emilie", nom: "COATELANT", pole: "CRM - Trafic" },
       { prenom: "Imen", nom: "Krichen", pole: "E-commerce" },
       { prenom: "Träcy", nom: "Ignace Mboe", pole: "E-commerce" },
-      { prenom: "Pauline", nom: "Periquito", pole: "E-commerce" },
+      { prenom: "Pauline", nom: "PERIQUITO", pole: "E-commerce" },
       { prenom: "Amandine", nom: "Alaso", pole: "E-commerce" },
-      { prenom: "Sandra", nom: "Notelet", pole: "Expérience Client" },
-      { prenom: "Kamila", nom: "Lamri", pole: "Expérience Client" },
-      { prenom: "Mathilde", nom: "Grassin", pole: "E-commerce" },
+      { prenom: "Sandra", nom: "NOTELET", pole: "Expérience Client" },
+      { prenom: "Kamila", nom: "LAMRI", pole: "Expérience Client" },
+      { prenom: "Mathilde", nom: "GRASSIN", pole: "E-commerce" },      { prenom: "Marjorie", nom: "Courtet", pole: "Management" },
+
     ],
   },
   {
@@ -103,14 +105,15 @@ const brainstormingTeams = [
     members: [
       { prenom: "Victoria", nom: "Onephitak", pole: "Communication" },
       { prenom: "Mélanie", nom: "Sagon", pole: "Communication" },
-      { prenom: "Ountourou Pilar", nom: "Gomis", pole: "Communication" },
+      { prenom: "Ountourou Pilar", nom: "GOMIS", pole: "Communication" },
       { prenom: "Mayez", nom: "Hassan", pole: "CRM - Trafic" },
       { prenom: "Adib", nom: "Samari", pole: "CRM - Trafic" },
-      { prenom: "Quentin", nom: "Drouhot", pole: "E-commerce" },
-      { prenom: "Florian", nom: "Renault", pole: "E-commerce" },
+      { prenom: "Quentin", nom: "DROUHOT", pole: "E-commerce" },
+      { prenom: "Florian", nom: "RENAULT", pole: "E-commerce" },
       { prenom: "Tania", nom: "Lefebvre", pole: "E-commerce" },
       { prenom: "Elisa", nom: "Lorthios", pole: "Expérience Client" },
-      { prenom: "Millia", nom: "Netro", pole: "Expérience Client" },
+      { prenom: "Millia", nom: "NETRO", pole: "Expérience Client" },      { prenom: "Nathalie", nom: "Jacquot", pole: "Management" },
+
     ],
   },
   {
@@ -120,17 +123,18 @@ const brainstormingTeams = [
     angle: "Services & fidélisation",
     angleDetail: "Programme de fidélité, avantages, abonnements",
     members: [
-      { prenom: "Nathalie", nom: "Maitre", pole: "Communication" },
+      { prenom: "Nathalie", nom: "MAITRE", pole: "Communication" },
       { prenom: "Sarah", nom: "Evenden", pole: "Communication" },
-      { prenom: "Lauren", nom: "Destombes", pole: "Communication" },
-      { prenom: "Axelle", nom: "Piquet / Duvignacq", pole: "CRM - Trafic" },
+      { prenom: "Lauren", nom: "DESTOMBES", pole: "Communication" },
+      { prenom: "Axelle", nom: "PIQUET / DUVIGNACQ", pole: "CRM - Trafic" },
       { prenom: "Claire", nom: "Zegarra", pole: "E-commerce" },
-      { prenom: "Nordine", nom: "Iriout", pole: "E-commerce" },
+      { prenom: "Nordine", nom: "IRIOUT", pole: "E-commerce" },
       { prenom: "Nada", nom: "Ben Brahim", pole: "CRM - Trafic" },
-      { prenom: "Sharia", nom: "Ponn", pole: "E-commerce" },
-      { prenom: "Iman", nom: "Maghzaz", pole: "Trade Marketing & Retail media" },
-      { prenom: "Marie", nom: "Albiez", pole: "Expérience Client" },
-      { prenom: "Mélanie", nom: "Courpron", pole: "Services financiers" },
+      { prenom: "Sharia", nom: "PONN", pole: "E-commerce" },
+      { prenom: "Iman", nom: "MAGHZAZ", pole: "Trade Marketing & Retail media" },
+      { prenom: "Marie", nom: "ALBIEZ", pole: "Expérience Client" },
+      { prenom: "Mélanie", nom: "Courpron", pole: "Services financiers" },      { prenom: "Laure", nom: "Dutournier", pole: "Management" },
+
     ],
   },
   {
@@ -140,17 +144,18 @@ const brainstormingTeams = [
     angle: "Marque & contenus",
     angleDetail: "Codes, ton, créateurs et formats",
     members: [
-      { prenom: "Penda", nom: "Cisse", pole: "Communication" },
-      { prenom: "Eva", nom: "Habert", pole: "Communication" },
+      { prenom: "Penda", nom: "CISSE", pole: "Communication" },
+      { prenom: "Eva", nom: "HABERT", pole: "Communication" },
       { prenom: "Laetitia", nom: "Boutros", pole: "Communication" },
-      { prenom: "Mehdi", nom: "Kebaili", pole: "CRM - Trafic" },
+      { prenom: "Mehdi", nom: "KEBAILI", pole: "CRM - Trafic" },
       { prenom: "Dalel", nom: "Jlidi", pole: "E-commerce" },
       { prenom: "Jade", nom: "Oba Icket", pole: "E-commerce" },
       { prenom: "Wesley", nom: "Bijaoui", pole: "E-commerce" },
       { prenom: "Amel", nom: "Mbatsogo", pole: "E-commerce" },
       { prenom: "Christophe", nom: "Holvoet", pole: "Expérience Client" },
       { prenom: "Anaïs", nom: "Mastio", pole: "Services financiers" },
-      { prenom: "Antoine", nom: "Jacquemond", pole: "E-commerce" },
+      { prenom: "Antoine", nom: "Jacquemond", pole: "E-commerce" },      { prenom: "Valérie", nom: "Krauss", pole: "Management" },
+
     ],
   },
   {
@@ -162,15 +167,16 @@ const brainstormingTeams = [
     members: [
       { prenom: "Pérola", nom: "Passaro", pole: "Communication" },
       { prenom: "Kathleen", nom: "Derras", pole: "Communication" },
-      { prenom: "Laetitia", nom: "Otto", pole: "Communication" },
-      { prenom: "Samuel", nom: "Zaabouli-Bourgeois", pole: "CRM - Trafic" },
+      { prenom: "Laetitia", nom: "OTTO", pole: "Communication" },
+      { prenom: "Samuel", nom: "ZAABOULI-BOURGEOIS", pole: "CRM - Trafic" },
       { prenom: "Emilie", nom: "Pelé", pole: "CRM - Trafic" },
-      { prenom: "Shahinez", nom: "Belghit", pole: "E-commerce" },
-      { prenom: "Dylan", nom: "Gandon", pole: "E-commerce" },
+      { prenom: "Shahinez", nom: "BELGHIT", pole: "E-commerce" },
+      { prenom: "Dylan", nom: "GANDON", pole: "E-commerce" },
       { prenom: "Aubane", nom: "Olivero de Rubiana", pole: "E-commerce" },
       { prenom: "Rayane", nom: "Adghar", pole: "Expérience Client" },
-      { prenom: "Binta", nom: "Hama", pole: "Expérience Client" },
-      { prenom: "Valérie", nom: "Rochereau", pole: "Services financiers" },
+      { prenom: "Binta", nom: "HAMA", pole: "Expérience Client" },
+      { prenom: "Valérie", nom: "ROCHEREAU", pole: "Services financiers" },      { prenom: "Solenne", nom: "Pasqualetti", pole: "Management" },
+
     ],
   },
   {
@@ -180,16 +186,16 @@ const brainstormingTeams = [
     angle: "Vie & usages",
     angleDetail: "Premier logement, accessibilité, durabilité",
     members: [
-      { prenom: "Laure", nom: "Leconte", pole: "Communication" },
-      { prenom: "Frédéric", nom: "Kellenberger", pole: "Communication" },
+      { prenom: "Laure", nom: "LECONTE", pole: "Communication" },
+      { prenom: "Frédéric", nom: "KELLENBERGER", pole: "Communication" },
       { prenom: "Adrien", nom: "Djeabal", pole: "E-commerce" },
       { prenom: "Coralie", nom: "Le Bozec", pole: "E-commerce" },
       { prenom: "Alexane", nom: "Weber", pole: "E-commerce" },
-      { prenom: "Anaele", nom: "Vitse", pole: "CRM - Trafic" },
-      { prenom: "Océane", nom: "Hadjadj", pole: "Expérience Client" },
+      { prenom: "Anaele", nom: "VITSE", pole: "CRM - Trafic" },
+      { prenom: "Océane", nom: "HADJADJ", pole: "Expérience Client" },
       { prenom: "François", nom: "Bertonneau", pole: "Expérience Client" },
-      { prenom: "Audrey", nom: "Barna", pole: "Trade Marketing & Retail media" },
-      { prenom: "Monica", nom: "Ribeiro Da Silva", pole: "E-commerce" },
+      { prenom: "Audrey", nom: "BARNA", pole: "Trade Marketing & Retail media" },
+      { prenom: "Monica", nom: "RIBEIRO DA SILVA", pole: "E-commerce" },
       { prenom: "Célia", nom: "Lefebvre", pole: "Communication" },
     ],
   },
@@ -202,14 +208,15 @@ const brainstormingTeams = [
     members: [
       { prenom: "Alexandra", nom: "Gauthier", pole: "Communication" },
       { prenom: "Olivia", nom: "Cabaret", pole: "Communication" },
-      { prenom: "Jérémy", nom: "Tissier", pole: "E-commerce" },
+      { prenom: "Jérémy", nom: "TISSIER", pole: "E-commerce" },
       { prenom: "Azur", nom: "Chadaine", pole: "E-commerce" },
-      { prenom: "Thomas", nom: "Phommarath", pole: "E-commerce" },
+      { prenom: "Thomas", nom: "PHOMMARATH", pole: "E-commerce" },
       { prenom: "Morgane", nom: "Vidament", pole: "E-commerce" },
       { prenom: "Amélia", nom: "Machado", pole: "E-commerce" },
       { prenom: "Esther", nom: "Livio", pole: "Expérience Client" },
       { prenom: "Sophie", nom: "Bourgeois", pole: "Expérience Client" },
-      { prenom: "Margaux", nom: "Beudet", pole: "Trade Marketing & Retail media" },
+      { prenom: "Margaux", nom: "Beudet", pole: "Trade Marketing & Retail media" },      { prenom: "Marie", nom: "Amsellem", pole: "Management" },
+
     ],
   },
 ];
@@ -532,6 +539,11 @@ const state = {
   selectedNominee: null,
   brainstormSearch: "",
   brainstormMyTeam: null,
+  pradaStats: null,
+  pradaReineSearch: "",
+  pradaRoiSearch: "",
+  pradaReineSelected: null,
+  pradaRoiSelected: null,
   selectedWallEmoji: "🎉",
   wallTextDraft: "",
   liveState: {
@@ -867,6 +879,9 @@ async function syncLiveState() {
     if (previousCategory !== state.liveState.activeCategoryId) {
       state.selectedNominee = null;
     }
+
+    // Sync prada results when vote closes automatically
+    if (state.view === "prada") syncPradaStats().then(render);
 
     render();
   } catch {
@@ -1580,6 +1595,45 @@ function poleColor(pole) {
   return map[pole] || "rgba(255,255,255,0.5)";
 }
 
+function normalize(str) {
+  return String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+const allParticipants = brainstormingTeams
+  .flatMap((t) => t.members.map((m) => ({ fullName: `${m.prenom} ${m.nom}`, prenom: m.prenom, nom: m.nom, team: t.id })))
+  .sort((a, b) => a.nom.localeCompare(b.nom));
+
+async function syncPradaStats() {
+  try {
+    const params = new URLSearchParams({ participantId: state.profile?.id || "" });
+    const res = await fetch(`/api/prada-votes?${params}`);
+    if (res.ok) state.pradaStats = await res.json();
+  } catch {}
+}
+
+async function submitPradaVote(category) {
+  const name = category === "reine" ? state.pradaReineSelected : state.pradaRoiSelected;
+  if (!name || !state.profile) return;
+  try {
+    const res = await fetch("/api/prada-votes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ participantId: state.profile.id, pseudo: state.profile.pseudo, avatarId: state.profile.avatarId, category, name }),
+    });
+    if (res.ok) {
+      state.pradaStats = await res.json();
+      if (category === "reine") { state.pradaReineSearch = ""; state.pradaReineSelected = null; }
+      else { state.pradaRoiSearch = ""; state.pradaRoiSelected = null; }
+      notify("Vote enregistré 👗");
+      render();
+    } else if (res.status === 409) {
+      notify("Le vote Prada est fermé.");
+    }
+  } catch {
+    notify("Erreur réseau, réessaie.");
+  }
+}
+
 const bsPhases = [
   {
     num: 1, label: "Diverger", time: "20 min", horaire: "14h15 → 14h35",
@@ -1631,14 +1685,131 @@ const bsPitch = [
   { dur: "30 s", label: "La punchline", desc: "Une phrase choc qui résume la proposition." },
 ];
 
+function pradaCountdown() {
+  const closesAt = Date.parse(state.liveState?.pradaClosesAt || "");
+  if (!closesAt) return 0;
+  return Math.max(0, closesAt - Date.now());
+}
+
+function isPradaOpen() {
+  return Boolean(state.liveState?.pradaOpen) && pradaCountdown() > 0;
+}
+
+function renderPradaSearchBox(category, searchKey, selectedKey, label, icon) {
+  const query = normalize(state[searchKey] || "").trim();
+  const selected = state[selectedKey];
+  const alreadyVoted = state.pradaStats?.myVotes?.[category];
+  const results = query.length >= 2
+    ? allParticipants.filter((p) => normalize(p.fullName).includes(normalize(query)) || normalize(p.prenom).includes(normalize(query)) || normalize(p.nom).includes(normalize(query))).slice(0, 8)
+    : [];
+
+  return `
+    <div class="prada-vote-block ${alreadyVoted ? "is-voted" : ""}">
+      <div class="prada-cat-header">
+        <span class="prada-cat-icon">${icon}</span>
+        <div>
+          <strong>${label}</strong>
+          ${alreadyVoted ? `<p class="prada-voted-name">✓ ${escapeHtml(alreadyVoted)}</p>` : ""}
+        </div>
+      </div>
+      ${alreadyVoted ? "" : `
+        <input
+          class="input prada-search"
+          type="search"
+          data-prada-cat="${category}"
+          placeholder="Cherche un prénom ou un nom…"
+          value="${escapeHtml(state[searchKey] || "")}"
+          oninput="state['${searchKey}']=this.value; state['${selectedKey}']=null; render(); const f=document.querySelector('[data-prada-cat=${category}]'); if(f){f.focus();f.setSelectionRange(f.value.length,f.value.length);}"
+        />
+        ${results.length ? `
+          <div class="prada-results">
+            ${results.map((p) => `
+              <button
+                class="prada-result ${selected === p.fullName ? "is-selected" : ""}"
+                onclick="state['${selectedKey}']=${jsString(p.fullName).replace(/"/g, "&quot;")}; state['${searchKey}']=${jsString(p.fullName).replace(/"/g, "&quot;")}; render();"
+              >
+                <strong>${escapeHtml(p.prenom)}</strong> ${escapeHtml(p.nom)}
+                <span class="prada-team-badge">Éq. ${p.team}</span>
+              </button>
+            `).join("")}
+          </div>
+        ` : query.length >= 2 ? `<p class="empty-state">Aucun résultat</p>` : ""}
+        ${selected ? `
+          <button class="primary" style="margin-top:10px" onclick="submitPradaVote('${category}')">
+            Voter pour ${escapeHtml(selected)} ${icon}
+          </button>
+        ` : ""}
+      `}
+    </div>
+  `;
+}
+
+function renderPrada() {
+  const isOpen = isPradaOpen();
+  const stats = state.pradaStats;
+  const remainingMs = pradaCountdown();
+  const isClosed = !isOpen && Boolean(state.liveState?.pradaClosesAt) && !Boolean(state.liveState?.pradaOpen);
+
+  if (!state.pradaStats) syncPradaStats();
+
+  return `
+    ${renderTopbar()}
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Soirée · Vote</p>
+        <h2>Le diable s'habille en Prada</h2>
+      </div>
+      ${isOpen ? `<span class="pill prada-pill">${formatCountdown(remainingMs)}</span>` : ""}
+    </section>
+
+    ${isOpen ? `
+      <p class="reason" style="margin-bottom:16px">Qui est le <strong>roi</strong> et la <strong>reine</strong> de la soirée ? Vote pour tes favoris — 1 vote par catégorie.</p>
+      ${renderPradaSearchBox("reine", "pradaReineSearch", "pradaReineSelected", "La Reine de la soirée", "👸")}
+      ${renderPradaSearchBox("roi", "pradaRoiSearch", "pradaRoiSelected", "Le Roi de la soirée", "🤴")}
+    ` : isClosed && stats ? `
+      <div class="prada-results-wrap">
+        <div class="prada-podium-section">
+          <p class="eyebrow">👸 La Reine de la soirée</p>
+          ${stats.reine?.length ? stats.reine.slice(0, 3).map((r, i) => `
+            <div class="prada-podium-row ${i === 0 ? "is-winner" : ""}">
+              <span class="prada-rank">${["👑", "🥈", "🥉"][i]}</span>
+              <strong>${escapeHtml(r.name)}</strong>
+              <span class="prada-pct">${stats.total.reine ? Math.round((r.count / stats.total.reine) * 100) : 0}% · ${r.count} vote${r.count > 1 ? "s" : ""}</span>
+            </div>
+          `).join("") : `<p class="empty-state">Aucun vote</p>`}
+        </div>
+        <div class="prada-podium-section">
+          <p class="eyebrow">🤴 Le Roi de la soirée</p>
+          ${stats.roi?.length ? stats.roi.slice(0, 3).map((r, i) => `
+            <div class="prada-podium-row ${i === 0 ? "is-winner" : ""}">
+              <span class="prada-rank">${["👑", "🥈", "🥉"][i]}</span>
+              <strong>${escapeHtml(r.name)}</strong>
+              <span class="prada-pct">${stats.total.roi ? Math.round((r.count / stats.total.roi) * 100) : 0}% · ${r.count} vote${r.count > 1 ? "s" : ""}</span>
+            </div>
+          `).join("") : `<p class="empty-state">Aucun vote</p>`}
+        </div>
+        <p class="muted" style="text-align:center;font-size:0.8rem;margin-top:8px">${stats.total.reine} votes reine · ${stats.total.roi} votes roi</p>
+      </div>
+    ` : `
+      <article class="panel trophy-standby">
+        <div class="status-icon">👗</div>
+        <h2>Le vote n'est pas encore ouvert</h2>
+        <p class="reason">L'admin ouvrira le vote au bon moment pendant la soirée.</p>
+      </article>
+    `}
+
+    ${renderBottomNav()}
+  `;
+}
+
 function renderBrainstorming() {
-  const query = (state.brainstormSearch || "").toLowerCase().trim();
+  const query = normalize(state.brainstormSearch || "").trim();
   const myTeamId = state.brainstormMyTeam;
 
   const matchesMember = (m) =>
     !query ||
-    m.prenom.toLowerCase().includes(query) ||
-    m.nom.toLowerCase().includes(query);
+    normalize(m.prenom).includes(query) ||
+    normalize(m.nom).includes(query);
 
   const filteredTeams = brainstormingTeams
     .map((t) => ({ ...t, matchedMembers: t.members.filter(matchesMember) }))
@@ -1753,7 +1924,7 @@ function renderBrainstorming() {
     <div class="bs-search-wrap">
       <input class="input bs-search" type="search" placeholder="Chercher un prénom ou un nom…"
         value="${escapeHtml(state.brainstormSearch || "")}"
-        oninput="state.brainstormSearch=this.value; render(); this.focus();" />
+        oninput="state.brainstormSearch=this.value; render(); const f=document.querySelector('.bs-search'); if(f){f.focus();f.setSelectionRange(f.value.length,f.value.length);}" />
     </div>
 
     <div class="bs-teams">
@@ -1799,15 +1970,20 @@ function renderBrainstorming() {
 function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
-    { id: "brainstorm", label: "Brainstorming", icon: "💡", gated: true },
+    { id: "brainstorm", label: "Brainstorming", icon: "💡", gate: "brainstormOpen" },
     { id: "vote", label: "Oscars", icon: "★" },
+    { id: "prada", label: "Prada", icon: "👗", gate: "pradaOpen", alwaysWhenActive: true },
     { id: "wall", label: "Mur", icon: "💬" },
     { id: "trophies", label: "Prix", icon: "🏆" },
   ];
 
-  const visibleItems = items.filter(
-    (item) => !item.gated || Boolean(state.liveState?.brainstormOpen)
-  );
+  const visibleItems = items.filter((item) => {
+    if (!item.gate) return true;
+    const flagOn = Boolean(state.liveState?.[item.gate]);
+    // prada stays visible after close so results remain accessible
+    if (item.alwaysWhenActive) return flagOn || (state.pradaStats && (state.pradaStats.total?.reine > 0 || state.pradaStats.total?.roi > 0));
+    return flagOn;
+  });
   return `
     <nav class="bottom-nav" aria-label="Navigation principale">
       ${visibleItems
@@ -1852,6 +2028,7 @@ function render() {
     home: renderHome,
     brainstorm: renderBrainstorming,
     vote: renderVote,
+    prada: renderPrada,
     reveal: renderOscarReveal,
     wall: renderWall,
     trophies: renderTrophies,

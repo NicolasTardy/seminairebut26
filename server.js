@@ -9,14 +9,17 @@ const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
 const LIVE_STATE_FILE = path.join(DATA_DIR, "live-state.json");
 const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
+const PRADA_FILE = path.join(DATA_DIR, "prada-votes.json");
 const ADMIN_CODE = process.env.ADMIN_CODE || "beleket";
 const PRESENCE_TTL_MS = 18000;
 const VOTE_DURATION_MS = 60 * 1000;
+const PRADA_DURATION_MS = 60 * 60 * 1000;
 
 const participants = new Map();
 const liveState = loadLiveState();
 const messages = loadMessages();
 const votes = loadVotes();
+const pradaVotes = loadPradaVotes();
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -27,6 +30,54 @@ const mimeTypes = {
   ".svg": "image/svg+xml",
   ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 };
+
+function loadPradaVotes() {
+  try {
+    return JSON.parse(fs.readFileSync(PRADA_FILE, "utf8"));
+  } catch {
+    return { reine: {}, roi: {} };
+  }
+}
+
+function savePradaVotes() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(PRADA_FILE, JSON.stringify(pradaVotes, null, 2));
+}
+
+function isPradaWindowOpen() {
+  if (!liveState.pradaOpen) return false;
+  const closesAt = Date.parse(liveState.pradaClosesAt || "");
+  if (!closesAt || isNaN(closesAt)) return true;
+  if (Date.now() <= closesAt) return true;
+  liveState.pradaOpen = false;
+  liveState.updatedAt = new Date().toISOString();
+  saveLiveState();
+  return false;
+}
+
+function pradaResults(participantId) {
+  const tally = (bucket) => {
+    const counts = {};
+    for (const [vid, v] of Object.entries(bucket)) {
+      counts[v.name] = (counts[v.name] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  };
+  return {
+    reine: tally(pradaVotes.reine || {}),
+    roi: tally(pradaVotes.roi || {}),
+    myVotes: {
+      reine: pradaVotes.reine?.[participantId]?.name || null,
+      roi: pradaVotes.roi?.[participantId]?.name || null,
+    },
+    total: {
+      reine: Object.keys(pradaVotes.reine || {}).length,
+      roi: Object.keys(pradaVotes.roi || {}).length,
+    },
+  };
+}
 
 function loadVotes() {
   try {
@@ -55,6 +106,7 @@ function loadLiveState() {
       updatedAt: new Date().toISOString(),
       voteOpen: false,
       brainstormOpen: false,
+      pradaOpen: false,
       ...JSON.parse(fs.readFileSync(LIVE_STATE_FILE, "utf8")),
     };
   } catch {
@@ -66,6 +118,7 @@ function loadLiveState() {
       updatedAt: new Date().toISOString(),
       voteOpen: false,
       brainstormOpen: false,
+      pradaOpen: false,
     };
   }
 }
@@ -318,6 +371,17 @@ const server = http.createServer(async (request, response) => {
         voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
         voteResultOpen: categoryChanged ? false : Boolean(payload.voteResultOpen ?? liveState.voteResultOpen),
         brainstormOpen: Boolean(payload.brainstormOpen ?? liveState.brainstormOpen),
+        pradaOpen: (() => {
+          const wants = payload.pradaOpen !== undefined ? Boolean(payload.pradaOpen) : Boolean(liveState.pradaOpen);
+          const was = Boolean(liveState.pradaOpen);
+          if (wants && !was) {
+            const now2 = Date.now();
+            liveState.pradaOpenedAt = new Date(now2).toISOString();
+            liveState.pradaClosesAt = new Date(now2 + PRADA_DURATION_MS).toISOString();
+          }
+          if (!wants) { liveState.pradaOpenedAt = ""; liveState.pradaClosesAt = ""; }
+          return wants;
+        })(),
       };
 
       Object.assign(liveState, nextState);
@@ -400,6 +464,42 @@ const server = http.createServer(async (request, response) => {
     saveVotes();
     saveLiveState();
     sendJson(response, 200, voteStats(""));
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/prada-votes" && request.method === "GET") {
+    isPradaWindowOpen();
+    sendJson(response, 200, pradaResults(cleanText(requestUrl.searchParams.get("participantId"), 80)));
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/prada-votes" && request.method === "POST") {
+    if (!isPradaWindowOpen()) {
+      sendJson(response, 409, { error: "Prada vote closed" });
+      return;
+    }
+    try {
+      const payload = JSON.parse(await readBody(request));
+      const participantId = cleanText(payload.participantId, 80);
+      const category = cleanText(payload.category, 10);
+      const name = cleanText(payload.name, 120);
+      if (!participantId || !["reine", "roi"].includes(category) || !name) {
+        sendJson(response, 400, { error: "Missing fields" });
+        return;
+      }
+      pradaVotes[category] ||= {};
+      if (!pradaVotes[category][participantId]) {
+        pradaVotes[category][participantId] = {
+          name,
+          pseudo: cleanText(payload.pseudo || "Participant", 48),
+          createdAt: new Date().toISOString(),
+        };
+        savePradaVotes();
+      }
+      sendJson(response, 200, pradaResults(participantId));
+    } catch {
+      sendJson(response, 400, { error: "Invalid payload" });
+    }
     return;
   }
 

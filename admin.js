@@ -246,10 +246,13 @@ function renderLiveControl() {
       </div>
 
       <div class="atoggle-group">
-        <p class="atoggle-section">Brainstorming</p>
-        ${adminToggle("Équipes visibles", "💡", Boolean(live.brainstormOpen),
+        <p class="atoggle-section">Rubriques</p>
+        ${adminToggle("Brainstorming visible", "💡", Boolean(live.brainstormOpen),
           "saveLiveState({ brainstormOpen: true })",
           "saveLiveState({ brainstormOpen: false })")}
+        ${adminToggle("Vote Prada ouvert (1h)", "👗", Boolean(live.pradaOpen),
+          "saveLiveState({ pradaOpen: true })",
+          "saveLiveState({ pradaOpen: false })")}
       </div>
 
       <div class="atoggle-group">
