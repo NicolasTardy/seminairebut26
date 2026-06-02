@@ -57,6 +57,9 @@ const brainstormingTeams = [
   {
     id: 1,
     responsable: "Nicolas Tardy",
+    question: 1,
+    angle: "Relation & humain",
+    angleDetail: "Le rôle des vendeurs et du conseil",
     members: [
       { prenom: "Olivier", nom: "Granda", pole: "Communication" },
       { prenom: "Jessie", nom: "Missilou", pole: "E-commerce" },
@@ -74,6 +77,9 @@ const brainstormingTeams = [
   {
     id: 2,
     responsable: "Marjorie Courtet",
+    question: 1,
+    angle: "Data & personnalisation",
+    angleDetail: "CRM, IA et programmes relationnels",
     members: [
       { prenom: "Julie", nom: "Gouvard", pole: "Communication" },
       { prenom: "Virginie", nom: "Nerrière", pole: "Communication" },
@@ -91,6 +97,9 @@ const brainstormingTeams = [
   {
     id: 3,
     responsable: "Nathalie Jacquot",
+    question: 1,
+    angle: "Communauté & valeurs",
+    angleDetail: "Engagement, RSE, raison d'être",
     members: [
       { prenom: "Victoria", nom: "Onephitak", pole: "Communication" },
       { prenom: "Mélanie", nom: "Sagon", pole: "Communication" },
@@ -107,6 +116,9 @@ const brainstormingTeams = [
   {
     id: 4,
     responsable: "Laure Dutournier",
+    question: 1,
+    angle: "Services & fidélisation",
+    angleDetail: "Programme de fidélité, avantages, abonnements",
     members: [
       { prenom: "Nathalie", nom: "Maitre", pole: "Communication" },
       { prenom: "Sarah", nom: "Evenden", pole: "Communication" },
@@ -124,6 +136,9 @@ const brainstormingTeams = [
   {
     id: 5,
     responsable: "Valérie Krauss",
+    question: 2,
+    angle: "Marque & contenus",
+    angleDetail: "Codes, ton, créateurs et formats",
     members: [
       { prenom: "Penda", nom: "Cisse", pole: "Communication" },
       { prenom: "Eva", nom: "Habert", pole: "Communication" },
@@ -141,6 +156,9 @@ const brainstormingTeams = [
   {
     id: 6,
     responsable: "Solenne Pasqualetti",
+    question: 2,
+    angle: "Expérience & magasin",
+    angleDetail: "Phygital, immersif, social commerce",
     members: [
       { prenom: "Pérola", nom: "Passaro", pole: "Communication" },
       { prenom: "Kathleen", nom: "Derras", pole: "Communication" },
@@ -158,6 +176,9 @@ const brainstormingTeams = [
   {
     id: 7,
     responsable: null,
+    question: 2,
+    angle: "Vie & usages",
+    angleDetail: "Premier logement, accessibilité, durabilité",
     members: [
       { prenom: "Laure", nom: "Leconte", pole: "Communication" },
       { prenom: "Frédéric", nom: "Kellenberger", pole: "Communication" },
@@ -175,6 +196,9 @@ const brainstormingTeams = [
   {
     id: 8,
     responsable: "Marie Amsellem",
+    question: 2,
+    angle: "Engagement & impact",
+    angleDetail: "Causes, inclusion, seconde main",
     members: [
       { prenom: "Alexandra", nom: "Gauthier", pole: "Communication" },
       { prenom: "Olivia", nom: "Cabaret", pole: "Communication" },
@@ -1556,6 +1580,57 @@ function poleColor(pole) {
   return map[pole] || "rgba(255,255,255,0.5)";
 }
 
+const bsPhases = [
+  {
+    num: 1, label: "Diverger", time: "20 min", horaire: "14h15 → 14h35",
+    icon: "🌪️", color: "#ff4fc4",
+    desc: "Chacun écrit 1 idée par post-it en silence. Quantité avant qualité.",
+    outil: "Crazy 8 · post-its individuels",
+  },
+  {
+    num: 2, label: "Cartographier", time: "15 min", horaire: "14h35 → 14h50",
+    icon: "🗺️", color: "#ffd76a",
+    desc: "Mise en commun à voix haute. Regrouper les idées par thèmes (clusters).",
+    outil: "Affinity mapping au mur",
+  },
+  {
+    num: 3, label: "Converger", time: "20 min", horaire: "14h50 → 15h10",
+    icon: "🎯", color: "#45f2a2",
+    desc: "Vote à gommettes (3 par personne). Top 3 idées retenues, enrichies en groupe.",
+    outil: "Dot voting + débat éclair",
+  },
+  {
+    num: 4, label: "Formaliser", time: "10 min", horaire: "15h10 → 15h20",
+    icon: "📋", color: "#21e6ff",
+    desc: "Remplir le template livrable et préparer le pitch de 5 minutes.",
+    outil: "Template téléchargeable",
+  },
+];
+
+const bsRules = [
+  { num: 1, icon: "💥", rule: "Quantité avant qualité", detail: "Vise l'abondance, le tri viendra plus tard." },
+  { num: 2, icon: "🤐", rule: "Pas de jugement", detail: "On ne critique aucune idée pendant la divergence." },
+  { num: 3, icon: "✨", rule: "Rebondir", detail: "Le « oui, et… » plutôt que le « oui, mais… »." },
+  { num: 4, icon: "🚀", rule: "Oser l'inattendu", detail: "Les idées folles ouvrent des chemins inexplorés." },
+  { num: 5, icon: "📝", rule: "1 idée = 1 post-it", detail: "Pour pouvoir trier, voter et combiner facilement." },
+  { num: 6, icon: "📵", rule: "Rester concentré", detail: "Téléphone en silence, attention au groupe." },
+];
+
+const bsRoles = [
+  { role: "Animateur·trice", desc: "Garant de la méthode", icon: "🎙️" },
+  { role: "Scribe", desc: "Capte et restitue", icon: "✏️" },
+  { role: "Gardien du temps", desc: "Tient les phases", icon: "⏱️" },
+  { role: "Porte-parole", desc: "Pitche en plénière", icon: "📣" },
+];
+
+const bsPitch = [
+  { dur: "30 s", label: "Le contexte", desc: "Question traitée et angle d'attaque du groupe." },
+  { dur: "1 min", label: "L'insight clé", desc: "Le constat le plus marquant qui a guidé la réflexion." },
+  { dur: "2 min", label: "Les 3 idées-forces", desc: "Présentation des idées priorisées et de leur logique." },
+  { dur: "1 min", label: "Le plan d'action", desc: "Premiers leviers : quoi, par qui, quand." },
+  { dur: "30 s", label: "La punchline", desc: "Une phrase choc qui résume la proposition." },
+];
+
 function renderBrainstorming() {
   const query = (state.brainstormSearch || "").toLowerCase().trim();
   const myTeamId = state.brainstormMyTeam;
@@ -1571,59 +1646,114 @@ function renderBrainstorming() {
 
   const myTeam = myTeamId ? brainstormingTeams.find((t) => t.id === myTeamId) : null;
 
+  const guideSection = state.bs_guide || "phases";
+
   return `
     ${renderTopbar()}
-    <section class="section-title">
-      <div>
-        <p class="eyebrow">Atelier</p>
-        <h2>Brainstorming</h2>
-      </div>
-      ${myTeam ? `<span class="pill">Équipe ${myTeam.id}</span>` : ""}
-    </section>
 
     ${myTeam ? `
-      <div class="bs-my-team panel">
-        <p class="eyebrow" style="margin:0 0 6px">Mon équipe</p>
-        <div class="bs-team-header">
-          <span class="bs-team-number">${myTeam.id}</span>
+      <div class="bs-mission-card">
+        <div class="bs-mission-top">
+          <span class="bs-team-number" style="width:48px;height:48px;font-size:1.4rem">${myTeam.id}</span>
           <div>
-            <strong>Équipe ${myTeam.id}</strong>
-            ${myTeam.responsable ? `<p class="reason" style="margin:2px 0 0">Resp. ${escapeHtml(myTeam.responsable)}</p>` : ""}
+            <p class="eyebrow" style="margin:0">Équipe ${myTeam.id} · ${myTeam.question === 1 ? "Question Fidélité" : "Question Génération Z"}</p>
+            <strong style="font-size:1.1rem">${escapeHtml(myTeam.angle)}</strong>
+            <p class="reason" style="margin:2px 0 0">${escapeHtml(myTeam.angleDetail)}</p>
           </div>
-          <button class="ghost" style="width:auto;min-height:36px;padding:6px 10px;font-size:0.8rem" onclick="state.brainstormMyTeam=null;render()">Changer</button>
         </div>
-        <div class="bs-member-list" style="margin-top:10px">
-          ${myTeam.members.map((m) => `
-            <div class="bs-member">
-              <span class="bs-pole-dot" style="background:${poleColor(m.pole)}"></span>
-              <span><strong>${escapeHtml(m.prenom)}</strong> ${escapeHtml(m.nom)}</span>
-              <span class="bs-pole-label">${escapeHtml(m.pole)}</span>
-            </div>
-          `).join("")}
+        <div class="bs-q-block ${myTeam.question === 1 ? "q1" : "q2"}">
+          ${myTeam.question === 1
+            ? `<p class="bs-q-label">Q1</p><p class="bs-q-text">Quelle sera la <strong>fidélité de demain</strong> dans le retail spécialisé, et particulièrement chez BUT France ?</p>`
+            : `<p class="bs-q-label">Q2</p><p class="bs-q-text">Comment réussir à <strong>parler à la Génération Z</strong> quand on s'appelle BUT ?</p>`
+          }
         </div>
+        <button class="bs-change-team" onclick="state.brainstormMyTeam=null;render()">Changer d'équipe</button>
       </div>
-      <p class="muted" style="text-align:center;margin:10px 0 16px;font-size:0.82rem">Toutes les équipes ci-dessous</p>
     ` : `
-      <p class="reason" style="margin-bottom:12px">Cherche ton prénom ou nom pour trouver ton équipe, puis appuie sur "C'est mon équipe".</p>
+      <div class="bs-welcome">
+        <p class="eyebrow">13h30 · Séminaire BUT France</p>
+        <h2>Atelier Brainstorming</h2>
+        <p class="reason">80 participants · 8 équipes · 3h15 pour innover ensemble.</p>
+      </div>
     `}
 
-    <a
-      class="bs-download-btn"
-      href="/assets/template-brainstorming.pptx"
-      download="template-brainstorming.pptx"
-    >
-      <span>📥</span>
-      <span>Télécharger le template PowerPoint</span>
+    <!-- GUIDE TABS -->
+    <div class="bs-guide-tabs">
+      <button class="bs-gtab ${guideSection === "phases" ? "is-active" : ""}" onclick="state.bs_guide='phases';render()">🌪️ Les 4 phases</button>
+      <button class="bs-gtab ${guideSection === "rules" ? "is-active" : ""}" onclick="state.bs_guide='rules';render()">📌 Règles d'or</button>
+      <button class="bs-gtab ${guideSection === "roles" ? "is-active" : ""}" onclick="state.bs_guide='roles';render()">🎭 Rôles</button>
+      <button class="bs-gtab ${guideSection === "pitch" ? "is-active" : ""}" onclick="state.bs_guide='pitch';render()">📣 Pitch 5 min</button>
+    </div>
+
+    ${guideSection === "phases" ? `
+      <div class="bs-phases">
+        ${bsPhases.map((p) => `
+          <div class="bs-phase-card">
+            <div class="bs-phase-head" style="border-color:${p.color}">
+              <span class="bs-phase-icon">${p.icon}</span>
+              <div>
+                <div class="bs-phase-label">Phase ${p.num} · <strong>${p.label}</strong></div>
+                <div class="bs-phase-timing">${p.horaire} · <strong>${p.time}</strong></div>
+              </div>
+            </div>
+            <p class="bs-phase-desc">${p.desc}</p>
+            <span class="bs-phase-outil">🛠️ ${p.outil}</span>
+          </div>
+        `).join("")}
+      </div>
+    ` : guideSection === "rules" ? `
+      <div class="bs-rules">
+        ${bsRules.map((r) => `
+          <div class="bs-rule">
+            <span class="bs-rule-icon">${r.icon}</span>
+            <div>
+              <strong>${r.num}. ${r.rule}</strong>
+              <p class="reason">${r.detail}</p>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    ` : guideSection === "roles" ? `
+      <div class="bs-roles">
+        ${bsRoles.map((r) => `
+          <div class="bs-role-card">
+            <span class="bs-role-icon">${r.icon}</span>
+            <div>
+              <strong>${r.role}</strong>
+              <p class="reason">${r.desc}</p>
+            </div>
+          </div>
+        `).join("")}
+        <p class="muted" style="font-size:0.8rem;text-align:center;margin-top:4px">Désignez ces 4 rôles dès le début de l'atelier.</p>
+      </div>
+    ` : `
+      <div class="bs-pitch">
+        <p class="reason" style="margin-bottom:10px">Chaque groupe dispose de <strong>5 minutes</strong> pour pitcher ses conclusions :</p>
+        ${bsPitch.map((s) => `
+          <div class="bs-pitch-step">
+            <span class="bs-pitch-dur">${s.dur}</span>
+            <div>
+              <strong>${s.label}</strong>
+              <p class="reason">${s.desc}</p>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `}
+
+    <!-- DOWNLOAD -->
+    <a class="bs-download-btn" href="/assets/template-brainstorming.pptx" download="template-brainstorming.pptx">
+      <span>📥</span><span>Télécharger le template PowerPoint</span>
     </a>
 
+    <!-- TEAMS -->
+    <div class="bs-section-title">
+      <p class="eyebrow">Les équipes</p>
+    </div>
     <div class="bs-search-wrap">
-      <input
-        class="input bs-search"
-        type="search"
-        placeholder="Chercher un prénom ou un nom…"
+      <input class="input bs-search" type="search" placeholder="Chercher un prénom ou un nom…"
         value="${escapeHtml(state.brainstormSearch || "")}"
-        oninput="state.brainstormSearch=this.value; render(); this.focus();"
-      />
+        oninput="state.brainstormSearch=this.value; render(); this.focus();" />
     </div>
 
     <div class="bs-teams">
@@ -1635,16 +1765,13 @@ function renderBrainstorming() {
             const membersToShow = query ? team.matchedMembers : team.members;
             return `
               <article class="bs-team-card ${isMyTeam ? "is-my-team" : ""}">
-                <button
-                  class="bs-team-toggle"
-                  onclick="state['bs_open_${team.id}'] = ${!isOpen}; render();"
-                >
+                <button class="bs-team-toggle" onclick="state['bs_open_${team.id}'] = ${!isOpen}; render();">
                   <span class="bs-team-number">${team.id}</span>
                   <div class="bs-team-info">
                     <strong>Équipe ${team.id}</strong>
-                    ${team.responsable ? `<span class="bs-resp">Resp. ${escapeHtml(team.responsable)}</span>` : `<span class="bs-resp muted">Responsable non défini</span>`}
+                    <span class="bs-resp">${escapeHtml(team.angle)} · ${team.question === 1 ? "Fidélité" : "Gén. Z"}</span>
                   </div>
-                  <span class="bs-count">${team.members.length} membres</span>
+                  <span class="bs-count">${team.members.length}</span>
                   <span class="bs-chevron">${isOpen ? "▲" : "▼"}</span>
                 </button>
                 ${isOpen ? `
@@ -1656,11 +1783,9 @@ function renderBrainstorming() {
                         <span class="bs-pole-label">${escapeHtml(m.pole)}</span>
                       </div>
                     `).join("")}
-                    ${!isMyTeam ? `
-                      <button class="primary" style="margin-top:12px" onclick="state.brainstormMyTeam=${team.id}; state.brainstormSearch=''; render();">
-                        ✓ C'est mon équipe
-                      </button>
-                    ` : `<p class="bs-my-tag">✓ Mon équipe</p>`}
+                    ${!isMyTeam
+                      ? `<button class="primary" style="margin-top:12px" onclick="state.brainstormMyTeam=${team.id}; state.brainstormSearch=''; render();">✓ C'est mon équipe</button>`
+                      : `<p class="bs-my-tag">✓ Mon équipe</p>`}
                   </div>
                 ` : ""}
               </article>

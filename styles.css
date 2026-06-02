@@ -1493,3 +1493,161 @@ h3 {
 .bs-download-btn:active {
   background: rgba(33, 230, 255, 0.16);
 }
+
+/* ── Brainstorming guide ────────────────────── */
+.bs-welcome { margin-bottom: 14px; }
+
+.bs-mission-card {
+  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 106, 0.1), rgba(255, 79, 196, 0.07));
+}
+
+.bs-mission-top {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.bs-q-block {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.bs-q-block.q1 { background: rgba(33, 230, 255, 0.1); border-left: 3px solid #21e6ff; }
+.bs-q-block.q2 { background: rgba(255, 79, 196, 0.1); border-left: 3px solid #ff4fc4; }
+
+.bs-q-label { margin: 0 0 4px; font-weight: 950; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.bs-q-text { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+
+.bs-change-team {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.bs-guide-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.bs-gtab {
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  cursor: pointer;
+  text-align: center;
+  min-height: 48px;
+}
+
+.bs-gtab.is-active {
+  border-color: var(--gold);
+  background: rgba(255, 215, 106, 0.14);
+  color: var(--gold);
+}
+
+/* Phases */
+.bs-phases { display: grid; gap: 8px; margin-bottom: 14px; }
+
+.bs-phase-card {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+}
+
+.bs-phase-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid;
+}
+
+.bs-phase-icon { font-size: 1.6rem; }
+.bs-phase-label { font-size: 0.9rem; }
+.bs-phase-timing { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.bs-phase-desc { margin: 0 0 6px; font-size: 0.88rem; line-height: 1.4; }
+.bs-phase-outil { font-size: 0.75rem; color: var(--cyan); }
+
+/* Rules */
+.bs-rules { display: grid; gap: 8px; margin-bottom: 14px; }
+
+.bs-rule {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+}
+
+.bs-rule-icon { font-size: 1.3rem; text-align: center; }
+.bs-rule strong { font-size: 0.9rem; }
+.bs-rule .reason { margin: 2px 0 0; font-size: 0.82rem; }
+
+/* Roles */
+.bs-roles { display: grid; gap: 8px; margin-bottom: 14px; }
+
+.bs-role-card {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+}
+
+.bs-role-icon { font-size: 1.4rem; text-align: center; }
+
+/* Pitch */
+.bs-pitch { display: grid; gap: 8px; margin-bottom: 14px; }
+
+.bs-pitch-step {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+}
+
+.bs-pitch-dur {
+  display: grid;
+  place-items: center;
+  padding: 6px 4px;
+  border-radius: 6px;
+  background: rgba(255, 215, 106, 0.18);
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-align: center;
+  align-self: start;
+}
+
+.bs-pitch-step strong { font-size: 0.9rem; }
+.bs-pitch-step .reason { margin: 2px 0 0; font-size: 0.82rem; }
+
+.bs-section-title { margin: 16px 0 8px; }

@@ -199,6 +199,21 @@ function renderCodePanel() {
   `;
 }
 
+function adminToggle(label, icon, isOn, onAction, offAction) {
+  return `
+    <div class="atoggle-row">
+      <span class="atoggle-label">${icon} ${label}</span>
+      <button
+        class="atoggle ${isOn ? "is-on" : "is-off"}"
+        onclick="${isOn ? offAction : onAction}"
+      >
+        <span class="atoggle-knob"></span>
+        <span class="atoggle-text">${isOn ? "ON" : "OFF"}</span>
+      </button>
+    </div>
+  `;
+}
+
 function renderLiveControl() {
   const live = adminState.liveState || {
     activeCategoryId: "very-bad-trip",
@@ -206,6 +221,8 @@ function renderLiveControl() {
     revealedHonoreeIds: [],
     activeStepId: "welcome-breakfast",
     voteOpen: false,
+    brainstormOpen: false,
+    voteResultOpen: false,
   };
   const category = categoryById(live.activeCategoryId);
   const voteIsOpen = isVoteOpen();
@@ -215,66 +232,52 @@ function renderLiveControl() {
   return `
     <section class="panel">
       <p class="eyebrow">Régie live</p>
-      <div class="vote-admin-status ${voteIsOpen ? "is-open" : "is-closed"}">
-        <span>${voteIsOpen ? "Vote ouvert" : "Vote fermé"}</span>
-        <strong>${voteIsOpen ? formatCountdown(remainingMs) : "OFF"}</strong>
+
+      <div class="astat-banner ${voteIsOpen ? "is-vote-on" : ""}">
+        <div class="astat-row">
+          <span>👥 Connectés</span><strong>${adminState.presence?.online ?? 0}</strong>
+        </div>
+        <div class="astat-row">
+          <span>🗳️ Ont voté</span><strong>${votedCount}</strong>
+        </div>
+        <div class="astat-row">
+          <span>⏱️ Vote</span><strong>${voteIsOpen ? formatCountdown(remainingMs) : "—"}</strong>
+        </div>
       </div>
-      <div class="metric-grid">
-        <div class="metric"><span class="micro">Connectés</span><strong>${adminState.presence?.online ?? 0}</strong></div>
-        <div class="metric"><span class="micro">Ont voté</span><strong>${votedCount}</strong></div>
-        <div class="metric"><span class="micro">Catégorie</span><strong>${category.title.replace("Oscar ", "")}</strong></div>
+
+      <div class="atoggle-group">
+        <p class="atoggle-section">Brainstorming</p>
+        ${adminToggle("Équipes visibles", "💡", Boolean(live.brainstormOpen),
+          "saveLiveState({ brainstormOpen: true })",
+          "saveLiveState({ brainstormOpen: false })")}
       </div>
-      <div class="admin-actions" style="margin-bottom:4px">
-        <button class="vote-toggle is-open-action" onclick="saveLiveState({ brainstormOpen: true })" ${live.brainstormOpen ? "disabled" : ""}>
-          <span>💡</span>
-          <strong>${live.brainstormOpen ? "Équipes visibles" : "Ouvrir brainstorming"}</strong>
-        </button>
-        <button class="vote-toggle is-close-action" onclick="saveLiveState({ brainstormOpen: false })" ${live.brainstormOpen ? "" : "disabled"}>
-          <span>🔒</span>
-          <strong>Masquer équipes</strong>
-        </button>
+
+      <div class="atoggle-group">
+        <p class="atoggle-section">Oscars</p>
+        <div class="field" style="margin:0 0 10px">
+          <label for="category" class="atoggle-section" style="margin-bottom:6px;display:block">Catégorie active</label>
+          <select class="admin-select" id="category" onchange="saveLiveState({ activeCategoryId: this.value, voteOpen: false })">
+            ${adminCategories.map((item) => `<option value="${item.id}" ${item.id === live.activeCategoryId ? "selected" : ""}>${item.title.replace(/^Oscar /, "")}</option>`).join("")}
+          </select>
+        </div>
+        ${adminToggle("Vote ouvert (1:30)", "🗳️", voteIsOpen,
+          "openVote()",
+          "closeVote()")}
+        ${adminToggle("Résultats affichés", "📊", Boolean(live.voteResultOpen) && !voteIsOpen,
+          "saveLiveState({ voteResultOpen: true })",
+          "saveLiveState({ voteResultOpen: false })")}
       </div>
-      <div class="field">
-        <label for="step">Étape active</label>
+
+      <div class="atoggle-group">
+        <p class="atoggle-section">Étape du programme</p>
         <select class="admin-select" id="step" onchange="saveLiveState({ activeStepId: this.value })">
           ${adminSteps.map((step) => `<option value="${step.id}" ${step.id === live.activeStepId ? "selected" : ""}>${step.label}</option>`).join("")}
         </select>
       </div>
-      <div class="field">
-        <label for="category">Catégorie Oscar active</label>
-        <select class="admin-select" id="category" onchange="saveLiveState({ activeCategoryId: this.value, voteOpen: false })">
-          ${adminCategories
-            .map((item) => `<option value="${item.id}" ${item.id === live.activeCategoryId ? "selected" : ""}>${item.title}</option>`)
-            .join("")}
-        </select>
-      </div>
-      <div class="admin-actions">
-        <button class="vote-toggle is-open-action" onclick="openVote()" ${voteIsOpen ? "disabled" : ""}>
-          <span>▶</span>
-          <strong>${voteIsOpen ? "Vote déjà ouvert" : "Ouvrir 1:30"}</strong>
-        </button>
-        <button class="vote-toggle is-close-action" onclick="closeVote()" ${voteIsOpen ? "" : "disabled"}>
-          <span>■</span>
-          <strong>${voteIsOpen ? "Fermer maintenant" : "Vote fermé"}</strong>
-        </button>
-      </div>
-      <div class="admin-actions" style="margin-top:8px">
-        <button class="vote-toggle is-open-action" onclick="saveLiveState({ voteResultOpen: true })" ${live.voteResultOpen && !voteIsOpen ? "disabled" : ""}>
-          <span>📊</span>
-          <strong>${live.voteResultOpen && !voteIsOpen ? "Résultats affichés" : "Afficher résultats"}</strong>
-        </button>
-        <button class="vote-toggle is-close-action" onclick="saveLiveState({ voteResultOpen: false })" ${live.voteResultOpen && !voteIsOpen ? "" : "disabled"}>
-          <span>🙈</span>
-          <strong>Masquer résultats</strong>
-        </button>
-      </div>
+
       <div class="admin-reset-row">
-        <button class="admin-reset-btn" onclick="resetVotes(${jsAdminString(live.activeCategoryId)})">
-          ↺ Remettre à zéro cette catégorie
-        </button>
-        <button class="admin-reset-btn admin-reset-all" onclick="resetVotes('all')">
-          ↺ Tout remettre à zéro
-        </button>
+        <button class="admin-reset-btn" onclick="resetVotes(${jsAdminString(live.activeCategoryId)})">↺ RAZ catégorie</button>
+        <button class="admin-reset-btn admin-reset-all" onclick="resetVotes('all')">↺ RAZ tous les votes</button>
       </div>
     </section>
   `;
@@ -301,29 +304,35 @@ function renderHonoreeControl() {
   const activeHonoreeId = adminState.liveState?.activeHonoreeId || "";
   const honoree = honoreeById(activeHonoreeId);
   const revealedCount = adminState.liveState?.revealedHonoreeIds?.length || 0;
-  const title = activeHonoreeId === "all" ? "Liste complète affichée" : honoree ? honoree.name : "Prix masqués";
+  const isVisible = Boolean(activeHonoreeId);
+  const currentLabel = activeHonoreeId === "all"
+    ? "📋 Liste complète"
+    : honoree
+    ? `🏆 ${honoree.name}`
+    : "🙈 Masqué";
 
   return `
     <section class="panel">
       <p class="eyebrow">Remise des prix</p>
-      <h2>${title}</h2>
-      <p class="admin-note">${Math.min(revealedCount, adminHonorees.length)} / ${adminHonorees.length} révélés</p>
-      <div class="field">
-        <label for="honoree">Élu affiché</label>
+
+      <div class="astat-banner ${isVisible ? "is-vote-on" : ""}">
+        <div class="astat-row"><span>Affiché</span><strong>${currentLabel}</strong></div>
+        <div class="astat-row"><span>Révélés</span><strong>${Math.min(revealedCount, adminHonorees.length)} / ${adminHonorees.length}</strong></div>
+      </div>
+
+      <div class="atoggle-group">
         <select class="admin-select" id="honoree" onchange="saveLiveState({ activeHonoreeId: this.value })">
-          <option value="" ${activeHonoreeId ? "" : "selected"}>Masquer les prix</option>
-          <option value="all" ${activeHonoreeId === "all" ? "selected" : ""}>Afficher la liste complète</option>
-          ${adminHonorees
-            .map((item) => `<option value="${item.id}" ${item.id === activeHonoreeId ? "selected" : ""}>${item.name} · ${item.title}</option>`)
-            .join("")}
+          <option value="" ${activeHonoreeId ? "" : "selected"}>— Masquer —</option>
+          <option value="all" ${activeHonoreeId === "all" ? "selected" : ""}>📋 Liste complète</option>
+          ${adminHonorees.map((item) => `<option value="${item.id}" ${item.id === activeHonoreeId ? "selected" : ""}>🏆 ${item.name} · ${item.title}</option>`).join("")}
         </select>
       </div>
-      <div class="admin-actions">
-        <button class="secondary" onclick="showPreviousHonoree()">Précédent</button>
-        <button class="primary" onclick="showNextHonoree()">Suivant</button>
+
+      <div class="admin-actions" style="margin-top:10px">
+        <button class="admin-nav-btn" onclick="showPreviousHonoree()">← Précédent</button>
+        <button class="admin-nav-btn is-next" onclick="showNextHonoree()">Suivant →</button>
       </div>
-      <button class="primary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: 'all' })">Afficher la liste complète</button>
-      <button class="secondary admin-wide-action" onclick="saveLiveState({ activeHonoreeId: '' })">Masquer la récompense</button>
+      <button class="secondary admin-wide-action" style="margin-top:8px" onclick="saveLiveState({ activeHonoreeId: '' })">🙈 Tout masquer</button>
     </section>
   `;
 }
