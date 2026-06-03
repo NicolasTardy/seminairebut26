@@ -473,3 +473,51 @@
 .alert-send-btn:active {
   filter: brightness(0.9);
 }
+
+/* ── Nouveau layout linéaire chronologique ─── */
+.admin-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-logout-small {
+  padding: 6px 12px;
+  min-height: 34px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,49,95,0.15);
+  color: #ffd0dc;
+  font-size: 0.78rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.admin-section {
+  margin-bottom: 10px;
+}
+
+.admin-section-label {
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
+/* Sur desktop : 2 colonnes pour les sections lourdes */
+@media (min-width: 700px) {
+  .admin-shell {
+    width: min(100%, 700px);
+  }
+}

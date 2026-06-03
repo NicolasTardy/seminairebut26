@@ -405,89 +405,116 @@ function renderResults() {
   `;
 }
 
-function renderAdminTabs() {
-  const tabs = [
-    { id: "live", label: "Régie", icon: "▶" },
-    { id: "prix", label: "Prix", icon: "🏆" },
-    { id: "resultats", label: "Résultats", icon: "📊" },
-  ];
-  return `
-    <nav class="admin-tabs">
-      ${tabs.map((t) => `
-        <button class="admin-tab ${adminState.tab === t.id ? "is-active" : ""}" onclick="adminState.tab='${t.id}'; renderAdmin();">
-          <span>${t.icon}</span>
-          <span>${t.label}</span>
-        </button>
-      `).join("")}
-    </nav>
-  `;
-}
-
 function renderAdmin() {
   const app = document.querySelector("#admin-app");
   const isLoggedIn = adminState.liveState !== null;
+  const live = adminState.liveState || {};
+  const voteIsOpen = isVoteOpen();
+  const remainingMs = voteRemainingMs();
+
   app.innerHTML = `
-    <header class="topbar">
+    <!-- HEADER -->
+    <header class="admin-header-bar">
       <div class="brand">
         <div class="brand-mark">★</div>
         <div>
-          <div class="brand-title">Régie admin</div>
-          <div class="brand-subtitle">BUT · Séminaire 2026</div>
+          <div class="brand-title">Régie BUT 2026</div>
         </div>
       </div>
-      <a class="ghost admin-app-link" href="/">App</a>
+      <div class="admin-header-actions">
+        <a class="ghost admin-app-link" href="/" style="min-height:36px;padding:6px 12px;font-size:0.82rem">App ↗</a>
+        ${isLoggedIn ? `<button class="admin-logout-small" type="button" onclick="logoutAdmin()">Déco</button>` : ""}
+      </div>
     </header>
-    ${isLoggedIn ? renderAdminTabs() : ""}
-    <div class="admin-grid">
+
+    <!-- 0. IDENTIFICATION -->
+    <div class="admin-section">
+      <div class="admin-section-label">🔐 Identification</div>
       ${renderCodePanel()}
-      ${isLoggedIn ? `
-        <div class="admin-desktop-two">
-          <div class="admin-tab-panel" data-tab="live">${renderLiveControl()}</div>
-          <div>
-            <div class="admin-tab-panel" data-tab="prix">${renderHonoreeControl()}</div>
-            <div class="admin-tab-panel" data-tab="resultats">${renderResults()}</div>
-          </div>
-        </div>
-      ` : ""}
     </div>
-    ${isLoggedIn ? `
-      <div class="alert-panel">
-        <div class="alert-panel-header">
-          <span class="alert-panel-icon">📣</span>
-          <div>
-            <strong>Message à tous</strong>
-            <p class="micro">Popup + signal sonore sur tous les téléphones</p>
-          </div>
-        </div>
+
+    ${!isLoggedIn ? "" : `
+
+    <!-- 1. MESSAGE À TOUS -->
+    <div class="admin-section">
+      <div class="admin-section-label">📣 Message à tous</div>
+      <div class="alert-panel" style="margin-top:0">
         <div class="alert-compose">
           <input
             class="alert-panel-input"
             type="text"
             id="alert-msg-input"
-            placeholder="Ex : RDV au bar · Pause 10 min · La soirée commence !"
+            placeholder="Ex : RDV au bar · Pause 10 min…"
             maxlength="120"
             value="${escapeHtml(adminState.alertDraft || "")}"
             oninput="adminState.alertDraft=this.value"
             onkeydown="if(event.key==='Enter' && this.value.trim()) sendAlert()"
           />
-          <button class="alert-send-btn" onclick="sendAlert()">Envoyer 🔔</button>
+          <button class="alert-send-btn" onclick="sendAlert()">🔔 Envoyer</button>
+        </div>
+        <p class="micro" style="margin:6px 0 0;color:rgba(255,215,106,0.7)">Popup + ding sonore sur tous les téléphones</p>
+      </div>
+    </div>
+
+    <!-- 2. ÉTAPE DU PROGRAMME -->
+    <div class="admin-section">
+      <div class="admin-section-label">📋 Étape du programme</div>
+      <div class="panel" style="margin-top:0">
+        <select class="admin-select" id="step" onchange="saveLiveState({ activeStepId: this.value })">
+          ${adminSteps.map((step) => `<option value="${step.id}" ${step.id === live.activeStepId ? "selected" : ""}>${step.label}</option>`).join("")}
+        </select>
+        <div class="astat-banner" style="margin-top:10px">
+          <div class="astat-row"><span>👥 Connectés</span><strong>${adminState.presence?.online ?? 0}</strong></div>
         </div>
       </div>
-      <button class="secondary admin-logout" type="button" onclick="logoutAdmin()">Se déconnecter</button>
-    ` : ""}
-  `;
-  if (isLoggedIn) applyAdminTab();
-}
+    </div>
 
-function applyAdminTab() {
-  const isMobile = window.innerWidth < 700;
-  if (!isMobile) {
-    document.querySelectorAll(".admin-tab-panel").forEach((el) => (el.style.display = ""));
-    return;
-  }
-  document.querySelectorAll(".admin-tab-panel").forEach((el) => {
-    el.style.display = el.dataset.tab === adminState.tab ? "" : "none";
-  });
+    <!-- 3. BRAINSTORMING -->
+    <div class="admin-section">
+      <div class="admin-section-label">💡 Brainstorming équipes</div>
+      <div class="panel" style="margin-top:0">
+        ${adminToggle("Afficher les équipes aux participants", "💡", Boolean(live.brainstormOpen),
+          "saveLiveState({ brainstormOpen: true })",
+          "saveLiveState({ brainstormOpen: false })")}
+      </div>
+    </div>
+
+    <!-- 4. REMISE DES PRIX -->
+    <div class="admin-section">
+      <div class="admin-section-label">🏆 Remise des prix</div>
+      ${renderHonoreeControl()}
+    </div>
+
+    <!-- 5. OSCARS — VOTES -->
+    <div class="admin-section">
+      <div class="admin-section-label">★ Oscars — Votes</div>
+      <div class="panel" style="margin-top:0">
+        <div class="astat-banner ${voteIsOpen ? "is-vote-on" : ""}" style="margin:0 0 12px">
+          <div class="astat-row"><span>🗳️ Ont voté</span><strong>${adminState.votes ? Object.values(adminState.votes.totals || {}).reduce((a,b)=>a+b,0) : 0}</strong></div>
+          <div class="astat-row"><span>⏱️ Timer</span><strong>${voteIsOpen ? formatCountdown(remainingMs) : "—"}</strong></div>
+        </div>
+        <div class="field" style="margin:0 0 12px">
+          <label class="atoggle-section">Catégorie active</label>
+          <select class="admin-select" id="category" onchange="saveLiveState({ activeCategoryId: this.value, voteOpen: false })">
+            ${adminCategories.map((item) => `<option value="${item.id}" ${item.id === live.activeCategoryId ? "selected" : ""}>${item.title.replace(/^Oscar /, "")}</option>`).join("")}
+          </select>
+        </div>
+        ${adminToggle("Vote ouvert (1 min)", "🗳️", voteIsOpen, "openVote()", "closeVote()")}
+        <div class="admin-reset-row" style="margin-top:10px">
+          <button class="admin-reset-btn" onclick="resetVotes(${jsAdminString(live.activeCategoryId || 'very-bad-trip')})">↺ RAZ catégorie</button>
+          <button class="admin-reset-btn admin-reset-all" onclick="resetVotes('all')">↺ RAZ tous</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. OSCARS — RÉSULTATS & REVEAL -->
+    <div class="admin-section">
+      <div class="admin-section-label">🎬 Oscars — Résultats & Reveal</div>
+      ${renderResults()}
+    </div>
+
+    `}
+  `;
 }
 
 renderAdmin();
