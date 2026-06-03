@@ -787,11 +787,20 @@ function reconnectParticipant() {
   render();
 }
 
+// Fetch avec timeout pour éviter l'accumulation de requêtes pendantes
+function fetchWithTimeout(url, options, timeoutMs) {
+  const ms = timeoutMs || 8000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+    .finally(() => clearTimeout(timer));
+}
+
 async function syncPresence() {
   if (!state.profile || state.profile.isActive === false) return;
 
   try {
-    const response = await fetch("/api/presence", {
+    const response = await fetchWithTimeout("/api/presence", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -814,7 +823,7 @@ async function syncPresence() {
 function startPresenceSync() {
   if (!state.profile || state.profile.isActive === false || state.presenceTimer) return;
   syncPresence();
-  state.presenceTimer = window.setInterval(syncPresence, 5000);
+  state.presenceTimer = window.setInterval(syncPresence, 15000);
 }
 
 async function syncVotes() {
@@ -843,7 +852,7 @@ async function syncMessages() {
   if (!state.profile || state.profile.isActive === false) return;
 
   try {
-    const response = await fetch("/api/messages");
+    const response = await fetchWithTimeout("/api/messages");
     if (!response.ok) throw new Error("Messages unavailable");
 
     const data = await response.json();
@@ -862,7 +871,7 @@ function startWallSync() {
 
 async function syncLiveState() {
   try {
-    const response = await fetch("/api/live-state");
+    const response = await fetchWithTimeout("/api/live-state");
     if (!response.ok) throw new Error("Live state unavailable");
 
     const nextLiveState = await response.json();
@@ -897,6 +906,9 @@ async function syncLiveState() {
     const newRevealId = state.liveState?.activeRevealCategoryId || "";
     if (newRevealId && newRevealId !== previousRevealId) {
       await syncVotes();
+      if (state.view === "prada") syncPradaStats().then(render);
+      render();
+      return;
     }
 
     // Sync prada results when vote closes automatically
@@ -934,7 +946,7 @@ async function submitVote() {
   if (!state.profile) return;
 
   try {
-    const response = await fetch("/api/votes", {
+    const response = await fetchWithTimeout("/api/votes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -969,7 +981,7 @@ async function submitMessage(event) {
   if (!text && !emoji) return;
 
   try {
-    const response = await fetch("/api/messages", {
+    const response = await fetchWithTimeout("/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1711,7 +1723,7 @@ async function submitPradaVote(category) {
   const name = category === "reine" ? state.pradaReineSelected : state.pradaRoiSelected;
   if (!name || !state.profile) return;
   try {
-    const res = await fetch("/api/prada-votes", {
+    const res = await fetchWithTimeout("/api/prada-votes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ participantId: state.profile.id, pseudo: state.profile.pseudo, avatarId: state.profile.avatarId, category, name }),

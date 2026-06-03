@@ -2,6 +2,9 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 
+process.on("uncaughtException", (err) => console.error("[FATAL] uncaughtException:", err));
+process.on("unhandledRejection", (reason) => console.error("[FATAL] unhandledRejection:", reason));
+
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || "0.0.0.0";
 const ROOT = __dirname;
@@ -15,7 +18,29 @@ const PRESENCE_TTL_MS = 18000;
 const VOTE_DURATION_MS = 60 * 1000;
 const PRADA_DURATION_MS = 60 * 60 * 1000;
 
+// Créer data/ dès le démarrage
+const os = require("node:os");
+const crypto = require("node:crypto");
+fs.mkdirSync(DATA_DIR, { recursive: true });
+
 const participants = new Map();
+// Nettoyage périodique des participants inactifs
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, p] of participants.entries()) {
+    if (now - p.lastSeen > PRESENCE_TTL_MS) participants.delete(id);
+  }
+}, 60_000);
+
+// Sauvegarde asynchrone atomique (évite de bloquer l'event loop)
+function saveJsonAsync(filePath, data) {
+  const json = JSON.stringify(data, null, 2);
+  const tmp = path.join(os.tmpdir(), `sem-${crypto.randomBytes(6).toString("hex")}.json`);
+  return fs.promises.writeFile(tmp, json, "utf8")
+    .then(() => fs.promises.rename(tmp, filePath))
+    .catch((err) => console.error("[SAVE ERROR]", filePath, err.message));
+}
+
 const liveState = loadLiveState();
 const messages = loadMessages();
 const votes = loadVotes();
@@ -39,10 +64,7 @@ function loadPradaVotes() {
   }
 }
 
-function savePradaVotes() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(PRADA_FILE, JSON.stringify(pradaVotes, null, 2));
-}
+function savePradaVotes() { saveJsonAsync(PRADA_FILE, pradaVotes); }
 
 function isPradaWindowOpen() {
   if (!liveState.pradaOpen) return false;
@@ -125,20 +147,11 @@ function loadLiveState() {
   }
 }
 
-function saveLiveState() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(LIVE_STATE_FILE, JSON.stringify(liveState, null, 2));
-}
+function saveLiveState() { saveJsonAsync(LIVE_STATE_FILE, liveState); }
 
-function saveMessages() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages.slice(0, 120), null, 2));
-}
+function saveMessages() { saveJsonAsync(MESSAGES_FILE, messages.slice(0, 120)); }
 
-function saveVotes() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2));
-}
+function saveVotes() { saveJsonAsync(VOTES_FILE, votes); }
 
 function voteEndsAt() {
   const closesAt = Date.parse(liveState.voteClosesAt || "");
@@ -250,15 +263,17 @@ function isAuthorizedAdmin(request) {
 function readBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
+    let done = false;
     request.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 8192) {
+      if (body.length > 8192 && !done) {
+        done = true;
         reject(new Error("Body too large"));
         request.destroy();
       }
     });
-    request.on("end", () => resolve(body));
-    request.on("error", reject);
+    request.on("end", () => { if (!done) { done = true; resolve(body); } });
+    request.on("error", (err) => { if (!done) { done = true; reject(err); } });
   });
 }
 
@@ -363,7 +378,7 @@ const server = http.createServer(async (request, response) => {
         activeCategoryId: nextActiveCategoryId,
         activeHonoreeId,
         revealedHonoreeIds: Array.isArray(payload.revealedHonoreeIds)
-          ? payload.revealedHonoreeIds.map((id) => cleanText(id, 80)).filter(Boolean)
+          ? payload.revealedHonoreeIds.slice(0, 50).map((id) => cleanText(id, 80)).filter(Boolean)
           : revealedHonoreeIds,
         activeStepId: cleanText(payload.activeStepId || liveState.activeStepId, 80),
         updatedAt: new Date().toISOString(),
