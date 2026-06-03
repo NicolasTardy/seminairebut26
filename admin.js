@@ -513,6 +513,17 @@ function renderAdmin() {
       ${renderResults()}
     </div>
 
+    <!-- 7. PRADA -->
+    <div class="admin-section">
+      <div class="admin-section-label">👗 Le diable s'habille en Prada</div>
+      <div class="panel" style="margin-top:0">
+        ${adminToggle("Vote Prada ouvert (1 heure)", "👗", Boolean(live.pradaOpen),
+          "saveLiveState({ pradaOpen: true })",
+          "saveLiveState({ pradaOpen: false })")}
+        ${live.pradaClosesAt ? `<p class="micro" style="margin:8px 0 0">Ferme à : ${new Date(live.pradaClosesAt).toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"})}</p>` : ""}
+      </div>
+    </div>
+
     `}
   `;
 }
