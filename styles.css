@@ -1890,3 +1890,21 @@ h3 {
     linear-gradient(100deg, transparent 0 42%, rgba(255, 255, 255, 0.12) 46%, transparent 54%);
   pointer-events: none;
 }
+
+.trophy-visual-speed .trophy-portrait-placeholder {
+  background:
+    repeating-linear-gradient(15deg, rgba(255, 49, 95, 0.18) 0 4px, transparent 4px 32px),
+    radial-gradient(circle at 50% 40%, rgba(255, 173, 51, 0.58), transparent 34%),
+    linear-gradient(145deg, rgba(80, 10, 10, 0.96), rgba(20, 5, 5, 0.98));
+}
+
+.trophy-portrait-wrap.trophy-visual-speed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(255,255,255,0.26), transparent 10%),
+    radial-gradient(circle at 84% 16%, rgba(255,255,255,0.2), transparent 9%),
+    linear-gradient(100deg, transparent 0 42%, rgba(255,255,255,0.12) 46%, transparent 54%);
+  pointer-events: none;
+}

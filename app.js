@@ -388,6 +388,15 @@ const honorees = [
     visual: "mission",
     reason: "Elle a sauté à deux pieds dans le projet nouvelle campagne de pub, embrassant de nouvelles missions et projets imprévus.",
   },
+  {
+    id: "anais-melanie-speed",
+    title: 'Prix "Speed"',
+    subtitle: "Plus rapides que Keanu Reeves dans Speed",
+    name: "Anaïs & Mélanie",
+    badgeIcon: "💨",
+    visual: "speed",
+    reason: "Elles lancent les projets plus vite que Keanu Reeves dans Speed 2 — personne ne les arrête.",
+  },
 ];
 
 const agendaSteps = [

@@ -18,6 +18,7 @@ const adminHonorees = [
   { id: "team-pei", name: "Team PEI", title: `Oscar "Retour vers le Futur"` },
   { id: "virginie-nerriere", name: "Nerrière Virginie", title: "Oscar de l’éternel sourire" },
   { id: "perola-pessaro", name: "Pessaro Perola", title: "Prix Mission Impossible" },
+  { id: "anais-melanie-speed", name: "Anaïs & Mélanie", title: `Prix "Speed"` },
 ];
 
 const adminSteps = [
