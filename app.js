@@ -1091,7 +1091,6 @@ function renderTopbar() {
         </div>
       </div>
       <div class="topbar-actions">
-        <a class="ghost admin-link" href="/admin">Admin</a>
         ${profileStatus}
       </div>
     </header>

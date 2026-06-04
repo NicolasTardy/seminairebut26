@@ -35,7 +35,7 @@ setInterval(() => {
 // Sauvegarde asynchrone atomique (évite de bloquer l'event loop)
 function saveJsonAsync(filePath, data) {
   const json = JSON.stringify(data, null, 2);
-  const tmp = path.join(os.tmpdir(), `sem-${crypto.randomBytes(6).toString("hex")}.json`);
+  const tmp = path.join(path.dirname(filePath), `.tmp-${crypto.randomBytes(6).toString("hex")}.json`);
   return fs.promises.writeFile(tmp, json, "utf8")
     .then(() => fs.promises.rename(tmp, filePath))
     .catch((err) => console.error("[SAVE ERROR]", filePath, err.message));
