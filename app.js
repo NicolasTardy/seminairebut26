@@ -2195,6 +2195,7 @@ function render(force) {
   // Ne pas re-render pendant la saisie sauf si explicitement demandé (force=true)
   if (!force && isTyping()) return;
 
+  const scrollY = window.scrollY;
   const app = document.querySelector("#app");
 
   if (!state.profile) {
@@ -2218,6 +2219,7 @@ function render(force) {
   };
 
   app.innerHTML = renderToast() + (views[state.view] || renderHome)();
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
 }
 
 render();
