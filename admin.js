@@ -35,7 +35,7 @@ const adminSteps = [
   { id: "wrap-up", label: "16:30 · Synthèse et clôture" },
   { id: "free-time", label: "16:45 · Temps libre" },
   { id: "team-building", label: "18:15 · Team Building" },
-  { id: "oscars", label: "19:30 · Remise des Oscars" },
+  { id: "oscars", label: "19:30 · Apéro" },
   { id: "dinner", label: "20:30 · Dîner" },
   { id: "party", label: "22:00 · Soirée" },
 ];
@@ -406,6 +406,7 @@ function renderResults() {
 }
 
 function renderAdmin() {
+  const scrollY = window.scrollY;
   const app = document.querySelector("#admin-app");
   const isLoggedIn = adminState.liveState !== null;
   const live = adminState.liveState || {};
@@ -526,6 +527,7 @@ function renderAdmin() {
 
     `}
   `;
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
 }
 
 function isUserTyping() {
