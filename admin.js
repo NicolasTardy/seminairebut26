@@ -488,6 +488,7 @@ function renderAdmin() {
             onkeydown="if(event.key==='Enter' && this.value.trim()) sendAlert()"
           />
           <button class="alert-send-btn" onclick="sendAlert()">🔔 Envoyer</button>
+          ${adminState.liveState?.alertMessage ? `<button class="alert-send-btn" style="background:rgba(255,49,95,0.7)" onclick="saveLiveState({ alertMessage: '', alertSentAt: '' })">✕ Effacer</button>` : ""}
         </div>
         <p class="micro" style="margin:6px 0 0;color:rgba(255,215,106,0.7)">Popup + ding sonore sur tous les téléphones</p>
         <label class="alert-send-btn" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">

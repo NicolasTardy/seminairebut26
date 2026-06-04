@@ -392,7 +392,7 @@ const server = http.createServer(async (request, response) => {
         brainstormOpen: Boolean(payload.brainstormOpen ?? liveState.brainstormOpen),
         cocktailOpen: Boolean(payload.cocktailOpen ?? liveState.cocktailOpen),
         alertMessage: payload.alertMessage !== undefined ? cleanText(payload.alertMessage, 200) : (liveState.alertMessage || ""),
-        alertSentAt: payload.alertMessage !== undefined && payload.alertMessage ? new Date().toISOString() : (liveState.alertSentAt || ""),
+        alertSentAt: payload.alertMessage !== undefined ? (payload.alertMessage ? new Date().toISOString() : "") : (liveState.alertSentAt || ""),
         pradaOpen: (() => {
           const wants = payload.pradaOpen !== undefined ? Boolean(payload.pradaOpen) : Boolean(liveState.pradaOpen);
           const was = Boolean(liveState.pradaOpen);
