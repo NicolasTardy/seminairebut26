@@ -1948,6 +1948,22 @@ function renderBrainstorming() {
   return `
     ${renderTopbar()}
 
+    <!-- QUESTIONS DES ATELIERS -->
+    <div class="bs-questions-grid">
+      <div class="bs-question-card bs-q1-card">
+        <p class="bs-qcard-label">Question 1</p>
+        <p class="bs-qcard-text">Quelle sera la <strong>fidélité de demain</strong> dans le retail spécialisé, et particulièrement chez BUT ?</p>
+        <p class="bs-qcard-pistes"><em>Pistes à explorer</em><br>Programmes relationnels, services à valeur ajoutée, communautés, data &amp; personnalisation, RSE, expérience phygitale, rôle des vendeurs.</p>
+        <p class="bs-qcard-groups">Groupes 1 · 2 · 3 · 4</p>
+      </div>
+      <div class="bs-question-card bs-q2-card">
+        <p class="bs-qcard-label">Question 2</p>
+        <p class="bs-qcard-text">Comment réussir à <strong>parler à la Génération Z</strong> quand on s'appelle BUT ?</p>
+        <p class="bs-qcard-pistes"><em>Pistes à explorer</em><br>Codes &amp; ton de marque, réseaux sociaux, créateurs, univers du premier logement, accessibilité prix, engagement, expérience en magasin et en ligne.</p>
+        <p class="bs-qcard-groups">Groupes 5 · 6 · 7 · 8</p>
+      </div>
+    </div>
+
     ${myTeam ? `
       <div class="bs-mission-card">
         <div class="bs-mission-top">
