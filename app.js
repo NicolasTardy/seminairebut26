@@ -1131,7 +1131,7 @@ function renderProfileCreation() {
                 class="avatar-choice ${avatar.id === state.selectedAvatarId ? "is-selected" : ""}"
                 type="button"
                 aria-label="${avatar.label}"
-                onclick="state.pseudoDraft=document.querySelector('#pseudo').value; state.selectedAvatarId='${avatar.id}'; render();"
+                onclick="state.pseudoDraft=document.querySelector('#pseudo').value; state.selectedAvatarId='${avatar.id}'; render(true);"
               >
                 ${avatar.icon}
               </button>
@@ -1148,7 +1148,7 @@ function renderProfileCreation() {
               <button
                 class="mood-choice ${mood.id === state.selectedMoodId ? "is-selected" : ""}"
                 type="button"
-                onclick="state.pseudoDraft=document.querySelector('#pseudo').value; state.selectedMoodId='${mood.id}'; render();"
+                onclick="state.pseudoDraft=document.querySelector('#pseudo').value; state.selectedMoodId='${mood.id}'; render(true);"
               >
                 <span class="mood-icon">${mood.icon}</span>
                 <span>
@@ -1845,7 +1845,7 @@ function renderPradaSearchBox(category, searchKey, selectedKey, label, icon) {
           data-prada-cat="${category}"
           placeholder="Cherche un prénom ou un nom…"
           value="${escapeHtml(state[searchKey] || "")}"
-          oninput="state['${searchKey}']=this.value; state['${selectedKey}']=null; render(); const f=document.querySelector('[data-prada-cat=${category}]'); if(f){f.focus();f.setSelectionRange(f.value.length,f.value.length);}"
+          oninput="state['${searchKey}']=this.value; state['${selectedKey}']=null; render(true); const f=document.querySelector('[data-prada-cat=${category}]'); if(f){f.focus();f.setSelectionRange(f.value.length,f.value.length);}"
         />
         ${results.length ? `
           <div class="prada-results">
@@ -1964,7 +1964,7 @@ function renderBrainstorming() {
             : `<p class="bs-q-label">Q2</p><p class="bs-q-text">Comment réussir à <strong>parler à la Génération Z</strong> quand on s'appelle BUT ?</p>`
           }
         </div>
-        <button class="bs-change-team" onclick="state.brainstormMyTeam=null;render()">Changer d'équipe</button>
+        <button class="bs-change-team" onclick="state.brainstormMyTeam=null;render(true)">Changer d'équipe</button>
       </div>
     ` : `
       <div class="bs-welcome">
@@ -1976,10 +1976,10 @@ function renderBrainstorming() {
 
     <!-- GUIDE TABS -->
     <div class="bs-guide-tabs">
-      <button class="bs-gtab ${guideSection === "phases" ? "is-active" : ""}" onclick="state.bs_guide='phases';render()">🌪️ Les 4 phases</button>
-      <button class="bs-gtab ${guideSection === "rules" ? "is-active" : ""}" onclick="state.bs_guide='rules';render()">📌 Règles d'or</button>
-      <button class="bs-gtab ${guideSection === "roles" ? "is-active" : ""}" onclick="state.bs_guide='roles';render()">🎭 Rôles</button>
-      <button class="bs-gtab ${guideSection === "pitch" ? "is-active" : ""}" onclick="state.bs_guide='pitch';render()">📣 Pitch 5 min</button>
+      <button class="bs-gtab ${guideSection === "phases" ? "is-active" : ""}" onclick="state.bs_guide='phases';render(true)">🌪️ Les 4 phases</button>
+      <button class="bs-gtab ${guideSection === "rules" ? "is-active" : ""}" onclick="state.bs_guide='rules';render(true)">📌 Règles d'or</button>
+      <button class="bs-gtab ${guideSection === "roles" ? "is-active" : ""}" onclick="state.bs_guide='roles';render(true)">🎭 Rôles</button>
+      <button class="bs-gtab ${guideSection === "pitch" ? "is-active" : ""}" onclick="state.bs_guide='pitch';render(true)">📣 Pitch 5 min</button>
     </div>
 
     ${guideSection === "phases" ? `
@@ -2051,8 +2051,8 @@ function renderBrainstorming() {
       <input class="input bs-search" id="bs-search-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         placeholder="Chercher un prénom ou un nom…"
         value="${escapeHtml(state.brainstormSearch || "")}"
-        oninput="(function(el){var v=el.value,p=el.selectionStart;state.brainstormSearch=v;render();var f=document.getElementById('bs-search-input');if(f){f.focus();try{f.setSelectionRange(p,p);}catch(e){}}})(this)" />
-      ${state.brainstormSearch ? `<button class="bs-search-clear" onclick="state.brainstormSearch='';render();">×</button>` : ""}
+        oninput="(function(el){var v=el.value,p=el.selectionStart;state.brainstormSearch=v;render(true);var f=document.getElementById('bs-search-input');if(f){f.focus();try{f.setSelectionRange(p,p);}catch(e){}}})(this)" />
+      ${state.brainstormSearch ? `<button class="bs-search-clear" onclick="state.brainstormSearch='';render(true);">×</button>` : ""}
     </div>
 
     <div class="bs-teams">
@@ -2064,7 +2064,7 @@ function renderBrainstorming() {
             const membersToShow = query ? team.matchedMembers : team.members;
             return `
               <article class="bs-team-card ${isMyTeam ? "is-my-team" : ""}">
-                <button class="bs-team-toggle" onclick="state['bs_open_${team.id}'] = ${!isOpen}; render();">
+                <button class="bs-team-toggle" onclick="state['bs_open_${team.id}'] = ${!isOpen}; render(true);">
                   <span class="bs-team-number">${team.id}</span>
                   <div class="bs-team-info">
                     <strong>Équipe ${team.id}${team.responsable ? ` · ${escapeHtml(team.responsable)}` : ""}</strong>
@@ -2083,7 +2083,7 @@ function renderBrainstorming() {
                       </div>
                     `).join("")}
                     ${!isMyTeam
-                      ? `<button class="primary" style="margin-top:12px" onclick="state.brainstormMyTeam=${team.id}; state.brainstormSearch=''; render();">✓ C'est mon équipe</button>`
+                      ? `<button class="primary" style="margin-top:12px" onclick="state.brainstormMyTeam=${team.id}; state.brainstormSearch=''; render(true);">✓ C'est mon équipe</button>`
                       : `<p class="bs-my-tag">✓ Mon équipe</p>`}
                   </div>
                 ` : ""}
@@ -2118,7 +2118,7 @@ function renderBottomNav() {
         .map((item) => `
             <button
               class="nav-item ${state.view === item.id ? "is-active" : ""}"
-              onclick="state.view='${item.id}'; render();"
+              onclick="state.view='${item.id}'; render(true);"
             >
               <span class="nav-icon">${item.icon}</span>
               <span>${item.label}</span>
@@ -2148,7 +2148,15 @@ function renderToast() {
   return alert + toast;
 }
 
-function render() {
+function isTyping() {
+  const el = document.activeElement;
+  return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+}
+
+function render(force) {
+  // Ne pas re-render pendant la saisie sauf si explicitement demandé (force=true)
+  if (!force && isTyping()) return;
+
   const app = document.querySelector("#app");
 
   if (!state.profile) {

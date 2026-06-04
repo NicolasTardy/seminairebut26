@@ -528,9 +528,35 @@ function renderAdmin() {
   `;
 }
 
+function isUserTyping() {
+  const el = document.activeElement;
+  return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT");
+}
+
+function safeRenderAdmin() {
+  if (!isUserTyping()) renderAdmin();
+}
+
+async function safeRefreshAdmin() {
+  try {
+    const [liveState, presence, votes] = await Promise.all([
+      fetch("/api/live-state").then(r => r.json()),
+      fetch("/api/presence").then(r => r.json()),
+      fetch("/api/votes").then(r => r.json()),
+    ]);
+    adminState.liveState = liveState;
+    adminState.presence = presence;
+    adminState.votes = votes;
+    safeRenderAdmin();
+  } catch {
+    adminState.message = "Impossible de rafraîchir la régie.";
+    safeRenderAdmin();
+  }
+}
+
 renderAdmin();
 refreshAdmin();
-window.setInterval(refreshAdmin, 4000);
+window.setInterval(safeRefreshAdmin, 4000);
 window.setInterval(() => {
-  if (adminState.liveState?.voteOpen) renderAdmin();
+  if (adminState.liveState?.voteOpen) safeRenderAdmin();
 }, 1000);
