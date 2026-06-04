@@ -973,7 +973,8 @@ async function syncLiveState() {
 
     // Détecter une nouvelle alerte admin
     const newAlertAt = state.liveState?.alertSentAt || "";
-    if (newAlertAt && newAlertAt !== previousAlertAt && newAlertAt !== state.lastAlertSentAt) {
+    // Déclencher seulement si vraiment nouvelle (pas déjà vue, y compris après refresh)
+    if (newAlertAt && newAlertAt !== state.lastAlertSentAt) {
       state.lastAlertSentAt = newAlertAt;
       localStorage.setItem("nuit_cesars_last_alert", newAlertAt);
       state.activeAlert = state.liveState.alertMessage || "";
@@ -1778,7 +1779,12 @@ function playDing() {
 
 function dismissAlert() {
   state.activeAlert = null;
-  render();
+  const sentAt = state.liveState?.alertSentAt || "";
+  if (sentAt) {
+    state.lastAlertSentAt = sentAt;
+    localStorage.setItem("nuit_cesars_last_alert", sentAt);
+  }
+  render(true);
 }
 
 function normalize(str) {
