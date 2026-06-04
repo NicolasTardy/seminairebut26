@@ -333,8 +333,7 @@ function renderHonoreeControl() {
       <p class="eyebrow">Remise des prix</p>
 
       <div class="astat-banner ${isVisible ? "is-vote-on" : ""}">
-        <div class="astat-row"><span>Affiché</span><strong>${currentLabel}</strong></div>
-        <div class="astat-row"><span>Révélés</span><strong>${Math.min(revealedCount, adminHonorees.length)} / ${adminHonorees.length}</strong></div>
+        <div class="astat-row"><span>Affiché en gros plan</span><strong>${currentLabel}</strong></div>
       </div>
 
       <div class="atoggle-group">
