@@ -523,7 +523,7 @@ const agendaSteps = [
     id: "oscars",
     start: "19:30",
     end: "20:30",
-    title: "Remise des Oscars",
+    title: "Apéro",
     type: "awards",
     icon: "🏆",
     djAction: "Ouvrir votes + reveals trophées",
