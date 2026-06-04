@@ -1660,6 +1660,8 @@ function renderWall() {
 function renderTrophies() {
   const honoree = activeHonoree();
   const showWinnerList = shouldShowWinnerList();
+  // Quand rien n'est sélectionné, afficher directement la liste complète des prix
+  const showDefault = !honoree && !showWinnerList;
 
   return `
     ${renderTopbar()}
@@ -1673,7 +1675,7 @@ function renderTrophies() {
 
     <div class="trophy-list">
       ${
-        showWinnerList
+        showWinnerList || showDefault
           ? renderWinnerList()
           : honoree
           ? renderHonoreeCard(honoree)
