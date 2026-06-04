@@ -333,7 +333,8 @@ function renderHonoreeControl() {
       <p class="eyebrow">Remise des prix</p>
 
       <div class="astat-banner ${isVisible ? "is-vote-on" : ""}">
-        <div class="astat-row"><span>Affiché en gros plan</span><strong>${currentLabel}</strong></div>
+        <div class="astat-row"><span>Affiché</span><strong>${currentLabel}</strong></div>
+        <div class="astat-row"><span>Révélés</span><strong>${Math.min(revealedCount, adminHonorees.length)} / ${adminHonorees.length}</strong></div>
       </div>
 
       <div class="atoggle-group">
@@ -482,22 +483,12 @@ function renderAdmin() {
     <!-- 4. REMISE DES PRIX -->
     <div class="admin-section">
       <div class="admin-section-label">🏆 Remise des prix</div>
-      <div class="panel" style="margin-top:0;margin-bottom:10px">
-        ${adminToggle("Onglet Prix visible", "🏆", Boolean(live.prixOpen),
-          "saveLiveState({ prixOpen: true })",
-          "saveLiveState({ prixOpen: false })")}
-      </div>
       ${renderHonoreeControl()}
     </div>
 
     <!-- 5. OSCARS — VOTES -->
     <div class="admin-section">
       <div class="admin-section-label">★ Oscars — Votes</div>
-      <div class="panel" style="margin-top:0;margin-bottom:10px">
-        ${adminToggle("Onglet Oscars visible", "★", Boolean(live.oscarsOpen),
-          "saveLiveState({ oscarsOpen: true })",
-          "saveLiveState({ oscarsOpen: false })")}
-      </div>
       <div class="panel" style="margin-top:0">
         <div class="astat-banner ${voteIsOpen ? "is-vote-on" : ""}" style="margin:0 0 12px">
           <div class="astat-row"><span>🗳️ Ont voté</span><strong>${adminState.votes ? Object.values(adminState.votes.totals || {}).reduce((a,b)=>a+b,0) : 0}</strong></div>

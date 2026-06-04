@@ -1660,8 +1660,6 @@ function renderWall() {
 function renderTrophies() {
   const honoree = activeHonoree();
   const showWinnerList = shouldShowWinnerList();
-  // Quand rien n'est sélectionné, afficher directement la liste complète des prix
-  const showDefault = !honoree && !showWinnerList;
 
   return `
     ${renderTopbar()}
@@ -1675,7 +1673,7 @@ function renderTrophies() {
 
     <div class="trophy-list">
       ${
-        showWinnerList || showDefault
+        showWinnerList
           ? renderWinnerList()
           : honoree
           ? renderHonoreeCard(honoree)
@@ -2139,10 +2137,10 @@ function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "brainstorm", label: "Brainstorming", icon: "💡", gate: "brainstormOpen" },
-    { id: "vote", label: "Oscars", icon: "★", gate: "oscarsOpen" },
+    { id: "vote", label: "Oscars", icon: "★" },
     { id: "prada", label: "Prada", icon: "👗", gate: "pradaOpen", alwaysWhenActive: true },
     { id: "wall", label: "Mur", icon: "💬" },
-    { id: "trophies", label: "Prix", icon: "🏆", gate: "prixOpen" },
+    { id: "trophies", label: "Prix", icon: "🏆" },
   ];
 
   const visibleItems = items.filter((item) => {
