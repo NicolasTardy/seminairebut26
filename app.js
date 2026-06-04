@@ -53,6 +53,64 @@ const moods = [
 
 const wallEmojis = ["🎉", "🔥", "👏", "💖", "🤩", "😂", "✨", "🏆"];
 
+const cocktailTables = [
+  { id: 1, members: [
+    { prenom: "Frédéric", nom: "Kellenberger" }, { prenom: "François", nom: "Bertonneau" },
+    { prenom: "Dylan", nom: "Gandon" }, { prenom: "Imen", nom: "Krichen" },
+    { prenom: "Valérie", nom: "Krauss" }, { prenom: "Morgane", nom: "Vidament" },
+    { prenom: "Océane", nom: "Hadjadj" }, { prenom: "Laure", nom: "Dutournier" },
+    { prenom: "Lauren", nom: "Destombes" },
+  ]},
+  { id: 2, members: [
+    { prenom: "Adib", nom: "Samari" }, { prenom: "Florian", nom: "Renault" },
+    { prenom: "Margaux", nom: "Beudet" }, { prenom: "Astrid", nom: "Minier" },
+    { prenom: "Jessie", nom: "Missilou" }, { prenom: "Claire", nom: "Zegarra" },
+    { prenom: "Ountourou Pilar", nom: "Gomis" }, { prenom: "Emilie", nom: "Coatelant" },
+    { prenom: "Anaele", nom: "Vitse" }, { prenom: "Millia", nom: "Netro" },
+  ]},
+  { id: 3, members: [
+    { prenom: "Théo", nom: "Decherf" }, { prenom: "Mayez", nom: "Hassan" },
+    { prenom: "Träcy", nom: "Ignace Mboe" }, { prenom: "Nathalie", nom: "Maitre" },
+    { prenom: "Mélanie", nom: "Sagon" }, { prenom: "Alexane", nom: "Weber" },
+    { prenom: "Amélia", nom: "Machado" }, { prenom: "Amandine", nom: "Alaso" },
+  ]},
+  { id: 4, members: [
+    { prenom: "Coralie", nom: "Le Bozec" }, { prenom: "Marie", nom: "Albiez" },
+    { prenom: "Yassine", nom: "Mesmoudi" }, { prenom: "Mehdi", nom: "Kebaili" },
+    { prenom: "Marjorie", nom: "Courtet" }, { prenom: "Emilie", nom: "Pelé" },
+    { prenom: "Nada", nom: "Ben Brahim" }, { prenom: "Andrea", nom: "Becker" },
+    { prenom: "Mélanie", nom: "Courpron" }, { prenom: "Aubane", nom: "Olivero de Rubiana" },
+  ]},
+  { id: 5, members: [
+    { prenom: "Elisa", nom: "Lorthios" }, { prenom: "Esther", nom: "Livio" },
+    { prenom: "Thomas", nom: "Phommarath" }, { prenom: "Olivier", nom: "Granda" },
+    { prenom: "Jenna", nom: "Blancon" }, { prenom: "Laure", nom: "Leconte" },
+    { prenom: "Marie", nom: "Palus" }, { prenom: "Virginie", nom: "Nerrière" },
+    { prenom: "Victoria", nom: "Onephitak" }, { prenom: "Audrey", nom: "Barna" },
+  ]},
+  { id: 6, members: [
+    { prenom: "Jade", nom: "Oba Icket" }, { prenom: "Valérie", nom: "Rochereau" },
+    { prenom: "Mourad", nom: "Baïche" }, { prenom: "Samuel", nom: "Zaabouli-Bourgeois" },
+    { prenom: "Binta", nom: "Hama" }, { prenom: "Mathilde", nom: "Grassin" },
+    { prenom: "Iman", nom: "Maghzaz" }, { prenom: "Shahinez", nom: "Belghit" },
+    { prenom: "Kathleen", nom: "Derras" }, { prenom: "Nathalie", nom: "Jacquot" },
+  ]},
+  { id: 7, members: [
+    { prenom: "Julie", nom: "Gouvard" }, { prenom: "Quentin", nom: "Drouhot" },
+    { prenom: "Wesley", nom: "Bijaoui" }, { prenom: "Alexandra", nom: "Gauthier" },
+    { prenom: "Monica", nom: "Ribeiro Da Silva" }, { prenom: "Laetitia", nom: "Otto" },
+    { prenom: "Pérola", nom: "Passaro" }, { prenom: "Axelle", nom: "Piquet / Duvignacq" },
+    { prenom: "Anaïs", nom: "Mastio" },
+  ]},
+  { id: 8, members: [
+    { prenom: "Rayane", nom: "Adghar" }, { prenom: "Nicolas", nom: "Tardy" },
+    { prenom: "Anais", nom: "Atienza" }, { prenom: "Tania", nom: "Lefebvre" },
+    { prenom: "Sandra", nom: "Notelet" }, { prenom: "Sophie", nom: "Bourgeois" },
+    { prenom: "Sarah", nom: "Evenden" }, { prenom: "Hervé", nom: "Tsayem" },
+    { prenom: "Pauline", nom: "Periquito" }, { prenom: "Penda", nom: "Cisse" },
+  ]},
+];
+
 const brainstormingTeams = [
   {
     id: 1,
@@ -557,6 +615,8 @@ const state = {
   selectedNominee: null,
   brainstormSearch: "",
   brainstormMyTeam: null,
+  cocktailSearch: "",
+  cocktailMyTable: null,
   pradaStats: null,
   lastAlertSentAt: localStorage.getItem("nuit_cesars_last_alert") || "",
   activeAlert: null,
@@ -1928,6 +1988,99 @@ function renderPrada() {
   `;
 }
 
+function renderCocktail() {
+  const query = normalize(state.cocktailSearch || "").trim();
+  const myTableId = state.cocktailMyTable;
+
+  const matches = (m) => !query || normalize(m.prenom).includes(query) || normalize(m.nom).includes(query);
+
+  const filteredTables = cocktailTables
+    .map((t) => ({ ...t, matched: t.members.filter(matches) }))
+    .filter((t) => !query || t.matched.length > 0);
+
+  const myTable = myTableId ? cocktailTables.find((t) => t.id === myTableId) : null;
+
+  return `
+    ${renderTopbar()}
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Soirée</p>
+        <h2>🍸 Cocktail — Ma table</h2>
+      </div>
+      ${myTable ? `<span class="pill">Table ${myTable.id}</span>` : ""}
+    </section>
+
+    ${myTable ? `
+      <div class="bs-mission-card" style="margin-bottom:14px">
+        <div class="bs-team-header">
+          <span class="bs-team-number" style="width:48px;height:48px;font-size:1.5rem;background:linear-gradient(135deg,#ff4fc4,#ffd76a)">${myTable.id}</span>
+          <div>
+            <strong style="font-size:1.1rem">Table ${myTable.id}</strong>
+            <p class="reason" style="margin:2px 0 0">${myTable.members.length} personnes à ta table</p>
+          </div>
+          <button class="ghost" style="width:auto;min-height:36px;padding:6px 10px;font-size:0.8rem" onclick="state.cocktailMyTable=null;render(true)">Changer</button>
+        </div>
+        <div class="bs-member-list" style="margin-top:10px">
+          ${myTable.members.map((m) => `
+            <div class="bs-member">
+              <span class="bs-pole-dot" style="background:#ff4fc4"></span>
+              <span><strong>${escapeHtml(m.prenom)}</strong> ${escapeHtml(m.nom)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <p class="muted" style="text-align:center;font-size:0.82rem;margin-bottom:14px">Toutes les tables ci-dessous</p>
+    ` : `
+      <p class="reason" style="margin-bottom:12px">Cherche ton prénom pour trouver ta table de cocktail.</p>
+    `}
+
+    <div class="bs-search-wrap">
+      <input class="input bs-search" id="cocktail-search-input" type="text"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        placeholder="Chercher un prénom ou un nom…"
+        value="${escapeHtml(state.cocktailSearch || "")}"
+        oninput="(function(el){var v=el.value,p=el.selectionStart;state.cocktailSearch=v;render(true);var f=document.getElementById('cocktail-search-input');if(f){f.focus();try{f.setSelectionRange(p,p);}catch(e){}}})(this)" />
+      ${state.cocktailSearch ? `<button class="bs-search-clear" onclick="state.cocktailSearch='';render(true)">×</button>` : ""}
+    </div>
+
+    <div class="bs-teams">
+      ${filteredTables.length === 0
+        ? `<p class="empty-state">Aucun résultat pour "${escapeHtml(query)}"</p>`
+        : filteredTables.map((table) => {
+            const isOpen = query ? true : (state[`ct_open_${table.id}`] || false);
+            const isMyTable = myTableId === table.id;
+            const toShow = query ? table.matched : table.members;
+            return `
+              <article class="bs-team-card ${isMyTable ? "is-my-team" : ""}">
+                <button class="bs-team-toggle" onclick="state['ct_open_${table.id}']=${!isOpen};render(true);">
+                  <span class="bs-team-number" style="background:linear-gradient(135deg,#ff4fc4,#ffd76a);color:#23110d">${table.id}</span>
+                  <div class="bs-team-info">
+                    <strong>Table ${table.id}</strong>
+                    <span class="bs-resp">${table.members.length} personnes</span>
+                  </div>
+                  <span class="bs-chevron">${isOpen ? "▲" : "▼"}</span>
+                </button>
+                ${isOpen ? `
+                  <div class="bs-member-list">
+                    ${toShow.map((m) => `
+                      <div class="bs-member ${query && matches(m) ? "is-match" : ""}">
+                        <span class="bs-pole-dot" style="background:#ff4fc4"></span>
+                        <span><strong>${escapeHtml(m.prenom)}</strong> ${escapeHtml(m.nom)}</span>
+                      </div>
+                    `).join("")}
+                    ${!isMyTable
+                      ? `<button class="primary" style="margin-top:12px" onclick="state.cocktailMyTable=${table.id};state.cocktailSearch='';render(true);">✓ C'est ma table</button>`
+                      : `<p class="bs-my-tag">✓ Ma table</p>`}
+                  </div>
+                ` : ""}
+              </article>
+            `;
+          }).join("")}
+    </div>
+    ${renderBottomNav()}
+  `;
+}
+
 function renderBrainstorming() {
   const query = normalize(state.brainstormSearch || "").trim();
   const myTeamId = state.brainstormMyTeam;
@@ -2137,6 +2290,7 @@ function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "brainstorm", label: "Brainstorming", icon: "💡", gate: "brainstormOpen" },
+    { id: "cocktail", label: "Cocktail", icon: "🍸", gate: "cocktailOpen" },
     { id: "vote", label: "Oscars", icon: "★" },
     { id: "prada", label: "Prada", icon: "👗", gate: "pradaOpen", alwaysWhenActive: true },
     { id: "wall", label: "Mur", icon: "💬" },
@@ -2211,6 +2365,7 @@ function render(force) {
   const views = {
     home: renderHome,
     brainstorm: renderBrainstorming,
+    cocktail: renderCocktail,
     vote: renderVote,
     prada: renderPrada,
     reveal: renderOscarReveal,

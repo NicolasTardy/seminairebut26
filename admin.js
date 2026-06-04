@@ -554,7 +554,17 @@ function renderAdmin() {
       ${renderResults()}
     </div>
 
-    <!-- 7. PRADA -->
+    <!-- 7. COCKTAIL -->
+    <div class="admin-section">
+      <div class="admin-section-label">🍸 Cocktail — Tables</div>
+      <div class="panel" style="margin-top:0">
+        ${adminToggle("Onglet Cocktail visible", "🍸", Boolean(live.cocktailOpen),
+          "saveLiveState({ cocktailOpen: true })",
+          "saveLiveState({ cocktailOpen: false })")}
+      </div>
+    </div>
+
+    <!-- 8. PRADA -->
     <div class="admin-section">
       <div class="admin-section-label">👗 Le diable s'habille en Prada</div>
       <div class="panel" style="margin-top:0">
