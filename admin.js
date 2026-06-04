@@ -18,6 +18,9 @@ const adminHonorees = [
   { id: "valerie-rochereau", name: "Valérie Rochereau", title: `Prix "Terminator"` },
   { id: "anais-melanie-speed", name: "Anaïs & Mélanie", title: `Prix "Speed 2"` },
   { id: "emilie-pele-hp", name: "Émilie Pelé", title: "Oscar Harry Potter" },
+  { id: "sophie-inception", name: "Sophie", title: `Prix "Inception"` },
+  { id: "rayane-starwars", name: "Rayane", title: `Prix "La Guerre des Étoiles"` },
+  { id: "equipe-rc", name: "Équipe Relation Client", title: `Prix "Le Téléphone Sonne Toujours Deux Fois"` },
 ];
 
 const adminSteps = [

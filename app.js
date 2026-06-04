@@ -446,6 +446,33 @@ const honorees = [
     visual: "hogwarts",
     reason: "Pour avoir su maîtriser Responsys en seulement quelques mois et démontrer une montée en compétences impressionnante. Félicitations Émilie !",
   },
+  {
+    id: "sophie-inception",
+    title: `Prix "Inception"`,
+    subtitle: "Coordination & pilotage projet CASANE",
+    name: "Sophie",
+    badgeIcon: "🌀",
+    visual: "inception",
+    reason: "Pour avoir piloté le projet CASANE dans toutes ses dimensions, coordonné de nombreux interlocuteurs et contribué à faire émerger un nouveau parcours client ainsi qu'une nouvelle gamme de meubles configurables. Bravo Sophie !",
+  },
+  {
+    id: "rayane-starwars",
+    title: `Prix "La Guerre des Étoiles"`,
+    subtitle: "E-réputation & avis clients",
+    name: "Rayane",
+    badgeIcon: "⭐",
+    visual: "starwars",
+    reason: "Pour avoir fait progresser l'e-réputation, valorisé les avis clients et embarqué le réseau dans une dynamique positive autour des étoiles. Félicitations Rayane !",
+  },
+  {
+    id: "equipe-rc",
+    title: `Prix "Le Téléphone Sonne Toujours Deux Fois"`,
+    subtitle: "Service client · Pick season",
+    name: "Équipe Relation Client",
+    badgeIcon: "📞",
+    visual: "phone",
+    reason: "Pour avoir tenu la ligne du service client pendant une pick season particulièrement exigeante, avec professionnalisme, engagement et esprit d'équipe. Bravo à toute l'équipe !",
+  },
 ];
 
 const agendaSteps = [
