@@ -129,6 +129,7 @@ function loadLiveState() {
       voteOpen: false,
       brainstormOpen: false,
       pradaOpen: false,
+      cocktailOpen: false,
       activeRevealCategoryId: "",
       ...JSON.parse(fs.readFileSync(LIVE_STATE_FILE, "utf8")),
     };
@@ -142,6 +143,7 @@ function loadLiveState() {
       voteOpen: false,
       brainstormOpen: false,
       pradaOpen: false,
+      cocktailOpen: false,
       activeRevealCategoryId: "",
     };
   }
@@ -388,6 +390,7 @@ const server = http.createServer(async (request, response) => {
         voteOpenedAt: wantsVoteOpen ? nextVoteOpenedAt : "",
         activeRevealCategoryId: categoryChanged ? "" : cleanText(payload.activeRevealCategoryId ?? liveState.activeRevealCategoryId ?? "", 80),
         brainstormOpen: Boolean(payload.brainstormOpen ?? liveState.brainstormOpen),
+        cocktailOpen: Boolean(payload.cocktailOpen ?? liveState.cocktailOpen),
         alertMessage: payload.alertMessage !== undefined ? cleanText(payload.alertMessage, 200) : (liveState.alertMessage || ""),
         alertSentAt: payload.alertMessage !== undefined && payload.alertMessage ? new Date().toISOString() : (liveState.alertSentAt || ""),
         pradaOpen: (() => {
