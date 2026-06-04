@@ -1951,16 +1951,38 @@ function renderBrainstorming() {
     <!-- QUESTIONS DES ATELIERS -->
     <div class="bs-questions-grid">
       <div class="bs-question-card bs-q1-card">
-        <p class="bs-qcard-label">Question 1</p>
-        <p class="bs-qcard-text">Quelle sera la <strong>fidélité de demain</strong> dans le retail spécialisé, et particulièrement chez BUT ?</p>
-        <p class="bs-qcard-pistes"><em>Pistes à explorer</em><br>Programmes relationnels, services à valeur ajoutée, communautés, data &amp; personnalisation, RSE, expérience phygitale, rôle des vendeurs.</p>
-        <p class="bs-qcard-groups">Groupes 1 · 2 · 3 · 4</p>
+        <div class="bs-qcard-header">
+          <p class="bs-qcard-label">Question 1 · Fidélité de demain</p>
+          <p class="bs-qcard-text">Quelle sera la <strong>fidélité de demain</strong> dans le retail spécialisé, et particulièrement chez BUT ?</p>
+        </div>
+        <div class="bs-qcard-groups-list">
+          ${brainstormingTeams.filter(t => t.question === 1).map(t => `
+            <div class="bs-qcard-group-row">
+              <span class="bs-qcard-badge bs-qcard-badge-q1">G${t.id}</span>
+              <div>
+                <strong>${escapeHtml(t.angle)}</strong>
+                <p class="bs-qcard-detail">${escapeHtml(t.angleDetail)}</p>
+              </div>
+            </div>
+          `).join("")}
+        </div>
       </div>
       <div class="bs-question-card bs-q2-card">
-        <p class="bs-qcard-label">Question 2</p>
-        <p class="bs-qcard-text">Comment réussir à <strong>parler à la Génération Z</strong> quand on s'appelle BUT ?</p>
-        <p class="bs-qcard-pistes"><em>Pistes à explorer</em><br>Codes &amp; ton de marque, réseaux sociaux, créateurs, univers du premier logement, accessibilité prix, engagement, expérience en magasin et en ligne.</p>
-        <p class="bs-qcard-groups">Groupes 5 · 6 · 7 · 8</p>
+        <div class="bs-qcard-header">
+          <p class="bs-qcard-label">Question 2 · Génération Z</p>
+          <p class="bs-qcard-text">Comment réussir à <strong>parler à la Génération Z</strong> quand on s'appelle BUT ?</p>
+        </div>
+        <div class="bs-qcard-groups-list">
+          ${brainstormingTeams.filter(t => t.question === 2).map(t => `
+            <div class="bs-qcard-group-row">
+              <span class="bs-qcard-badge bs-qcard-badge-q2">G${t.id}</span>
+              <div>
+                <strong>${escapeHtml(t.angle)}</strong>
+                <p class="bs-qcard-detail">${escapeHtml(t.angleDetail)}</p>
+              </div>
+            </div>
+          `).join("")}
+        </div>
       </div>
     </div>
 
