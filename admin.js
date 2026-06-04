@@ -1,6 +1,7 @@
 const ADMIN_CODE_KEY = "seminaire_admin_code";
 
 const adminCategories = [
+  { id: "fashion", title: `Oscar "Confessions d'une accro du shopping"`, subtitle: "Le/la plus fashion" },
   { id: "ratatouille", title: `Oscar "Ratatouille"`, subtitle: "Les meilleurs cuisiniers" },
   { id: "oss-117", title: `Oscar "OSS 117"`, subtitle: "Blagues et jeux de mots" },
   { id: "voyage-chihiro", title: `Oscar "Le Voyage de Chihiro"`, subtitle: "Voyage entre les bureaux" },

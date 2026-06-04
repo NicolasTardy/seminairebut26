@@ -281,6 +281,20 @@ const brainstormingTeams = [
 
 const oscarCategories = [
   {
+    id: "fashion",
+    visual: "fashion",
+    badgeIcon: "👗",
+    title: `Oscar "Confessions d'une accro du shopping"`,
+    subtitle: "Le ou la plus fashion de notre direction",
+    source: "Marie",
+    nominees: [
+      { name: "Träcy Ignace Mboe", reason: "Look coloré et parfaitement maîtrisé." },
+      { name: "Thomas Phommarath", reason: "Style recherché, simple et efficace." },
+      { name: "Esther Livo-Durand", reason: "Élégance naturelle et féminine." },
+      { name: "Kathleen Derras", reason: "Notre Miss BUT, fraîcheur et maquillage toujours au rendez-vous." },
+    ],
+  },
+  {
     id: "ratatouille",
     visual: "ratatouille",
     badgeIcon: "🍳",
