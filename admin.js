@@ -9,16 +9,15 @@ const adminCategories = [
 ];
 
 const adminHonorees = [
-  { id: "sophie-inception", name: "Sophie", title: `Prix "Inception"` },
-  { id: "rayane-starwars", name: "Rayane", title: `Prix "La Guerre des Étoiles"` },
-  { id: "equipe-rc", name: "Équipe Relation Client", title: `Prix "Le Téléphone Sonne Toujours 2 Fois"` },
-  { id: "emilie-pele-hp", name: "Emilie Pelé", title: "Oscar Harry Potter" },
-  { id: "valerie-rochereau", name: "Valérie Rochereau", title: `Prix "Terminator"` },
+  { id: "audrey-barna", name: "Audrey Barna", title: `Oscar "L'Histoire sans fin"` },
+  { id: "margaux-beudet", name: "Margaux Beudet", title: `Oscar "Million Dollar Baby"` },
+  { id: "virginie-nerriere", name: "Virginie Nerrière", title: "Oscar de l'Éternel Sourire" },
+  { id: "perola-pessaro", name: "Pérola Pessaro", title: "Prix Mission Impossible" },
   { id: "team-marketplace", name: "Team Marketplace", title: `Oscar "The Social Network"` },
   { id: "team-pei", name: "Team PEI", title: `Oscar "Retour vers le Futur"` },
-  { id: "virginie-nerriere", name: "Nerrière Virginie", title: "Oscar de l’éternel sourire" },
-  { id: "perola-pessaro", name: "Pessaro Perola", title: "Prix Mission Impossible" },
-  { id: "anais-melanie-speed", name: "Anaïs & Mélanie", title: `Prix "Speed"` },
+  { id: "valerie-rochereau", name: "Valérie Rochereau", title: `Prix "Terminator"` },
+  { id: "anais-melanie-speed", name: "Anaïs & Mélanie", title: `Prix "Speed 2"` },
+  { id: "emilie-pele-hp", name: "Émilie Pelé", title: "Oscar Harry Potter" },
 ];
 
 const adminSteps = [
