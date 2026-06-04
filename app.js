@@ -2137,10 +2137,10 @@ function renderBottomNav() {
   const items = [
     { id: "home", label: "Accueil", icon: "⌂" },
     { id: "brainstorm", label: "Brainstorming", icon: "💡", gate: "brainstormOpen" },
-    { id: "vote", label: "Oscars", icon: "★" },
+    { id: "vote", label: "Oscars", icon: "★", gate: "oscarsOpen" },
     { id: "prada", label: "Prada", icon: "👗", gate: "pradaOpen", alwaysWhenActive: true },
     { id: "wall", label: "Mur", icon: "💬" },
-    { id: "trophies", label: "Prix", icon: "🏆" },
+    { id: "trophies", label: "Prix", icon: "🏆", gate: "prixOpen" },
   ];
 
   const visibleItems = items.filter((item) => {
