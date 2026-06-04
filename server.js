@@ -266,7 +266,7 @@ function readBody(request) {
     let done = false;
     request.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 8192 && !done) {
+      if (body.length > 2 * 1024 * 1024 && !done) {
         done = true;
         reject(new Error("Body too large"));
         request.destroy();
@@ -533,8 +533,9 @@ const server = http.createServer(async (request, response) => {
       const participantId = cleanText(payload.participantId, 80);
       const text = cleanText(payload.text, 180);
       const emoji = cleanText(payload.emoji, 12);
+      const image = typeof payload.image === "string" && payload.image.startsWith("data:image/") ? payload.image : "";
 
-      if (!participantId || (!text && !emoji)) {
+      if (!participantId || (!text && !emoji && !image)) {
         sendJson(response, 400, { error: "Missing message fields" });
         return;
       }
@@ -544,6 +545,7 @@ const server = http.createServer(async (request, response) => {
         avatarId: cleanText(payload.avatarId || "spark", 40),
         createdAt: new Date().toISOString(),
         emoji,
+        image,
         participantId,
         pseudo: cleanText(payload.pseudo || "Participant", 48),
         text,

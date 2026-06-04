@@ -185,6 +185,42 @@ async function sendAlert() {
   renderAdmin();
 }
 
+async function postAdminPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const MAX = 900;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement("canvas");
+      const ratio = Math.min(1, MAX / img.width, MAX / img.height);
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      const base64 = canvas.toDataURL("image/jpeg", 0.82);
+      try {
+        await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            participantId: "admin",
+            pseudo: "Régie",
+            avatarId: "star",
+            emoji: "📸",
+            text: "",
+            image: base64,
+          }),
+        });
+        input.value = "";
+        alert("Photo postée sur le mur ✅");
+      } catch { alert("Erreur lors du post."); }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 async function resetVotes(scope) {
   const label = scope === "all" ? "TOUS les votes de toutes les catégories" : `les votes de la catégorie active`;
   if (!confirm(`Remettre à zéro ${label} ? Cette action est irréversible.`)) return;
@@ -454,6 +490,10 @@ function renderAdmin() {
           <button class="alert-send-btn" onclick="sendAlert()">🔔 Envoyer</button>
         </div>
         <p class="micro" style="margin:6px 0 0;color:rgba(255,215,106,0.7)">Popup + ding sonore sur tous les téléphones</p>
+        <label class="alert-send-btn" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">
+          📸 Poster une photo sur le mur
+          <input type="file" accept="image/*" style="display:none" onchange="postAdminPhoto(this)">
+        </label>
       </div>
     </div>
 

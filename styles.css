@@ -2062,3 +2062,12 @@ h3 {
 
 .bs-q1-card { background: #c8102e; }
 .bs-q2-card { background: #1a2238; }
+
+.wall-image {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 10px;
+  margin-top: 6px;
+  object-fit: cover;
+}

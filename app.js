@@ -1639,7 +1639,8 @@ function renderWall() {
                             : ""
                         }
                       </div>
-                      ${message.text ? `<p class="reason">${escapeHtml(message.text)}</p>` : `<p class="reason">Humeur partagée</p>`}
+                      ${message.image ? `<img class="wall-image" src="${message.image}" alt="photo">` : ""}
+                      ${message.text ? `<p class="reason">${escapeHtml(message.text)}</p>` : message.image ? "" : `<p class="reason">Humeur partagée</p>`}
                     </div>
                   </article>
                 `,
